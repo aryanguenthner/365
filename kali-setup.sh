@@ -7,7 +7,7 @@
 # sudo chmod +x kali-setup.sh 
 # Usage type: sudo ./kali-setup.sh | tee setuplog.txt
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 2020-05-20
+# Last Updated 2020-05-22
 ################################################
 #python-pygraphviz python-psycopg2 python-krbv python-mysqldb <-- //Might need these
 echo
@@ -93,8 +93,8 @@ echo
 cd /opt
 git clone https://github.com/GerbenJavado/LinkFinder.git
 cd LinkFinder
-python setup.py install
 pip3 install -r requirements.txt
+python setup.py install
 echo
 echo "LockPhish"
 cd /opt
@@ -167,7 +167,7 @@ git clone https://github.com/thelinuxchoice/userrecon.git
 echo
 echo "AD Recon - My Fav"
 cd /opt
-https://github.com/sense-of-security/ADRecon.git
+git clone https://github.com/sense-of-security/ADRecon.git
 echo
 echo "Daniel Miessler Security List Collection"
 cd /opt
