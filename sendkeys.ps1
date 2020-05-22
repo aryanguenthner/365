@@ -1,0 +1,1 @@
+Add-Type -AssemblyName system.windows.forms; while ($true) {[system.windows.forms.sendkeys]::sendwait(" + ");start-sleep -seconds 60}

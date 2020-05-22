@@ -1,0 +1,1 @@
+cmd.exe /c defrag.exe C: /H /U /V /O
