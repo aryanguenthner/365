@@ -32,8 +32,8 @@ echo "Be Patient, Not a lot of output on this portion of the install"
 echo
 date
 echo
-apt-get -y install python-pymongo python-crypto \
-> python-future apache2 libapache2-mod-wsgi libkrb5-dev dokuwiki
+apt-get -y install python-crypto \
+> apache2 libapache2-mod-wsgi libkrb5-dev dokuwiki
 # Installing the Latest version of IVRE from Github
 echo
 echo "Attepting To Installing Some IVRE Dependencies"
@@ -42,6 +42,7 @@ apt-get install python-pip && pip install -U pip
 wget https://bootstrap.pypa.io/get-pip.py
 python get-pip.py
 echo
+pip install future
 pip install python-krbv
 pip install matplotlib
 pip install tinydb
