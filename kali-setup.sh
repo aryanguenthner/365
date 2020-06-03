@@ -7,7 +7,7 @@
 # sudo chmod +x kali-setup.sh 
 # Usage type: sudo ./kali-setup.sh | tee setuplog.txt
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 2020-05-22
+# Last Updated 2020-05-28
 ################################################
 #python-pygraphviz python-psycopg2 python-krbv python-mysqldb <-- //Might need these
 echo
@@ -35,7 +35,7 @@ echo 'net.ipv6.conf.wlan0.disable_ipv6 = 1' >> /etc/sysctl.conf
 echo 'net.ipv6.conf.wlan1.disable_ipv6 = 1' >> /etc/sysctl.conf
 sysctl -p -f /etc/sysctl.conf
 echo "Be Patient, Installing Kali Dependencies"
-apt -y install hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libappindicator3-1 libindicator3-7 libmbim-utils libreoffice nfs-common openssl phantomjs python3-dev python3-pip python-dbus python-lxml python-pil terminator tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev python3-venv
+apt -y install python-crypto hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libappindicator3-1 libindicator3-7 libmbim-utils libreoffice nfs-common openssl phantomjs python3-dev python3-pip python-dbus python-lxml python-pil terminator tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev python3-venv
 echo
 echo "Metasploit Ready Up"
 msfdb init
