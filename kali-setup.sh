@@ -7,7 +7,7 @@
 # sudo chmod +x kali-setup.sh 
 # Usage type: sudo ./kali-setup.sh | tee setuplog.txt
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 2020-06-04
+# Last Updated 2020-06-06
 ################################################
 #python-pygraphviz python-psycopg2 python-krbv python-mysqldb <-- //Might need these
 echo
@@ -147,7 +147,7 @@ python setup.py install
 echo "EyeWitness"
 cd /opt
 git clone https://github.com/FortyNorthSecurity/EyeWitness.git
-cd EyeWitness/setup
+cd /opt/EyeWitness/Python/setup
 yes | ./setup.sh
 echo
 echo
@@ -285,7 +285,7 @@ echo
 #echo
 chmod -R 777 /home/kali/
 echo
-echo "Hacker Lives Matter"
+echo "Hacker Hacker"
 source ~/.bashrc
 date | tee kalisetupfinishdate.txt
 updatedb
