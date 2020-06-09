@@ -1516,14 +1516,14 @@ def run_nmap(target, opts, logfile):
             sys.exit(1)
 
     # Build the NMap command args
-    cmd = ["nmap", "-Pn" "-A"]
+    cmd = ["nmap", "-Pn", "-A"]
 
     if opts.sourceport:
         cmd += "-g", str(opts.sourceport)
     # Build the NMap Scripts for IVRE.ROCKS
-    sslscripts = "--script=ssl-cert,ssl-enum-ciphers"
+    sslscripts = "--script=ssl-cert,ssl-enum-ciphers,ssl-heartbleed"
     if opts.sslopt:
-        sslscripts += ",sip-enum-users,sip-brute,sip-methods,mainframe-banner,mainframe-screenshot,rtsp-screenshot,rpcinfo,vnc-screenshot,x11-access,x11-screenshot,nfs-showmount,nfs-ls,smb-enum-shares,http-robots.txt.nse,http-webdav-scan,http-screenshot,http-auth,http-sql-injection,http-git,http-open-proxy,socks-open-proxy,smtp-open-relay,ftp-anon,ftp-bounce,ms-sql-info,ms-sql-empty-password,mysql-info,mysql-empty-password,vnc-brute,vnc-screenshot,vmware-version,http-shellshock,http-default-accounts"
+        sslscripts += ",sip-enum-users,sip-brute,sip-methods,rtsp-screenshot,rpcinfo,vnc-screenshot,x11-access,x11-screenshot,nfs-showmount,nfs-ls,smb-ls,smb-enum-shares,http-robots.txt.nse,http-webdav-scan,http-screenshot,http-auth,http-sql-injection,http-ntlm-info,http-git,http-open-redirect,http-open-proxy,socks-open-proxy,smtp-open-relay,ftp-anon,ftp-bounce,ms-sql-config,ms-sql-info,ms-sql-empty-password,mysql-info,mysql-empty-password,vnc-brute,vnc-screenshot,vmware-version,http-shellshock,http-default-accounts"
 
     if opts.json_min:
         outputs = "-oX"
@@ -1539,9 +1539,9 @@ def run_nmap(target, opts, logfile):
 
     # greatly increases scan speed, introduced in nmap v.6.25(?)
     if float(ver) >= 6.25:
-        cmd += "--max-retries", "0", "--max-parallelism", "100"
+        cmd += "-mtu", "24", "--max-retries", "0", "--scan-delay", "1s", "--max-rtt-timeout", "100ms", "--host-timeout", "15m", "--script-timeout", "15m"
 
-    cmd += portswitch, out_ports, "-T%s" % opts.nmapspeed, "-vv", "-sC", sslscripts, outputs, fname, "--open"
+    cmd += portswitch, out_ports, "-T%s" % opts.nmapspeed, "-vvv", "-sC", sslscripts, outputs, fname, "--open"
 
     if opts.udp:
         cmd.append("-sU")
