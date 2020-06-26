@@ -1,5 +1,5 @@
 #/bin/bash
-
+# WebMap Nmap Dashboard Pentest Collaboration
 sudo apt -y install curl gnupg2 apt-transport-https software-properties-common ca-certificates 
 curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
 echo "deb [arch=amd64] https://download.docker.com/linux/debian buster stable" | sudo tee  /etc/apt/sources.list.d/docker.list
@@ -14,5 +14,5 @@ docker exec -ti webmap /root/token
 mkdir -p /tmp/webmap
 #
 docker run -d --name webmap -h webmap -p 8000:8000 -v /tmp/webmap:/opt/xml reborntc/webmap
-docker exec -ti webmap /root/token
+docker exec -ti webmap /root/token | tee webmap_token.txt
 
