@@ -7,12 +7,12 @@
 # Then do this chmod +x ivre-setup.sh 
 # Usage: ./ivre-setup.sh | tee ivrelog.txt
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 04/08/2020
+# Last Updated 2020-06-05
 ################################################
 : ' 2020-04-08
 TARGETS=192.168.1.0/24
-KALI=`hostname -I`
-nmap -iL $TARGETS --exclude=$KALI -Pn -T4 -A -sC -p- -vvvv -r --open --max-retries 0 --max-parallelism 100 --script=mainframe-banner,mainframe-screenshot,rtsp-screenshot,rpcinfo,vnc-screenshot,x11-access,x11-screenshot,nfs-showmount,nfs-ls,smb-enum-shares,http-robots.txt.nse,http-screenshot,http-auth,http-sql-injection,http-git,http-open-proxy,socks-open-proxy,smtp-open-relay,ftp-anon,ftp-bounce,ms-sql-empty-password,mysql-empty-password,vnc-brute,http-shellshock,http-default-accounts -oA nmapivre && ivre scan2db nmapivre.xml && ivre db2view nmap'
+HOST=`hostname -I`
+nmap -iL $TARGETS --exclude=$HOST -Pn -mtu 25 -T4 -A -sC -p- -vvvv -r --open --max-retries 0 --max-parallelism 100 --script=ssl-cert,ssl-enum-ciphers,ssl-heartbleed,sip-enum-users,sip-brute,sip-methods,rtsp-screenshot,rpcinfo,vnc-screenshot,x11-access,x11-screenshot,nfs-showmount,nfs-ls,smb-ls,smb-enum-shares,http-robots.txt.nse,http-webdav-scan,http-screenshot,http-auth,http-sql-injection,http-ntlm-info,http-git,http-open-redirect,http-open-proxy,socks-open-proxy,smtp-open-relay,ftp-anon,ftp-bounce,ms-sql-config,ms-sql-info,ms-sql-empty-password,mysql-info,mysql-empty-password,vnc-brute,vnc-screenshot,vmware-version,http-shellshock,http-default-accounts -oA nmapivre && ivre scan2db nmapivre.xml && ivre db2view nmap'
 echo
 date | tee ivre-startdate.txt
 echo "Installing MongoDB 4.2 from Ubuntu Repo, Because It Works"
