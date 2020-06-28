@@ -7,7 +7,7 @@
 # sudo chmod +x kali-setup.sh 
 # Usage type: sudo ./kali-setup.sh | tee setuplog.txt
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 2020-06-27
+# Last Updated 2020-06-28
 ################################################
 #python-pygraphviz python-psycopg2 python-krbv python-mysqldb <-- //Might need these
 echo
@@ -22,7 +22,7 @@ sed -i '32s/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/ss
 systemctl enable ssh
 service ssh restart
 echo
-echo "Kali IP Address"
+echo "Your Internal IP Address"
 hostname -I
 echo
 echo '# Kali IP' >> /root/.bashrc
@@ -108,7 +108,7 @@ echo "AWS CLI"
 pip install awscli
 echo
 echo "Malicious Macro Builder"
-cd /opt/
+cd /opt
 git clone https://github.com/infosecn1nja/MaliciousMacroMSBuild.git
 echo
 echo "metagoofil"
@@ -130,8 +130,8 @@ cd /opt
 git clone https://github.com/aboul3la/Sublist3r.git
 cd Sublist3r
 sudo pip install -r requirements.txt
-sudo apt-get install python-requests
-sudo apt-get install python-dnspython
+sudo apt-get -y install python-requests
+sudo apt-get -y install python-dnspython
 echo
 echo "dnstwister"
 cd /opt
@@ -257,7 +257,7 @@ echo
 echo
 # MobSF Setup
 sudo apt-get -y install openjdk-8-jdk
-sudo apt install -y python3-venv python3-pip python3-dev build-essential libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev wkhtmltopdf
+sudo apt install -y python3-venv python3-pip python3-dev build-essential libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev
 echo "MobSF"
 cd /opt/
 git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF.git
@@ -286,6 +286,7 @@ echo
 chmod -R 777 /home/kali/
 echo
 echo "Hacker Hacker"
+sudo systemctl restart ntp
 source ~/.bashrc
 date | tee kalisetupfinishdate.txt
 updatedb
