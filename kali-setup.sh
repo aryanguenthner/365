@@ -1,18 +1,19 @@
 #!/bin/bash
 ################################################
 # Kali Post Setup Automation Script
-# Tested on Kali 2020.2
+# Tested on Kali 2020.3
 # If you're reading this pat yourself on the back
 # sudo dos2unix kali-setup.sh
 # sudo chmod +x kali-setup.sh 
 # Usage type: sudo ./kali-setup.sh | tee setuplog.txt
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 2020-06-28
+# Last Updated 2020-08-30
 ################################################
-#python-pygraphviz python-psycopg2 python-krbv python-mysqldb <-- //Might need these
+#python-pygraphviz python-psycopg2 python-krbv python-mysqldb phantomjs<-- //Might need these one day
 echo
+echo "Be Patient, Installing Kali Dependencies"
+sudo apt update && apt -y upgrade && apt -y install torbrowser-launcher crackmapexec python-crypto hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libappindicator3-1 libindicator3-7 libmbim-utils libreoffice nfs-common openssl python3-dev python-dbus python-lxml python-pil terminator tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev python3-venv
 cd /home/kali/Desktop
-echo "Did you update your Kali before running this script?"
 echo
 date 2>&1 | tee kali-setup-startdate.txt
 echo
@@ -27,15 +28,6 @@ hostname -I
 echo
 echo '# Kali IP' >> /root/.bashrc
 echo 'hostname -I' >> /root/.bashrc
-echo
-echo "Attempting to Disable IPv6" # We will be back here
-echo 'net.ipv6.conf.disable_ipv6 = 1' >> /etc/sysctl.conf
-echo 'net.ipv6.conf.eth0.disable_ipv6 = 1' >> /etc/sysctl.conf
-echo 'net.ipv6.conf.wlan0.disable_ipv6 = 1' >> /etc/sysctl.conf
-echo 'net.ipv6.conf.wlan1.disable_ipv6 = 1' >> /etc/sysctl.conf
-sysctl -p -f /etc/sysctl.conf
-echo "Be Patient, Installing Kali Dependencies"
-apt -y install torbrowser-launcher crackmapexec python-crypto hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libappindicator3-1 libindicator3-7 libmbim-utils libreoffice nfs-common openssl phantomjs python3-dev python-dbus python-lxml python-pil terminator tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev python3-venv
 echo
 echo "Metasploit Ready Up"
 msfdb init
@@ -96,13 +88,10 @@ cd LinkFinder
 pip3 install -r requirements.txt
 python setup.py install
 echo
-echo "LockPhish"
 cd /opt
-git clone https://github.com/thelinuxchoice/lockphish.git
-echo
 echo "ShellPhish"
 cd /opt
-git clone https://github.com/thelinuxchoice/shellphish.git
+git clone https://github.com/aryanguenthner/shellphish.git
 echo
 echo "AWS CLI"
 pip install awscli
@@ -160,10 +149,6 @@ gem install rubyzip
 gem install spider
 echo
 echo "This is going to take a minute hold my root-beer"
-echo
-echo "Userrecon"
-cd /opt
-git clone https://github.com/thelinuxchoice/userrecon.git
 echo
 echo "AD Recon - My Fav"
 cd /opt
@@ -242,7 +227,7 @@ cd /opt
 git clone https://github.com/SecureAuthCorp/impacket.git
 cd /opt
 cd impacket
-python setup.py install
+sudo python setup.py install
 echo
 echo "GitRob"
 cd /tmp
@@ -251,8 +236,8 @@ unzip gitrob_linux_amd64_2.0.0-beta.zip
 mkdir -p /opt/gitrob
 mv gitrob /opt/gitrob/
 echo
-echo "Google Play CLI"
-apt -y install gplaycli
+#echo "Google Play CLI"
+#apt -y install gplaycli
 echo
 echo
 # MobSF Setup
@@ -263,13 +248,13 @@ cd /opt/
 git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF.git
 cd Mobile-Security-Framework-MobSF/
 pip3 install -r requirements.txt
-yes |./setup.sh
+sudo yes |./setup.sh
 echo
 echo "Lee Baird Discover Script"
 cd /opt
 git clone https://github.com/leebaird/discover.git
 cd discover
-./update.sh
+sudo ./update.sh
 echo
 echo "Don't Blink"
 echo
@@ -283,7 +268,7 @@ echo
 #cd ncis
 #dos2unix *.sh *.py && chmod +x *.sh *.py
 #echo
-chmod -R 777 /home/kali/
+sudo chmod -R 777 /home/kali/
 echo
 echo "Hacker Hacker"
 sudo systemctl restart ntp
