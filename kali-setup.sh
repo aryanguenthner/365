@@ -7,21 +7,26 @@
 # sudo chmod +x kali-setup.sh 
 # Usage type: sudo ./kali-setup.sh | tee setuplog.txt
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 2020-08-30
+# Last Updated 2020-10-16
 ################################################
 #python-pygraphviz python-psycopg2 python-krbv python-mysqldb phantomjs<-- //Might need these one day
 echo
 echo "Be Patient, Installing Kali Dependencies"
-sudo apt update && apt -y upgrade && apt -y install torbrowser-launcher crackmapexec python-crypto hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libappindicator3-1 libindicator3-7 libmbim-utils libreoffice nfs-common openssl python3-dev python-dbus python-lxml python-pil terminator tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev python3-venv
+sudo apt update && apt -y upgrade && apt -y install torbrowser-launcher crackmapexec python-crypto hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libappindicator3-1 libindicator3-7 libmbim-utils libreoffice nfs-common openssl python3-dev python-dbus python-lxml python-pil terminator tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev python3-venv driftnet websploit apt-transport-https openresolv
 cd /home/kali/Desktop
+echo
+echo "VPN stuff"
+cd /tmp
+wget --no-check-certificate https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub
+apt-key add openvpn-repo-pkg-key.pub
 echo
 date 2>&1 | tee kali-setup-startdate.txt
 echo
 # Because We like SSH
 echo "Enabling SSH"
-sed -i '32s/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-systemctl enable ssh
-service ssh restart
+sudo sed -i '32s/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+sudo systemctl enable ssh
+sudo service ssh restart
 echo
 echo "Your Internal IP Address"
 hostname -I
@@ -29,9 +34,15 @@ echo
 echo '# Kali IP' >> /root/.bashrc
 echo 'hostname -I' >> /root/.bashrc
 echo
+echo '#Go' >> /root/.bashrc
+echo 'export GOPATH=$HOME/work' >> /root/.bashrc
+echo 'export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin' >> /root/.bashrc
+echo
+cd /opt
+sudo curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && chmod 755 msfinstall && ./msfinstall
 echo "Metasploit Ready Up"
-msfdb init
-systemctl start postgresql
+sudo systemctl start postgresql
+sudo msfdb init
 echo
 echo "IVRE Rocks"
 sudo apt-get -y install ivre
@@ -44,32 +55,28 @@ cd vulscan/utilities/updater/
 chmod +x updateFiles.sh
 ./updateFiles.sh
 echo
-# Yeat
+# Yeet
 echo "Fixing setoolkit"
 # Fix Social Engineer Toolkit
 # Remove old files
-rm -R /usr/share/set
+sudo rm -R /usr/share/set
 # Get the lastest files
 git clone https://github.com/trustedsec/social-engineer-toolkit.git
 # Rename
-mv social-engineer-toolkit set
+sudo mv social-engineer-toolkit set
 # Move the new files back to the correct path
-mv set /usr/share
-#Edit line 144 to enable hotkey to Show Desktop xfce
-#/home/kali/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
-#      <property name="&lt;Super&gt;d" type="string" value="show_desktop_key"/>
+sudo mv set /usr/share
 echo "Cloud Tool Time"
 # Rename
 # Get Pip
 # Cloudsecurity Tool Time
 # https://rhinosecuritylabs.com/aws/pacu-open-source-aws-exploitation-framework/
 echo "Pacu The Fish, Not the Rapper"
-sudo apt-get remove python3-pip; sudo apt-get install python3-pip
 cd /opt
 git clone https://github.com/RhinoSecurityLabs/pacu
 cd pacu
-bash install.sh
-pip3 install -r requirements.txt
+sudo bash install.sh
+sudo pip3 install -r requirements.txt
 echo
 # Usage: python3 pacu.py
 #Scout
@@ -85,8 +92,8 @@ echo
 cd /opt
 git clone https://github.com/GerbenJavado/LinkFinder.git
 cd LinkFinder
-pip3 install -r requirements.txt
-python setup.py install
+sudo pip3 install -r requirements.txt
+sudo python setup.py install
 echo
 cd /opt
 echo "ShellPhish"
@@ -94,14 +101,14 @@ cd /opt
 git clone https://github.com/aryanguenthner/shellphish.git
 echo
 echo "AWS CLI"
-pip install awscli
+sudo pip install awscli
 echo
 echo "Malicious Macro Builder"
 cd /opt
 git clone https://github.com/infosecn1nja/MaliciousMacroMSBuild.git
 echo
 echo "metagoofil"
-apt -y install metagoofil
+sudo apt -y install metagoofil
 echo
 echo "Setting up Knock - Subdomain Finder"
 cd /opt
@@ -236,13 +243,13 @@ unzip gitrob_linux_amd64_2.0.0-beta.zip
 mkdir -p /opt/gitrob
 mv gitrob /opt/gitrob/
 echo
-#echo "Google Play CLI"
-#apt -y install gplaycli
+echo "Google Play CLI"
+apt -y install gplaycli
 echo
 echo
-# MobSF Setup
 sudo apt-get -y install openjdk-8-jdk
 sudo apt install -y python3-venv python3-pip python3-dev build-essential libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev
+# MobSF Setup
 echo "MobSF"
 cd /opt/
 git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF.git
@@ -253,8 +260,6 @@ echo
 echo "Lee Baird Discover Script"
 cd /opt
 git clone https://github.com/leebaird/discover.git
-cd discover
-sudo ./update.sh
 echo
 echo "Don't Blink"
 echo
@@ -268,6 +273,8 @@ echo
 #cd ncis
 #dos2unix *.sh *.py && chmod +x *.sh *.py
 #echo
+#Tor
+sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && apt -y install torbrowser-launcher
 sudo chmod -R 777 /home/kali/
 echo
 echo "Hacker Hacker"
