@@ -12,7 +12,7 @@
 #python-pygraphviz python-psycopg2 python-krbv python-mysqldb phantomjs<-- //Might need these one day
 echo
 echo "Be Patient, Installing Kali Dependencies"
-sudo apt update && apt -y upgrade && apt -y install torbrowser-launcher crackmapexec python-crypto hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libappindicator3-1 libindicator3-7 libmbim-utils libreoffice nfs-common openssl python3-dev python-dbus python-lxml python-pil terminator tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev python3-venv driftnet websploit apt-transport-https openresolv
+sudo apt update && apt -y upgrade && apt -y install crackmapexec python-crypto hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libappindicator3-1 libindicator3-7 libmbim-utils libreoffice nfs-common openssl python3-dev python-dbus python-lxml python-pil terminator tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev python3-venv driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail
 cd /home/kali/Desktop
 echo
 echo "VPN stuff"
@@ -247,7 +247,6 @@ echo "Google Play CLI"
 apt -y install gplaycli
 echo
 echo
-sudo apt-get -y install openjdk-8-jdk
 sudo apt install -y python3-venv python3-pip python3-dev build-essential libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev
 # MobSF Setup
 echo "MobSF"
@@ -260,7 +259,7 @@ echo
 echo "Lee Baird Discover Script"
 cd /opt
 git clone https://github.com/leebaird/discover.git
-echo
+echo "Just Don't Update Using the Discover Update Script"
 echo "Don't Blink"
 echo
 # Save these two for later
@@ -270,7 +269,7 @@ echo
 #echo "My Cool Scripts"
 #cd /opt
 #git clone https://github.com/aryanguenthner/365.git
-#cd ncis
+#cd 365
 #dos2unix *.sh *.py && chmod +x *.sh *.py
 #echo
 #Tor
