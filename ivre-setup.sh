@@ -1,49 +1,36 @@
-#!/bin/bash
 ################################################
-# IVRE Install Script
-# Tested on Kali 2020.1 x64
-# If you're reading this pat yourself on the back
-# Then do this dos2unix ivre-setup.sh
-# Then do this chmod +x ivre-setup.sh 
-# Usage: ./ivre-setup.sh | tee ivrelog.txt
-# Learn more at https://github.com/aryanguenthner/
-# Last Updated 2020-06-05
-################################################
-: ' 2020-04-08
-TARGETS=192.168.1.0/24
-HOST=`hostname -I`
-nmap -iL $TARGETS --exclude=$HOST -Pn -mtu 25 -T4 -A -sC -p- -vvvv -r --open --max-retries 0 --max-parallelism 100 --script=ssl-cert,ssl-enum-ciphers,ssl-heartbleed,sip-enum-users,sip-brute,sip-methods,rtsp-screenshot,rpcinfo,vnc-screenshot,x11-access,x11-screenshot,nfs-showmount,nfs-ls,smb-ls,smb-enum-shares,http-robots.txt.nse,http-webdav-scan,http-screenshot,http-auth,http-sql-injection,http-ntlm-info,http-git,http-open-redirect,http-open-proxy,socks-open-proxy,smtp-open-relay,ftp-anon,ftp-bounce,ms-sql-config,ms-sql-info,ms-sql-empty-password,mysql-info,mysql-empty-password,vnc-brute,vnc-screenshot,vmware-version,http-shellshock,http-default-accounts -oA nmapivre && ivre scan2db nmapivre.xml && ivre db2view nmap'
+# IVRE Post Kali Install Tested on Kali 2020.4
+# First Make This File Executable chmod +x *.sh
+# Usage: ./ivre-setup.sh 
+# Learn more at https://github.com/aryanguenthner
+# Last Updated 11/23/2020
+: 'EXAMPLE: nmap somesite.com/22 -g 53 --mtu 24 -T4 -A -PS -PE -p- -vv -r --open --max-retries 0 --max-parallelism 200 -sC --host-timeout 15m --script-timeout 2m --script=ssl-cert,ssl-enum-ciphers,ssl-heartbleed,sip-enum-users,sip-brute,sip-methods,rtsp-screenshot,rtsp-url-brute,rpcinfo,vnc-screenshot,x11-access,x11-screenshot,nfs-showmount,nfs-ls,smb-ls,smb-enum-shares,http-robots.txt.nse,http-webdav-scan,http-screenshot,http-auth,http-sql-injection,http-ntlm-info,http-git,http-open-redirect,http-open-proxy,socks-open-proxy,smtp-open-relay,ftp-anon,ftp-bounce,ms-sql-config,ms-sql-info,ms-sql-empty-password,mysql-info,mysql-empty-password,vnc-brute,vnc-screenshot,vmware-version,http-shellshock,http-default-accounts -oA nmapivre && ivre scan2db *.xml && ivre db2view nmap'
 echo
 date | tee ivre-startdate.txt
 echo "Installing MongoDB 4.2 from Ubuntu Repo, Because It Works"
 echo
+
+# MongoDB Install
+
 cd /tmp
 wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add -
 echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.2.list
-apt-get -y update
-apt-get -y install mongodb-org
+apt update
+apt -y install mongodb-org
 service mongod start
 systemctl enable mongod.service
 echo "Hopefully MongoDB Installed without any issues"
 echo
-echo "Installing IVRE"
-echo
-echo "Be Patient, Not a lot of output on this portion of the install"
-echo
-date
-echo
-apt-get -y install python-crypto \
-> apache2 libapache2-mod-wsgi libkrb5-dev dokuwiki
-# Installing the Latest version of IVRE from Github
-echo
+
+# Install Ivre
+
+pip install ivre
+
+# Dependencies
+
 echo "Attepting To Installing Some IVRE Dependencies"
-cd /tmp
-apt-get install python-pip && pip install -U pip
-wget https://bootstrap.pypa.io/get-pip.py
-python get-pip.py
 echo
 pip install future
-pip install python-krbv
 pip install matplotlib
 pip install tinydb
 pip install Crypto
@@ -53,96 +40,58 @@ pip install sqlalchemy
 pip install bottle
 pip install psycopg2
 echo
-echo "Git Clone IVRE to /opt"
-echo
-cd /opt
-git clone https://github.com/cea-sec/ivre.git
-cd ivre
-python setup.py build
-python setup.py install
-echo
-echo "IVRE Setup In Progress"
-echo
-cd /var/www/html ## or depending on your version /var/www
-rm index.html
-sed -i -e 's/html/dokuwiki/g' /etc/apache2/sites-enabled/000-default.conf
-sed -i -e '172s/None/All/g' /etc/apache2/apache2.conf
-ln -s /usr/local/share/ivre/web/static/* .
-cd /var/lib/dokuwiki/data/pages
-ln -s /usr/local/share/ivre/dokuwiki/doc
-cd /var/lib/dokuwiki/data/media
-ln -s /usr/local/share/ivre/dokuwiki/media/logo.png
-ln -s /usr/local/share/ivre/dokuwiki/media/doc
-cd /usr/share/dokuwiki
-echo
-echo "Patching Dokuwiki"
-echo
-patch -p0 < /usr/local/share/ivre/dokuwiki/backlinks.patch
-cd /etc/apache2/mods-enabled
-for m in rewrite.load wsgi.conf wsgi.load; do
-> '[ -L $m ]' || ln -s ../mods-available/$m; done
-cd ../
-echo 'Alias /cgi "/usr/local/share/ivre/web/wsgi/app.wsgi"' > conf-enabled/ivre.conf
-echo '<Location /cgi>' >> conf-enabled/ivre.conf
-echo 'SetHandler wsgi-script' >> conf-enabled/ivre.conf
-echo 'Options +ExecCGI' >> conf-enabled/ivre.conf
-echo 'Require all granted' >> conf-enabled/ivre.conf
-echo '</Location>' >> conf-enabled/ivre.conf
-rm /etc/dokuwiki/apache.conf
-cp /etc/apache2/apache2.conf /etc/dokuwiki/
-sed -i 's/^\(\s*\)#Rewrite/\1Rewrite/' /etc/dokuwiki/apache2.conf
-echo 'WEB_GET_NOTEPAD_PAGES = "localdokuwiki"' >> /etc/ivre.conf
-service apache2 start
-echo
+
+# Nmap Magic
+
 echo "Copying IVRE Nmap Scripts to Nmap"
+sudo apt -y install nmap
 echo
 cp /usr/local/share/ivre/nmap_scripts/*.nse /usr/share/nmap/scripts/
-# TODO: Get confirmation this rtsp script is working or not
-#patch /usr/share/nmap/scripts/rtsp-url-brute.nse \
-#> /usr/local/share/ivre/nmap_scripts/patches/rtsp-url-brute.patch
+patch /usr/share/nmap/scripts/rtsp-url-brute.nse \
+/usr/local/share/ivre/nmap_scripts/patches/rtsp-url-brute.patch
 nmap --script-updatedb
-echo "Downloading Neo4j to tmp"
-cd /tmp
-echo "Installing Neo4j"
-wget -O - https://debian.neo4j.org/neotechnology.gpg.key | apt-key add -
-echo 'deb https://debian.neo4j.org/repo stable/' | tee -a /etc/apt/sources.list.d/neo4j.list
-apt-get -y update
-apt-get install -y neo4j
-systemctl enable neo4j
+
+# Enable Ivre Nmap Screenshots
+
+cd /opt
+wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
+tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2
+mv phantomjs-1.9.8-linux-x86_64 phantomjs
+mv phantomjs /opt
+ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
+phantomjs -v
 echo
-echo "Now Starting The Database init, data download & importation"
-date
-echo "These last steps may take a long time to run (40 minutes on a decent server), nothing to worry about."
-echo -e "\r\n\r\n"
-yes | ivre ipinfo --init
-yes | ivre scancli --init
-yes | ivre view --init
+
+# Database init, data download & importation
+
+echo -e '\r'
+yes | ivre ipinfo --init # Run to Clear Dashboard
+yes | ivre scancli --init #Run to Clear Dashboard
+yes | ivre view --init #Run to Clear Dashboard
 yes | ivre flowcli --init
-ivre ipdata --download --import-all
-updatedb
-echo "Just About There"
+yes | sudo ivre runscansagentdb --init
+sudo ivre ipdata --download
+echo -e '\r'
+
+# Start IVRE Dashboard
+
+service apache2 start  ## reload or start
 echo
-echo "You Will Need To Import Nmap Files To Get Started"
+IP=`hostname -I`
+PORT=8888
 echo
-echo "Import nmapscanfile.xml files like this: ivre scan2db nmapscan.xml"
+echo "IVRE IP Address" $IP
 echo
-date | tee ivre-setup-finishdate.txt
-echo "After Importing do this: ivre db2view nmap"
-#Open a web browser and visit http://localhost:8888/
-#IVRE Web UI should show up, with no result of course
-#Click the HELP button to check if everything works
-#Database init, data download & importation
-# Time to start using IVRE: Bind localhost to -p8888
-# When the Web Interface for IVRE Opens you're ready!
+echo "Step 1) ivre scan2db *.xml"
 echo
-echo "Step 1) ivre scan2db somenmapfile.xml"
-echo
+echo -e '\r'
 echo "Step 2) ivre db2view nmap"
 echo
-echo "Step 3) Access the IVRE Dashboard"
-updatedb
-echo "Your IP Address"
-hostname -I
-ivre httpd --bind-address 0.0.0.0 --port 8888
-
+echo -e '\r'
+echo "Step 3) Open IVRE Dashbaord"
+#TODO escape ":" so there isn't a break in the dashboard url
+echo "http://$IP:$PORT"
+echo
+ivre httpd --bind-address 0.0.0.0 --port $PORT
+echo -e '\r'
 
