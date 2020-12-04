@@ -1,4 +1,5 @@
 # Hypnotix Free TV on Kali 2020.4
+# 12/04/2020
 echo
 apt update
 echo
@@ -10,7 +11,7 @@ cd hypnotix
 echo
 wget http://ftp.us.debian.org/debian/pool/main/i/imdbpy/python3-imdbpy_6.8-2_all.deb &&
 dpkg -i python3-imdbpy_6.8-2_all.deb 
-dpkg-buildpackage
+dpkg-buildpackage -khypnotix@hypnotix.com
 sudo dpkg -i ../hypnotix*.deb
 echo
 exit
