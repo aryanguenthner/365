@@ -1,0 +1,17 @@
+# Hypnotix Free TV on Kali 2020.4
+echo
+apt update
+echo
+apt -y install libmpv1 gir1.2-xapp-1.0 debhelper dpkg-dev git
+echo
+cd /opt
+git clone https://github.com/linuxmint/hypnotix.git
+cd hypnotix
+echo
+wget http://ftp.us.debian.org/debian/pool/main/i/imdbpy/python3-imdbpy_6.8-2_all.deb &&
+dpkg -i python3-imdbpy_6.8-2_all.deb 
+dpkg-buildpackage
+sudo dpkg -i ../hypnotix*.deb
+echo
+exit
+echo "Hacker TV"
