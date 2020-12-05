@@ -1,21 +1,21 @@
 #!/bin/bash
 ################################################
-# Kali Post Setup Automation Script
+# Kali Post Setup Automation Script with ivre.rocks
 # Tested on Kali 2020.4
 # If you're reading this pat yourself on the back
 # sudo dos2unix *.sh
 # sudo chmod +x *.sh
 # Usage: sudo ./kali-setup.sh | tee setup.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 11/20/2020
+# Last Updated 12/05/2020
 ################################################
-#python-dbus python-pygraphviz python-lxml python-pil python-crypto python-psycopg2 python-krbv python-mysqldb <-- //Might need these one day
+
 date | tee kali-setup-startdate.txt
 echo
 echo "Be Patient, Installing Kali Dependencies"
-sudo apt update && apt -y upgrade && apt -y install crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libappindicator3-1 libindicator3-7 libmbim-utils nfs-common openssl terminator tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail python3-dev python3-venv python3-pip libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r libreoffice
+sudo apt update && apt -y upgrade && apt -y install crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libappindicator3-1 libindicator3-7 libmbim-utils nfs-common openssl terminator tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail python3-dev python3-venv pip python3-pip libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r libreoffice
 echo
-cd /home/kali/Desktop
+pip install --upgrade pip
 echo
 echo "VPN stuff"
 cd /tmp
@@ -29,9 +29,9 @@ sudo sed -i '32s/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/s
 sudo systemctl enable ssh
 sudo service ssh restart
 echo
-echo "Teleconsole Rocks"
+# Share your Kali Terminal: teleconsole -f localhost:5000
+echo "Teleconsole is Awesome"
 curl https://www.teleconsole.com/get.sh | sh
-# Run: teleconsole -f localhost:5000
 echo
 echo "Your Internal IP Address"
 hostname -I
@@ -46,29 +46,15 @@ echo '#Go' >> /root/.bashrc
 echo 'export GOPATH=$HOME/work' >> /root/.bashrc
 echo 'export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin' >> /root/.bashrc
 echo
-# Metasploit
+# Metasploit Setup
 cd /opt
 sudo curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && chmod 755 msfinstall && ./msfinstall
+echo
 echo "Metasploit Ready Up"
 sudo systemctl start postgresql
 sudo msfdb init
 echo
-echo "Getting Vulsec & Vulners to make Nmap Do cool things"
-cd /usr/share/nmap/scripts/
-sudo git clone https://github.com/vulnersCom/nmap-vulners.git
-sudo git clone https://github.com/scipag/vulscan.git
-cd vulscan/utilities/updater/
-sudo chmod +x updateFiles.sh
-sudo ./updateFiles.sh
-echo
-echo "Enabling Nmap Screenshots Getting PhantomJS"
-cd /opt
-wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
-tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2
-mv phantomjs-1.9.8-linux-x86_64 phantomjs
-mv phantomjs /opt
-ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
-phantomjs -v
+nmap --script-updatedb
 # Yeet
 echo "Fixing setoolkit"
 # Fix Social Engineer Toolkit
@@ -80,35 +66,7 @@ sudo git clone https://github.com/trustedsec/social-engineer-toolkit.git
 sudo mv social-engineer-toolkit set
 # Move the new files back to the correct path
 sudo mv set /usr/share
-echo "Cloud Tool Time"
-# Rename
-# Get Pip
-# Cloudsecurity Tool Time
-# https://rhinosecuritylabs.com/aws/pacu-open-source-aws-exploitation-framework/
-#echo "Pacu The Fish, Not the Rapper"
-#cd /opt
-#git clone https://github.com/RhinoSecurityLabs/pacu
-#cd pacu
-#sudo bash install.sh
-#sudo pip3 install -r requirements.txt
-#echo
-# Usage: python3 pacu.py
-#Scout
-#echo "AWS Scout"
-#cd /opt 
-#git clone https://github.com/nccgroup/ScoutSuite.git
-## Usage scout aws --profile basc -f
-#echo
-#echo "Wayback"
-#cd /opt
-#git clone git clone https://github.com/Rhynorater/waybacktool.git
-#echo
-#cd /opt
-##git clone https://github.com/GerbenJavado/LinkFinder.git
-#cd LinkFinder
-#sudo pip3 install -r requirements.txt
-#sudo python setup.py install
-#echo
+echo
 cd /opt
 echo "ShellPhish"
 cd /opt
@@ -132,12 +90,10 @@ echo "Subbrute"
 cd /opt
 git clone https://github.com/TheRook/subbrute.git
 echo
-echo
 echo "dnstwister"
 cd /opt
 git clone https://github.com/elceef/dnstwist.git
-sudo apt-get -y install python3-dnspython python3-geoip python3-whois \
-python3-requests python3-ssdeep python3-dns
+sudo apt-get -y install python3-dnspython python3-geoip python3-whois python3-requests python3-ssdeep python3-dns
 echo
 echo "RDPY"
 cd /opt
@@ -187,7 +143,18 @@ echo
 echo "OneListForAll"
 cd /opt
 git clone https://github.com/six2dez/OneListForAll.git
-7z x onelistforall.7z.001
+echo
+echo "SprayingToolKit"
+cd /opt
+git clone https://github.com/byt3bl33d3r/SprayingToolkit.git
+echo
+: ' Nmap works dont forget --> nmap -Pn -p 445 -script smb-brute --script-args='smbpassword=Summer2019,smbusername=Administrator' 192.168.1.251 '
+echo
+: ' Hydra works dont forget --> hydra -p Summer2019 -l Administrator smb://192.168.1.251
+ '
+echo
+: ' Metasploit works dont forget --> set smbpass Summer2019 / set smbuser Administrator / set rhosts 192.168.1.251 / run
+'
 echo "Awesome XSS"
 cd /opt
 git clone https://github.com/s0md3v/AwesomeXSS.git
@@ -255,7 +222,9 @@ echo
 #apt -y install gplaycli
 echo
 echo
+
 # MobSF Setup
+
 echo "MobSF"
 cd /opt/
 git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF.git
@@ -279,26 +248,83 @@ cd 365
 dos2unix *.sh *.py && chmod +x *.sh *.py
 echo
 echo
-cd /opt
-wget https://www.python.org/ftp/python/3.6.5/Python-3.6.5.tar.xz
-tar xf Python-3.6.5.tar.xz
-cd Python-3.6.5
-./configure
-make
-sudo make install
-echo
-# Update Python Alternatives Lists
-update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
-update-alternatives --install /usr/bin/python python /usr/local/bin/python3.6 2
-update-alternatives --install /usr/bin/python python /usr/bin/python3.8 3
-# Tor
+
+#Tor
+
 sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && apt -y install torbrowser-launcher
-sudo chmod -R 777 /home/kali/
+echo
+date | tee ivre-startdate.txt
+echo "Installing MongoDB 4.2 from Ubuntu Repo, Because It Works"
+echo
+
+# MongoDB Install
+
+cd /tmp
+wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add -
+echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.2.list
+apt update
+apt -y install mongodb-org
+service mongod start
+systemctl enable mongod.service
+echo "Hopefully MongoDB Installed without any issues"
+echo
+
+# Install Ivre
+pip install ivre
+
+# Dependencies
+
+echo "Attepting To Installing Some IVRE Dependencies"
+echo
+pip install future
+pip install matplotlib
+pip install tinydb
+pip install Crypto
+pip install pymongo
+pip install py2neo
+pip install sqlalchemy
+pip install bottle
+pip install psycopg2
+echo
+
+# Nmap Magic
+
+echo "Copying IVRE Nmap Scripts to Nmap"
+sudo apt -y install nmap
+echo
+cp /usr/local/share/ivre/nmap_scripts/*.nse /usr/share/nmap/scripts/
+patch /usr/share/nmap/scripts/rtsp-url-brute.nse \
+/usr/local/share/ivre/nmap_scripts/patches/rtsp-url-brute.patch
+nmap --script-updatedb
+
+# Enable Ivre Nmap Screenshots
+
+cd /opt
+wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
+tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2
+mv phantomjs-1.9.8-linux-x86_64 phantomjs
+mv phantomjs /opt
+ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
+phantomjs -v
+echo
+
+# Database init, data download & importation
+
+echo -e '\r'
+yes | ivre ipinfo --init # Run to Clear Dashboard
+yes | ivre scancli --init #Run to Clear Dashboard
+yes | ivre view --init #Run to Clear Dashboard
+yes | ivre flowcli --init
+yes | sudo ivre runscansagentdb --init
+sudo ivre ipdata --download
+echo -e '\r'
+echo
+chmod -R 777 /home/kali/
 echo
 echo "Hacker Hacker"
 sudo systemctl restart ntp
 source ~/.bashrc
-date | tee kalisetup.log
+source ~/.zshrc
+echo
 updatedb
-# Buh Bye
 reboot
