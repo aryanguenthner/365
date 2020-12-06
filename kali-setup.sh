@@ -42,9 +42,15 @@ echo
 echo '# IP Address' >> /root/.bashrc
 echo 'hostname -I' >> /root/.bashrc
 echo
-echo '#Go' >> /root/.bashrc
+echo '# Go' >> /root/.bashrc
 echo 'export GOPATH=$HOME/work' >> /root/.bashrc
 echo 'export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin' >> /root/.bashrc
+echo
+echo '# MobSF' >> /root/.bashrc
+export ANDROID_SDK=/root/Android/Sdk/
+export PATH=$ANDROID_SDK/emulator:$ANDROID_SDK/tools:$PATH
+export PATH="/root/Android/Sdk/platform-tools":$PATH
+export PATH="/opt/android-studio/jre/jre/bin":$PATH
 echo
 # Metasploit Setup
 cd /opt
