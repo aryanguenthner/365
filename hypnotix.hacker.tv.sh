@@ -1,5 +1,6 @@
 # Hypnotix Free TV on Kali 2020.4
 # 12/09/2020
+echo "Hacker TV"
 echo
 apt update
 echo
@@ -11,11 +12,10 @@ cd hypnotix
 echo
 wget http://ftp.us.debian.org/debian/pool/main/i/imdbpy/python3-imdbpy_6.8-2_all.deb &&
 dpkg -i python3-imdbpy_6.8-2_all.deb 
-dpkg-buildpackage -khypnotix@hypnotix.com
+dpkg-buildpackage -b -uc
 sudo dpkg -i ../hypnotix*.deb
 echo
 echo
-echo "Hacker TV"
 sudo hypnotix &
 echo
 # Hacker Hacker
