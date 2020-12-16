@@ -8,7 +8,7 @@
 echo
 date | tee ivre-startdate.txt
 echo "Installing MongoDB 4.2 from Ubuntu Repo, Because It Works"
-echo
+
 
 # MongoDB Install
 
@@ -24,11 +24,15 @@ echo
 
 # Install Ivre
 
-pip install ivre
+apt -y install
 
 # Dependencies
+# TODO: Determine if we are using APT or PIP
+sudo apt -y install python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo
 
-echo "Attepting To Installing Some IVRE Dependencies"
+pip install --upgrade pip
+
+: 'echo "Attepting To Installing Some IVRE Dependencies"
 echo
 pip install future
 pip install matplotlib
@@ -40,7 +44,7 @@ pip install sqlalchemy
 pip install bottle
 pip install psycopg2
 echo
-
+'
 # Nmap Magic
 
 echo "Copying IVRE Nmap Scripts to Nmap"
