@@ -3,10 +3,10 @@
 # First Make This File Executable chmod +x *.sh
 # Usage: ./ivre-setup.sh 
 # Learn more at https://github.com/aryanguenthner
-# Last Updated 11/23/2020
-: 'EXAMPLE: nmap somesite.com/22 -g 53 --mtu 24 -T4 -A -PS -PE -p- -vv -r --open --max-retries 0 --max-parallelism 200 -sC --host-timeout 15m --script-timeout 2m --script=ssl-cert,ssl-enum-ciphers,ssl-heartbleed,sip-enum-users,sip-brute,sip-methods,rtsp-screenshot,rtsp-url-brute,rpcinfo,vnc-screenshot,x11-access,x11-screenshot,nfs-showmount,nfs-ls,smb-ls,smb-enum-shares,http-robots.txt.nse,http-webdav-scan,http-screenshot,http-auth,http-sql-injection,http-ntlm-info,http-git,http-open-redirect,http-open-proxy,socks-open-proxy,smtp-open-relay,ftp-anon,ftp-bounce,ms-sql-config,ms-sql-info,ms-sql-empty-password,mysql-info,mysql-empty-password,vnc-brute,vnc-screenshot,vmware-version,http-shellshock,http-default-accounts -oA nmapivre && ivre scan2db *.xml && ivre db2view nmap'
-echo
-date | tee ivre-startdate.txt
+# Last Updated 12/16/2020
+: 'EXAMPLE: nmap somesite.com/22 -g 53 --mtu 24 -T4 -A -PS -PE -p- -vv -r --open --max-retries 0 --max-parallelism 100 -sC --host-timeout 15m --script-timeout 2m --script=ssl-cert,ssl-enum-ciphers,ssl-heartbleed,sip-enum-users,sip-brute,sip-methods,rtsp-screenshot,rtsp-url-brute,rpcinfo,vnc-screenshot,x11-access,x11-screenshot,nfs-showmount,nfs-ls,smb-ls,smb-enum-shares,http-robots.txt.nse,http-webdav-scan,http-screenshot,http-auth,http-sql-injection,http-ntlm-info,http-git,http-open-redirect,http-open-proxy,socks-open-proxy,smtp-open-relay,ftp-anon,ftp-bounce,ms-sql-config,ms-sql-info,ms-sql-empty-password,mysql-info,mysql-empty-password,vnc-brute,vnc-screenshot,vmware-version,http-shellshock,http-default-accounts,vuln -oA nmapivre && ivre scan2db *.xml && ivre db2view nmap'
+echo "# Usage: ./ivre-setup.sh | tee ivre.log"
+date |> ivre-setupdate.txt
 echo "Installing MongoDB 4.2 from Ubuntu Repo, Because It Works"
 
 
@@ -30,21 +30,6 @@ apt -y install
 # TODO: Determine if we are using APT or PIP
 sudo apt -y install python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo
 
-pip install --upgrade pip
-
-: 'echo "Attepting To Installing Some IVRE Dependencies"
-echo
-pip install future
-pip install matplotlib
-pip install tinydb
-pip install Crypto
-pip install pymongo
-pip install py2neo
-pip install sqlalchemy
-pip install bottle
-pip install psycopg2
-echo
-'
 # Nmap Magic
 
 echo "Copying IVRE Nmap Scripts to Nmap"
@@ -88,14 +73,12 @@ echo "IVRE IP Address" $IP
 echo
 echo "Step 1) ivre scan2db *.xml"
 echo
-echo -e '\r'
 echo "Step 2) ivre db2view nmap"
 echo
-echo -e '\r'
 echo "Step 3) Open IVRE Dashbaord"
 #TODO escape ":" so there isn't a break in the dashboard url
 echo "http://$IP:$PORT"
 echo
-ivre httpd --bind-address 0.0.0.0 --port $PORT
-echo -e '\r'
-
+ivre httpd --bind-address 0.0.0.0 --port $PORT &
+date |> ivre-finishdate.txt
+# hacker hacker
