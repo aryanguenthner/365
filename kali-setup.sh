@@ -7,29 +7,47 @@
 # sudo chmod +x *.sh
 # Usage: sudo ./kali-setup.sh | tee setup.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 12/05/2020
+# Last Updated 12/19/2020
 ################################################
 
-date | tee kali-setup-startdate.txt
-echo
+date > kali-setup-date.txt
+
 echo "Be Patient, Installing Kali Dependencies"
-sudo apt update && apt -y upgrade && apt -y install crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libappindicator3-1 libindicator3-7 libmbim-utils nfs-common openssl terminator tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail python3-dev python3-venv pip python3-pip libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r libreoffice
-echo
-pip install --upgrade pip
-echo
+# full-upgrade might break things
+
+sudo apt update && apt -y upgrade && apt -y install python3-dev python3.8-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo openjdk-11-jdk crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libappindicator3-1 libindicator3-7 libmbim-utils nfs-common openssl terminator tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r libreoffice
+
+pip3 install --upgrade pip
+
+# Update Python Alternatives
+
+:'
+kali python Config
+update-alternatives --list python
+update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
+
+kali python3 Config
+update-alternatives --list python3
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 2
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 3
+update-alternatives --config python3
+update-alternatives  --set python3 /usr/bin/python3.8
+ '
+
 echo "VPN stuff"
 cd /tmp
 wget --no-check-certificate https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub
 apt-key add openvpn-repo-pkg-key.pub
-echo
-echo
-# Because We like SSH
+
+# Hackers like SSH
+
 echo "Enabling SSH"
 sudo sed -i '32s/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 sudo systemctl enable ssh
 sudo service ssh restart
-echo
-# Share your Kali Terminal: teleconsole -f localhost:5000
+
+# Share your Kali Terminal: teleconsole -f localhost:5555
+
 echo "Teleconsole is Awesome"
 curl https://www.teleconsole.com/get.sh | sh
 echo
@@ -46,33 +64,17 @@ echo '# Go' >> /root/.bashrc
 echo 'export GOPATH=$HOME/work' >> /root/.bashrc
 echo 'export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin' >> /root/.bashrc
 echo
-echo '# MobSF' >> /root/.bashrc
-export ANDROID_SDK=/root/Android/Sdk/
-export PATH=$ANDROID_SDK/emulator:$ANDROID_SDK/tools:$PATH
-export PATH="/root/Android/Sdk/platform-tools":$PATH
-export PATH="/opt/android-studio/jre/jre/bin":$PATH
-echo
 # Metasploit Setup
 cd /opt
 sudo curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && chmod 755 msfinstall && ./msfinstall
-echo
+
 echo "Metasploit Ready Up"
 sudo systemctl start postgresql
 sudo msfdb init
-echo
-nmap --script-updatedb
+
+
 # Yeet
-echo "Fixing setoolkit"
-# Fix Social Engineer Toolkit
-# Remove old files
-sudo rm -R /usr/share/set
-# Get the lastest files
-sudo git clone https://github.com/trustedsec/social-engineer-toolkit.git
-# Rename
-sudo mv social-engineer-toolkit set
-# Move the new files back to the correct path
-sudo mv set /usr/share
-echo
+
 cd /opt
 echo "ShellPhish"
 cd /opt
@@ -127,6 +129,18 @@ echo "AD Recon - My Fav"
 cd /opt
 git clone https://github.com/sense-of-security/ADRecon.git
 echo
+echo "enum4linux-ng"
+cd /opt
+git clone https://github.com/cddmp/enum4linux-ng.git
+echo
+echo "BloodHound"
+cd /opt
+git clone https://github.com/BloodHoundAD/Bloodhound.git
+echo
+echo "bloodhound-python"
+: 'bloodhound-python -u 'bob' -p 'Passw0rd!' -ns 192.168.1.3 -d LAB.local  -c all'
+pip install bloodhound
+echo
 echo "Daniel Miessler Security List Collection"
 cd /opt
 git clone https://github.com/danielmiessler/SecLists.git
@@ -153,14 +167,11 @@ echo
 echo "SprayingToolKit"
 cd /opt
 git clone https://github.com/byt3bl33d3r/SprayingToolkit.git
+: ' Nmap works dont forget --> nmap -Pn -p 445 -script smb-brute --script-args='smbpassword=Summer2019,smbusername=Administrator' 192.168.1.23 '
 echo
-: ' Nmap works dont forget --> nmap -Pn -p 445 -script smb-brute --script-args='smbpassword=Summer2019,smbusername=Administrator' 192.168.1.251 '
+: ' Hydra works dont forget --> hydra -p Summer2019 -l Administrator smb://192.168.1.23 '
+: ' Metasploit works dont forget --> set smbpass Summer2019 / set smbuser Administrator / set rhosts 192.168.1.251 / run '
 echo
-: ' Hydra works dont forget --> hydra -p Summer2019 -l Administrator smb://192.168.1.251
- '
-echo
-: ' Metasploit works dont forget --> set smbpass Summer2019 / set smbuser Administrator / set rhosts 192.168.1.251 / run
-'
 echo "Awesome XSS"
 cd /opt
 git clone https://github.com/s0md3v/AwesomeXSS.git
@@ -205,6 +216,10 @@ echo "Discover Admin Loging Pages - Breacher"
 cd /opt
 git clone https://github.com/s0md3v/Breacher.git
 echo
+echo "Search Google Extract Result URLS - degoogle"
+cd /opt
+git clone https://github.com/deepseagirl/degoogle.git
+echo
 echo "Web SSH (Pretty Cool)"
 cd /opt
 git clone https://github.com/huashengdun/webssh.git
@@ -227,17 +242,6 @@ echo
 #echo "Google Play CLI"
 #apt -y install gplaycli
 echo
-echo
-
-# MobSF Setup
-
-echo "MobSF"
-cd /opt/
-git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF.git
-cd Mobile-Security-Framework-MobSF/
-pip3 install -r requirements.txt
-sudo yes |./setup.sh
-echo
 echo "Lee Baird Discover Script"
 cd /opt
 git clone https://github.com/leebaird/discover.git
@@ -255,15 +259,20 @@ dos2unix *.sh *.py && chmod +x *.sh *.py
 echo
 echo
 
-#Tor
+#Tor Web Browser Stuff
 
-sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && apt -y install torbrowser-launcher
+#sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && 
+apt -y install torbrowser-launcher
 echo
-date | tee ivre-startdate.txt
-echo "Installing MongoDB 4.2 from Ubuntu Repo, Because It Works"
-echo
+cd /opt
+git clone https://github.com/databurn-in/TorGhost.git
+cd TorGhost
+sudo ./build.sh
 
 # MongoDB Install
+
+echo "Installing MongoDB 4.2 from Ubuntu Repo, Because It Works"
+
 
 cd /tmp
 wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add -
@@ -272,38 +281,30 @@ apt update
 apt -y install mongodb-org
 service mongod start
 systemctl enable mongod.service
-echo "Hopefully MongoDB Installed without any issues"
+echo "Hopefully MongoDB Installed without any issivreues"
 echo
 
-# Install Ivre
-pip install ivre
-
-# Dependencies
+# Install Ivre Dependencies
 
 echo "Attepting To Installing Some IVRE Dependencies"
+sudo apt -y install python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo
+
+# Install Ivre.Rocks
 echo
-pip install future
-pip install matplotlib
-pip install tinydb
-pip install Crypto
-pip install pymongo
-pip install py2neo
-pip install sqlalchemy
-pip install bottle
-pip install psycopg2
+apt -y install ivre
 echo
 
 # Nmap Magic
 
 echo "Copying IVRE Nmap Scripts to Nmap"
 sudo apt -y install nmap
-echo
+
 cp /usr/local/share/ivre/nmap_scripts/*.nse /usr/share/nmap/scripts/
 patch /usr/share/nmap/scripts/rtsp-url-brute.nse \
 /usr/local/share/ivre/nmap_scripts/patches/rtsp-url-brute.patch
 nmap --script-updatedb
 
-# Enable Ivre Nmap Screenshots
+# Enable Nmap Screenshots
 
 cd /opt
 wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
@@ -312,9 +313,9 @@ mv phantomjs-1.9.8-linux-x86_64 phantomjs
 mv phantomjs /opt
 ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
 phantomjs -v
-echo
 
-# Database init, data download & importation
+
+# Ivre Database init, data download & importation
 
 echo -e '\r'
 yes | ivre ipinfo --init # Run to Clear Dashboard
@@ -325,12 +326,54 @@ yes | sudo ivre runscansagentdb --init
 sudo ivre ipdata --download
 echo -e '\r'
 echo
-chmod -R 777 /home/kali/
+echo "Hacker TV"
 echo
+apt -y install libmpv1 gir1.2-xapp-1.0 debhelper python3-setproctitle dpkg-dev git
+echo
+cd /opt
+sudo git clone https://github.com/linuxmint/hypnotix.git
+cd hypnotix
+
+wget http://ftp.us.debian.org/debian/pool/main/i/imdbpy/python3-imdbpy_6.8-2_all.deb &&
+sudo dpkg -i python3-imdbpy_6.8-2_all.deb 
+sudo dpkg-buildpackage -b -uc
+sudo dpkg -i ../hypnotix*.deb
+
+# Windows Exploit Suggester Next Gen
+
+cd /opt
+sudo git clone https://github.com/bitsadmin/wesng.git
+
+# MobSF Setup
+
+echo '# MobSF' >> /root/.bashrc
+export ANDROID_SDK=/root/Android/Sdk/
+export PATH=$ANDROID_SDK/emulator:$ANDROID_SDK/tools:$PATH
+export PATH="/root/Android/Sdk/platform-tools":$PATH
+export PATH="/opt/android-studio/jre/jre/bin":$PATH
+
+echo '# Java Deez Nutz' >> /root/.bashrc
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+export PATH=$JAVA_HOME/bin:$PATH
+
+echo "Installing MobSF on kali 2020.4"
+
+# 
+# pip3 install yara-python==3.11.0
+# apt-get install python3.8-venv
+
+cd /opt/
+sudo git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF.git
+cd Mobile-Security-Framework-MobSF/
+pip3 install -r requirements.txt
+sudo yes |./setup.sh
+
+sudo chmod -R 777 /home/kali/
+
 echo "Hacker Hacker"
 sudo systemctl restart ntp
 source ~/.bashrc
 source ~/.zshrc
-echo
+
 updatedb
 reboot
