@@ -7,37 +7,48 @@
 # sudo chmod +x *.sh
 # Usage: sudo ./kali-setup.sh | tee setup.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 12/19/2020
+# Last Updated 12/21/2020
 ################################################
 
 date > kali-setup-date.txt
 
-echo "Be Patient, Installing Kali Dependencies"
-# full-upgrade might break things
+echo "Let's update first before we do this"
 
-sudo apt update && apt -y upgrade && apt -y install python3-dev python3.8-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo openjdk-11-jdk crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libappindicator3-1 libindicator3-7 libmbim-utils nfs-common openssl terminator tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r libreoffice
+# apt update && sudo apt -y upgrade && sudo apt -y full-upgrade && reboot
+
+echo "Be Patient, Installing Kali Dependencies"
+
+sudo apt -y install python3-dev python3-venv python3.8-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo openjdk-11-jdk crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libappindicator3-1 libindicator3-7 libmbim-utils nfs-common openssl terminator tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq libreoffice
 
 pip3 install --upgrade pip
 
 # Update Python Alternatives
 
-:'
-kali python Config
-update-alternatives --list python
-update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
+: 'kali python Config
+sudo update-alternatives --list python
+sudo update-alternatives --config python
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.8 3
+sudo update-alternatives --set python /usr/bin/python3.8
+# update-alternatives --remove-all python
 
 kali python3 Config
 update-alternatives --list python3
-sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 2
-sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 3
-update-alternatives --config python3
-update-alternatives  --set python3 /usr/bin/python3.8
- '
-
+sudo update-alternatives --config python3
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 2 #hypnotix, apt work, not MobSF
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 3 #MobSF
+sudo update-alternatives --set python3 /usr/bin/python3.9
+'
 echo "VPN stuff"
 cd /tmp
 wget --no-check-certificate https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub
 apt-key add openvpn-repo-pkg-key.pub
+
+echo "Getting tmpmail"
+# Hackers like tmpmail
+# tmpmail --generate hackermaill@1secmail.com
+curl -L "https://git.io/tmpmail" > tmpmail && chmod +x tmpmail
+mv tmpmail ~/bin/
 
 # Hackers like SSH
 
@@ -50,20 +61,20 @@ sudo service ssh restart
 
 echo "Teleconsole is Awesome"
 curl https://www.teleconsole.com/get.sh | sh
-echo
+
 echo "Your Internal IP Address"
 hostname -I
-echo
+
 echo "External Internal IP Address"
 curl ifconfig.me
-echo
+
 echo '# IP Address' >> /root/.bashrc
 echo 'hostname -I' >> /root/.bashrc
-echo
+
 echo '# Go' >> /root/.bashrc
 echo 'export GOPATH=$HOME/work' >> /root/.bashrc
 echo 'export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin' >> /root/.bashrc
-echo
+
 # Metasploit Setup
 cd /opt
 sudo curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && chmod 755 msfinstall && ./msfinstall
@@ -71,7 +82,6 @@ sudo curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/con
 echo "Metasploit Ready Up"
 sudo systemctl start postgresql
 sudo msfdb init
-
 
 # Yeet
 
@@ -107,12 +117,12 @@ echo "RDPY"
 cd /opt
 git clone https://github.com/citronneur/rdpy.git
 cd rdpy
-python setup.py install
+sudo python setup.py install
 echo "EyeWitness"
 cd /opt
 git clone https://github.com/FortyNorthSecurity/EyeWitness.git
 cd /opt/EyeWitness/Python/setup
-yes | ./setup.sh
+sudo yes | ./setup.sh
 echo
 echo
 echo "Cewl"
@@ -138,7 +148,7 @@ cd /opt
 git clone https://github.com/BloodHoundAD/Bloodhound.git
 echo
 echo "bloodhound-python"
-: 'bloodhound-python -u 'bob' -p 'Passw0rd!' -ns 192.168.1.3 -d LAB.local  -c all'
+# bloodhound-python -u 'bob' -p 'Passw0rd!' -ns 192.168.1.3 -d LAB.local  -c all'
 pip install bloodhound
 echo
 echo "Daniel Miessler Security List Collection"
@@ -151,8 +161,8 @@ echo
 echo "Awesome Incident Response"
 cd /opt
 git clone https://github.com/meirwah/awesome-incident-response.git
-echo
-echo "Fuzzdb you say?"
+
+echo "Fuzzdb"
 cd /opt
 git clone https://github.com/fuzzdb-project/fuzzdb.git
 echo
@@ -231,10 +241,10 @@ git clone https://github.com/SecureAuthCorp/impacket.git
 cd /opt
 cd impacket
 sudo python setup.py install
-echo
+
 echo "GitRob"
 cd /tmp
-wget --no-check-certificate https://github.com/michenriksen/gitrob/releases/download/v2.0.0-beta/gitrob_linux_amd64_2.0.0-beta.zip
+sudo wget --no-check-certificate https://github.com/michenriksen/gitrob/releases/download/v2.0.0-beta/gitrob_linux_amd64_2.0.0-beta.zip
 unzip gitrob_linux_amd64_2.0.0-beta.zip
 mkdir -p /opt/gitrob
 mv gitrob /opt/gitrob/
@@ -250,20 +260,19 @@ echo
 # Save these two for later
 # git clone https://github.com/jschicht/RawCopy.git
 # git clone https://github.com/khr0x40sh/MacroShop.git
-echo
-echo "My Cool Scripts"
+
+echo "Hacker Hacker"
 cd /opt
 git clone https://github.com/aryanguenthner/365.git
 cd 365
 dos2unix *.sh *.py && chmod +x *.sh *.py
 echo
-echo
 
 #Tor Web Browser Stuff
 
 #sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && 
-apt -y install torbrowser-launcher
-echo
+sudo apt -y install torbrowser-launcher
+
 cd /opt
 git clone https://github.com/databurn-in/TorGhost.git
 cd TorGhost
@@ -272,7 +281,6 @@ sudo ./build.sh
 # MongoDB Install
 
 echo "Installing MongoDB 4.2 from Ubuntu Repo, Because It Works"
-
 
 cd /tmp
 wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add -
@@ -313,7 +321,6 @@ mv phantomjs-1.9.8-linux-x86_64 phantomjs
 mv phantomjs /opt
 ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
 phantomjs -v
-
 
 # Ivre Database init, data download & importation
 
@@ -366,7 +373,7 @@ cd /opt/
 sudo git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF.git
 cd Mobile-Security-Framework-MobSF/
 pip3 install -r requirements.txt
-sudo yes |./setup.sh
+sudo ./setup.sh
 
 sudo chmod -R 777 /home/kali/
 
