@@ -274,8 +274,11 @@ echo
 sudo apt -y install torbrowser-launcher
 
 cd /opt
-git clone https://github.com/databurn-in/TorGhost.git
+git clone https://github.com/aryanguenthner/TorGhost.git
 cd TorGhost
+sudo apt -y install python3-pyinstaller
+sudo apt -y install python3-notify2
+sudo pip3 install --ignore-installed stem
 sudo ./build.sh
 
 # MongoDB Install
