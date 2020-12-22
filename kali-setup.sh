@@ -329,18 +329,17 @@ yes | ivre ipinfo --init # Run to Clear Dashboard
 yes | ivre scancli --init #Run to Clear Dashboard
 yes | ivre view --init #Run to Clear Dashboard
 yes | ivre flowcli --init
-yes | sudo ivre runscansagentdb --init
+yes | ivre runscansagentdb --init
 sudo ivre ipdata --download
 echo -e '\r'
-echo
+
 echo "Hacker TV"
-echo
+
 apt -y install libmpv1 gir1.2-xapp-1.0 debhelper python3-setproctitle dpkg-dev git
 echo
 cd /opt
 sudo git clone https://github.com/linuxmint/hypnotix.git
 cd hypnotix
-
 wget http://ftp.us.debian.org/debian/pool/main/i/imdbpy/python3-imdbpy_6.8-2_all.deb &&
 sudo dpkg -i python3-imdbpy_6.8-2_all.deb 
 sudo dpkg-buildpackage -b -uc
@@ -364,15 +363,13 @@ export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 export PATH=$JAVA_HOME/bin:$PATH
 
 echo "Installing MobSF on kali 2020.4"
-
-# 
-# pip3 install yara-python==3.11.0
-# apt-get install python3.8-venv
+# Works with Python 3.7/3.8
 
 cd /opt/
 sudo git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF.git
 cd Mobile-Security-Framework-MobSF/
-pip3 install -r requirements.txt
+sudo pip3 install -r requirements.txt
+sudo supython3 -m venv ./venv
 sudo ./setup.sh
 
 sudo chmod -R 777 /home/kali/
