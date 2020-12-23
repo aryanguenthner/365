@@ -372,7 +372,7 @@ cd /opt/
 sudo git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF.git
 cd Mobile-Security-Framework-MobSF/
 sudo pip3 install -r requirements.txt
-sudo supython3 -m venv ./venv
+sudo python3 -m venv ./venv
 sudo ./setup.sh
 
 sudo chmod -R 777 /home/kali/
