@@ -35,9 +35,9 @@ sudo apt -y install python3-pip python3-bottle python3-cryptography python3-dbus
 echo "Copying IVRE Nmap Scripts to Nmap"
 sudo apt -y install nmap
 echo
-cp /usr/local/share/ivre/nmap_scripts/*.nse /usr/share/nmap/scripts/
+cp /usr/share/ivre/nmap_scripts/*.nse /usr/share/nmap/scripts/
 patch /usr/share/nmap/scripts/rtsp-url-brute.nse \
-/usr/local/share/ivre/nmap_scripts/patches/rtsp-url-brute.patch
+/usr/share/ivre/nmap_scripts/patches/rtsp-url-brute.patch
 nmap --script-updatedb
 
 # Enable Ivre Nmap Screenshots

@@ -334,9 +334,9 @@ echo
 echo "Copying IVRE Nmap Scripts to Nmap"
 sudo apt -y install nmap
 
-cp /usr/local/share/ivre/nmap_scripts/*.nse /usr/share/nmap/scripts/
-patch /usr/share/nmap/scripts/rtsp-url-brute.nse \
-/usr/local/share/ivre/nmap_scripts/patches/rtsp-url-brute.patch
+cp /usr/share/ivre/nmap_scripts/*.nse /usr/share/nmap/scripts/
+yes | patch /usr/share/nmap/scripts/rtsp-url-brute.nse \
+/usr/share/ivre/nmap_scripts/patches/rtsp-url-brute.patch
 nmap --script-updatedb
 
 # Enable Nmap Screenshots
@@ -380,14 +380,14 @@ sudo git clone https://github.com/bitsadmin/wesng.git
 # MobSF Setup
 
 echo '# MobSF' >> /root/.bashrc
-export ANDROID_SDK=/root/Android/Sdk/
-export PATH=$ANDROID_SDK/emulator:$ANDROID_SDK/tools:$PATH
-export PATH="/root/Android/Sdk/platform-tools":$PATH
-export PATH="/opt/android-studio/jre/jre/bin":$PATH
+echo 'export ANDROID_SDK=/root/Android/Sdk/' >> /root/.bashrc
+echo 'export PATH=$ANDROID_SDK/emulator:$ANDROID_SDK/tools:$PATH' >> /root/.bashrc
+echo 'export PATH="/root/Android/Sdk/platform-tools":$PATH' >> /root/.bashrc
+echo 'export PATH="/opt/android-studio/jre/jre/bin":$PATH' >> /root/.bashrc
 
 echo '# Java Deez Nutz' >> /root/.bashrc
-export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-export PATH=$JAVA_HOME/bin:$PATH
+export 'JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64' >> /root/.bashrc
+export 'PATH=$JAVA_HOME/bin:$PATH' >> /root/.bashrc
 
 echo "Installing MobSF on kali 2020.4"
 # Works with Python 3.7/3.8
