@@ -7,7 +7,7 @@
 # sudo chmod +x *.sh
 # Usage: sudo ./kali-setup.sh | tee setup.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 12/24/2020
+# Last Updated 12/29/2020
 ################################################
 
 date > kali-setup-date.txt
@@ -19,11 +19,24 @@ echo "Update and Upgrade first before we do this kali-setup.sh install"
 echo "Be Patient, Installing Kali Dependencies"
 sudo apt update
 sudo apt -y install python3-dev python3-venv python3.8-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo openjdk-11-jdk crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libappindicator3-1 libindicator3-7 libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq libreoffice
-
+echo
 pip3 install --upgrade pip
-
+echo
+echo "Hacker TV" #Works with Python 3.9
+echo
+sudo apt -y install libmpv1 gir1.2-xapp-1.0 debhelper python3-setproctitle dpkg-dev git
+echo
+cd /opt
+sudo git clone https://github.com/aryanguenthner/hypnotix.git
+cd hypnotix
+wget http://ftp.us.debian.org/debian/pool/main/i/imdbpy/python3-imdbpy_6.8-2_all.deb &&
+sudo dpkg -i python3-imdbpy_6.8-2_all.deb
+sudo dpkg-buildpackage -b -uc
+sudo python3 -m venv ./venv
+sudo dpkg -i ../hypnotix*.deb
+echo
 # Update Python Alternatives
-
+echo
 : 'kali python Config
 sudo update-alternatives --list python
 sudo update-alternatives --config python
@@ -39,8 +52,8 @@ sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 3
 sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 2 #hypnotix, apt work, not MobSF
 sudo update-alternatives --set python3 /usr/bin/python3.9
 '
-
-: '# Virtualbox Install
+echo
+: '# Virtualbox Install if your doing a hard install
 sudo wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
 sudo wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
 echo "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian buster contrib" >> /etc/apt/sources.list
@@ -48,26 +61,25 @@ sudo apt update
 sudo apt -y install virtualbox
 '
 # Signal
-
+echo
 wget -O- https://updates.signal.org/desktop/apt/keys.asc |\
 sudo apt-key add -
-
+echo
 # NOTE: These instructions only work for 64 bit Debian-based
 # Linux distributions such as Ubuntu, Mint etc.
-
 # 1. Install our official public software signing key
 # 2. Add our repository to your list of repositories
 echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main" |\
 sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
-
+echo
 # 3. Update your package database and install signal
 sudo apt update && sudo apt -y install signal-desktop
-
+echo
 echo "VPN stuff"
 cd /tmp
 wget --no-check-certificate https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub
 apt-key add openvpn-repo-pkg-key.pub
-
+echo
 echo "Getting tmpmail"
 # Hackers like tmpmail
 # tmpmail --generate hackermaill@1secmail.com
@@ -76,14 +88,14 @@ mv tmpmail ~/bin/
 ./tmpmail --generate
 echo
 # Hackers like SSH
-
+echo
 echo "Enabling SSH"
 sudo sed -i '32s/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 sudo systemctl enable ssh
 sudo service ssh restart
 echo
 # Share your Kali Terminal: teleconsole -f localhost:5555
-
+echo
 echo "Teleconsole is Awesome"
 curl https://www.teleconsole.com/get.sh | sh
 echo
@@ -318,22 +330,15 @@ apt update
 apt -y install mongodb-org
 service mongod start
 systemctl enable mongod.service
-echo "Hopefully MongoDB Installed without any issivreues"
-echo
-# Install Ivre Dependencies
-echo "Attepting To Installing Some IVRE Dependencies"
-sudo apt -y install python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo
+echo "Hopefully MongoDB Installed"
 echo
 # Install Ivre.Rocks
 echo
-echo "Git Clone IVRE to /opt"
+pip install ivre
 echo
-cd /opt
-git clone https://github.com/cea-sec/ivre.git
-cd ivre
-sudo python setup.py build
-sudo python3 -m venv ./venv
-sudo pip3 install -e .
+# Dependencies
+pip install tinydb
+pip install py2neo
 echo
 # Ivre Database init, data download & importation
 echo
@@ -366,19 +371,6 @@ mv phantomjs /opt
 ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
 phantomjs -v
 echo
-echo "Hacker TV"
-echo
-sudo apt -y install libmpv1 gir1.2-xapp-1.0 debhelper python3-setproctitle dpkg-dev git
-echo
-cd /opt
-sudo git clone https://github.com/aryanguenthner/hypnotix.git
-cd hypnotix
-wget http://ftp.us.debian.org/debian/pool/main/i/imdbpy/python3-imdbpy_6.8-2_all.deb &&
-sudo python3 -m venv ./venv
-sudo dpkg -i python3-imdbpy_6.8-2_all.deb 
-sudo dpkg-buildpackage -b -uc
-sudo dpkg -i ../hypnotix*.deb
-echo
 # Windows Exploit Suggester Next Gen
 echo
 cd /opt
@@ -388,8 +380,9 @@ echo
 echo
 echo "Installing MobSF on kali 2020.4"
 # nano -c /opt/Mobile-Security-Framework-MobSF/run.sh
-# update-alternatives --set python3 /usr/bin/python3.8/
 # MobSF working with Python 3.7/3.8
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
+sudo update-alternatives --set python3 /usr/bin/python3.8/
 echo
 cd /opt/
 sudo git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF.git
