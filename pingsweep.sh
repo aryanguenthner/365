@@ -4,7 +4,7 @@
 # Live Hosts Are Output To A File ips.txt
 # Learn More @ https://github.com/aryanguenthner/
 # Tested on Kali 2020.3
-# Last updated 11/17/2020
+# Last updated 12/28/2020
 ######################################################
 
 YELLOW='033m'
@@ -14,6 +14,10 @@ KALI=`hostname -I`
 
 echo
 echo -e "\e[033mGetting Networking Information\e[0m"
+echo
+echo -e "\e[033mExternal IP\e[0m"
+curl ifconfig.me
+echo
 echo
 echo -e "\e[033mKali IP\e[0m"
 hostname -I
@@ -32,5 +36,6 @@ echo -e "\e[033mTarget List Ouput File -> ips.txt\e[0m"
 echo
 echo -e "\e[033mUse nmap to enumerate more info on your targets:\e[0m"
 echo
-echo "nmap -iL ips.txt -vvvv -sT -A -p- -r --open --max-retries 0 -mtu 24 -oA /home/kali/Desktop/nmapscans"
+echo "nmap -vvvv -sT -A -p- -r --open --max-retries 0 -mtu 24 -iL ips.txt -oA /home/kali/Desktop/nmapscan"
+echo
 echo -e '\r'
