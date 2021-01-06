@@ -7,18 +7,19 @@
 # sudo chmod +x *.sh
 # Usage: sudo ./kali-setup.sh | tee setup.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 12/29/2020
+# Last Updated 01/05/2021
 ################################################
-
+echo
+cd /home/kali/Desktop
 date > kali-setup-date.txt
-
+echo
 echo "Update and Upgrade first before we do this kali-setup.sh install"
-
+echo
 # apt update && sudo apt -y upgrade && sudo apt -y full-upgrade && reboot
-
+echo
 echo "Be Patient, Installing Kali Dependencies"
 sudo apt update
-sudo apt -y install python3-dev python3-venv python3.8-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo openjdk-11-jdk crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libappindicator3-1 libindicator3-7 libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq libreoffice
+sudo apt -y install ipcalc nload openjdk-13-jdk python3-dev python3-venv python3.8-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libappindicator3-1 libindicator3-7 libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq libreoffice
 echo
 pip3 install --upgrade pip
 echo
