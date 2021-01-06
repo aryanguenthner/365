@@ -3,11 +3,11 @@
 # First Make This File Executable chmod +x *.sh
 # Usage: ./ivre-setup.sh 
 # Learn more at https://github.com/aryanguenthner
-# Last Updated 12/28/2020
-
+# Last Updated 01/05/2021
 echo
 echo
-: 'EXAMPLE: nmap somesite.com/22 -g 53 --mtu 24 -T4 -A -PS -PE -p- -vv -r --open --max-retries 0 --max-parallelism 100 -sC --host-timeout 15m --script-timeout 2m --script=ssl-cert,ssl-enum-ciphers,ssl-heartbleed,sip-enum-users,sip-brute,sip-methods,rtsp-screenshot,rtsp-url-brute,rpcinfo,vnc-screenshot,x11-access,x11-screenshot,nfs-showmount,nfs-ls,smb-ls,smb-enum-shares,http-robots.txt.nse,http-webdav-scan,http-screenshot,http-auth,http-sql-injection,http-ntlm-info,http-git,http-open-redirect,http-open-proxy,socks-open-proxy,smtp-open-relay,ftp-anon,ftp-bounce,ms-sql-config,ms-sql-info,ms-sql-empty-password,mysql-info,mysql-empty-password,vnc-brute,vnc-screenshot,vmware-version,http-shellshock,http-default-accounts,vuln -oA nmapivre && ivre scan2db *.xml && ivre db2view nmap'
+echo
+: 'EXAMPLE: nmap --stats-every=1m --mtu=24 -A -T4 -Pn -p- -vvvv --open --min-rate=5000 --min-hostgroup=256 --max-retries=0 --min-parallelism=256 --script-timeout=4m --script=ssl-cert,ssl-enum-ciphers,ssl-heartbleed,sip-enum-users,sip-brute,sip-methods,rtsp-screenshot,rtsp-url-brute,rpcinfo,vnc-screenshot,x11-access,x11-screenshot,nfs-showmount,nfs-ls,smb-vuln-ms08-067,smb-vuln-ms17-010,smb-ls,smb-enum-shares,http-robots.txt.nse,http-webdav-scan,http-screenshot,http-auth,http-form-brute,http-sql-injection --script-args=http.useragent="Mozilla /5.0 (iPhone; CPU OS 11_0 like Mac OS X)",http-ntlm-info,http-git,http-open-redirect,http-open-proxy,socks-open-proxy,smtp-open-relay,ftp-anon,ftp-bounce,ms-sql-config,ms-sql-info,ms-sql-empty-password,mysql-info,mysql-empty-password,vnc-brute,vnc-screenshot,vmware-version,http-shellshock,http-default-accounts,http-passwd,smb-vuln-ms17-010,rdp-vuln-ms12-020,grab_beacon_config,vuln -iL ips.txt -oA $(date %Y%m%d)_lab8 && ivre scan2db *.xml && ivre db2view nmap'
 echo "# Usage: ./ivre-setup.sh | tee ivre.log"
 echo "Installing MongoDB 4.2 from Ubuntu Repo, Because It Works"
 echo
@@ -40,6 +40,8 @@ echo
 cp /usr/local/share/ivre/nmap_scripts/*.nse /usr/share/nmap/scripts/
 yes | patch /usr/share/nmap/scripts/rtsp-url-brute.nse \
 /usr/local/share/ivre/nmap_scripts/patches/rtsp-url-brute.patch
+wget https://raw.githubusercontent.com/whickey-r7/grab_beacon_config/main/grab_beacon_config.nse -O /usr/share/nmap/scripts/grab_beacon_config.nse
+echo
 nmap --script-updatedb
 echo
 # Enable Ivre Nmap Screenshots
