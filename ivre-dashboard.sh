@@ -1,12 +1,8 @@
 #!/bin/bash
-# IVRE Dashboard 01/01/2020
+# IVRE Dashboard 01/29/2021
 # Start IVRE Dashboard
 echo
-echo
-echo "IVRE IP Address"
-hostname -I
-echo
-echo "Step 1) ivre scan2db *.xml"
+echo "Step 1) ivre scan2db nmapscan.xml"
 echo
 echo -e '\r'
 echo "Step 2) ivre db2view nmap"
