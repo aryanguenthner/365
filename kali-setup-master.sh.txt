@@ -7,7 +7,7 @@
 # sudo chmod +x *.sh
 # Usage: sudo ./kali-setup.sh | tee setup.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 01/05/2021
+# Last Updated 02/21/2021
 ################################################
 echo
 cd /home/kali/Desktop
@@ -19,7 +19,7 @@ echo
 echo
 echo "Be Patient, Installing Kali Dependencies"
 sudo apt update
-sudo apt -y install ipcalc nload openjdk-13-jdk python3-dev python3-venv python3.8-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libappindicator3-1 libindicator3-7 libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq libreoffice
+sudo apt -y install at bloodhound ipcalc nload openjdk-13-jdk python3-dev python3-venv python3.8-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libappindicator3-1 libindicator3-7 libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq libreoffice
 echo
 pip3 install --upgrade pip
 echo
@@ -36,7 +36,7 @@ sudo dpkg-buildpackage -b -uc
 sudo python3 -m venv ./venv
 sudo dpkg -i ../hypnotix*.deb
 echo
-# Update Python Alternatives
+# How to Update Python Alternatives
 echo
 : 'kali python Config
 sudo update-alternatives --list python
@@ -106,13 +106,13 @@ echo
 echo "External Internal IP Address"
 curl ifconfig.me
 echo
-echo '# IP Address' >> /root/.bashrc
-echo 'hostname -I' >> /root/.bashrc
+echo '# IP Address' >> /root/.zshrc
+echo 'hostname -I' >> /root/.zshrc
 echo
-echo '# Go' >> /root/.bashrc
-echo 'export GOPATH=$HOME/work' >> /root/.bashrc
-echo 'export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin' >> /root/.bashrc
-echo 'export HISTCONTROL=ignoredups' >> /root/.bashrc
+echo '# Go' >> /root/.zshrc
+echo 'export GOPATH=$HOME/work' >> /root/.zshrc
+echo 'export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin' >> /root/.zshrc
+echo 'export HISTCONTROL=ignoredups' >> /root/.zshrc
 echo
 # Metasploit Setup
 cd /opt
@@ -195,9 +195,6 @@ cd /opt
 git clone https://github.com/danielmiessler/SecLists.git
 cd SecLists
 echo
-echo "Downloading OneRuleToRuleThemAll"
-wget https://github.com/NotSoSecure/password_cracking_rules/blob/master/OneRuleToRuleThemAll.rule
-echo
 echo "Awesome Incident Response"
 cd /opt
 git clone https://github.com/meirwah/awesome-incident-response.git
@@ -213,6 +210,12 @@ echo
 echo "OneListForAll"
 cd /opt
 git clone https://github.com/six2dez/OneListForAll.git
+cd OneListForAll
+# 7z x onelistforall.7z.001
+wget https://raw.githubusercontent.com/NotSoSecure/password_cracking_rules/master/OneRuleToRuleThemAll.rule
+wget https://github.com/NotSoSecure/password_cracking_rules/blob/master/OneRuleToRuleThemAll.rule
+wget https://contest-2010.korelogic.com/rules.txt
+cat rules.txt >> /etc/john/john.conf
 echo
 echo "SprayingToolKit"
 cd /opt
@@ -392,20 +395,19 @@ sudo pip3 install -r requirements.txt
 sudo python3 -m venv ./venv
 sudo ./setup.sh
 echo
-echo '# MobSF' >> /root/.bashrc
-export ANDROID_SDK=/root/Android/Sdk/
-export PATH=$ANDROID_SDK/emulator:$ANDROID_SDK/tools:$PATH
-export PATH="/root/Android/Sdk/platform-tools":$PATH
-export PATH="/opt/android-studio/jre/jre/bin":$PATH
-echo '# Java Deez Nutz' >> /root/.bashrc
-export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-export PATH=$JAVA_HOME/bin:$PATH
+echo '# MobSF' >> /root/.zshrc
+echo 'export ANDROID_SDK=/root/Android/Sdk/' >> /root/.zshrc
+echo 'export PATH=$ANDROID_SDK/emulator:$ANDROID_SDK/tools:$PATH' >> /root/.zshrc
+echo 'export PATH="/root/Android/Sdk/platform-tools":$PATH' >> /root/.zshrc
+echo 'export PATH="/opt/android-studio/jre/jre/bin":$PATH' >> /root/.zshrc
+echo '# Java Deez Nutz' >> /root/.zshrc
+echo 'export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64' >> /root/.zshrc
+echo 'export PATH=$JAVA_HOME/bin:$PATH' >> /root/.zshrc
 echo
 sudo chmod -R 777 /home/kali/
 echo
 echo "Hacker Hacker"
 sudo systemctl restart ntp
-source ~/.bashrc
 source ~/.zshrc
 echo
 updatedb
