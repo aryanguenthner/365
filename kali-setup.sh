@@ -342,7 +342,7 @@ echo "Hopefully MongoDB Installed"
 echo
 # Install Ivre.Rocks
 echo
-pip install ivre
+apt -y install ivre
 echo
 # Dependencies
 pip install tinydb
