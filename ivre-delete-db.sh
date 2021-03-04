@@ -1,1 +1,0 @@
-ivre view --init
