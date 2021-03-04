@@ -7,7 +7,7 @@
 # sudo chmod +x *.sh
 # Usage: sudo ./kali-setup.sh | tee setup.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 02/26/2021
+# Last Updated 03/03/2021
 ################################################
 echo
 cd /home/kali/Desktop
@@ -27,6 +27,7 @@ echo
 #libappindicator3-1 did not install
 pip3 install --upgrade pip
 echo
+pip3 install updog
 echo "Hacker TV" #Works with Python 3.9
 echo
 sudo apt -y install libmpv1 gir1.2-xapp-1.0 debhelper python3-setproctitle dpkg-dev git
@@ -414,6 +415,8 @@ echo "Hacker Hacker"
 sudo systemctl restart ntp
 source ~/.zshrc
 echo
+# VirtualBox Hack for USB Devices
+sudo adduser $USER vboxusers
 apt --fix-broken install
 updatedb
 echo
