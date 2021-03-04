@@ -30,6 +30,8 @@ echo
 pip3 install updog
 echo "Hacker TV" #Works with Python 3.9
 echo
+apt -y install python3-imdbpy
+echo
 sudo apt -y install libmpv1 gir1.2-xapp-1.0 debhelper python3-setproctitle dpkg-dev git
 echo
 cd /opt
