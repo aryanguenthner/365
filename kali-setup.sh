@@ -7,7 +7,7 @@
 # sudo chmod +x *.sh
 # Usage: sudo ./kali-setup.sh | tee setup.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 03/03/2021
+# Last Updated 03/13/2021
 ################################################
 echo
 cd /home/kali/Desktop
@@ -285,11 +285,11 @@ git clone https://github.com/huashengdun/webssh.git
 echo
 echo "Installing Impacket"
 cd /opt
-pip install jinja2==2.10.1
+pip3 install jinja2==2.10.1
 git clone https://github.com/SecureAuthCorp/impacket.git
 cd /opt
 cd impacket
-pip install -e .
+pip3 install -e .
 echo
 echo "GitRob"
 cd /tmp
