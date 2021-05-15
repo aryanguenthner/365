@@ -7,7 +7,7 @@
 # sudo chmod +x *.sh
 # Usage: sudo ./kali-setup.sh | tee setup.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 02/21/2021
+# Last Updated 05/13/2021
 ################################################
 echo
 cd /home/kali/Desktop
@@ -94,11 +94,6 @@ echo "Enabling SSH"
 sudo sed -i '32s/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 sudo systemctl enable ssh
 sudo service ssh restart
-echo
-# Share your Kali Terminal: teleconsole -f localhost:5555
-echo
-echo "Teleconsole is Awesome"
-curl https://www.teleconsole.com/get.sh | sh
 echo
 echo "Your Internal IP Address"
 hostname -I
