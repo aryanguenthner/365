@@ -1,13 +1,13 @@
 #!/bin/bash
 ################################################
 # Kali Post Setup Automation Script with ivre.rocks
-# Tested on Kali 2021.1
+# Tested on Kali 2021.2
 # If you're reading this pat yourself on the back
 # sudo dos2unix *.sh
 # sudo chmod +x *.sh
 # Usage: sudo ./kali-setup.sh | tee setup.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 05/13/2021
+# Last Updated 06/17/2021
 ################################################
 echo
 cd /home/kali/Desktop
@@ -32,6 +32,7 @@ chmod +x script.deb.sh
 sudo os=debian dist=stretch ./script.deb.sh
 echo
 # Install cloudflare tunnel
+cd /tmp
 wget -q https://bin.equinox.io/c/VdrWdbjqyF/cloudflared-stable-linux-amd64.deb
 dpkg -i cloudflared-stable-linux-amd64.deb
 echo
