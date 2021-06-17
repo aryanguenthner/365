@@ -25,6 +25,24 @@ echo
 #libindicator3-7 did not install
 #python3.8-venv did not install
 #libappindicator3-1 did not install
+echo
+# Slack Setup
+wget https://packagecloud.io/install/repositories/slacktechnologies/slack/script.deb.sh 
+chmod +x script.deb.sh
+sudo os=debian dist=stretch ./script.deb.sh
+echo
+# Install cloudflare tunnel
+wget -q https://bin.equinox.io/c/VdrWdbjqyF/cloudflared-stable-linux-amd64.deb
+dpkg -i cloudflared-stable-linux-amd64.deb
+echo
+# Install Etcher - USB Bootable Media Creator
+curl -1sLf \
+   'https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh' \
+   | sudo -E bash 
+apt update
+apt -y install balena-etcher-electron
+echo
+# Upgrade pip
 pip3 install --upgrade pip
 echo
 pip3 install updog
