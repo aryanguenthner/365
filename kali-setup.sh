@@ -7,10 +7,10 @@
 # sudo chmod +x *.sh
 # Usage: sudo ./kali-setup.sh | tee setup.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 06/17/2021
+# Last Updated 07/02/2021
 ################################################
 echo
-cd /home/kali/Desktop
+cd /tmp
 date > kali-setup-date.txt
 echo
 echo "Update and Upgrade first before we do this kali-setup.sh install"
@@ -83,24 +83,23 @@ echo
 : '# Virtualbox Install if your doing a hard install
 sudo wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
 sudo wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
-echo "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian buster contrib" >> /etc/apt/sources.list
+sudo echo "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian buster contrib" >> /etc/apt/sources.list
 sudo apt update
-sudo apt -y install virtualbox
+sudo apt -y install dkms
+sudo apt -y install virtualbox virtualbox-ext-pack
 '
 # Signal
-echo
-wget -O- https://updates.signal.org/desktop/apt/keys.asc |\
-sudo apt-key add -
 echo
 # NOTE: These instructions only work for 64 bit Debian-based
 # Linux distributions such as Ubuntu, Mint etc.
 # 1. Install our official public software signing key
+wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
+cat signal-desktop-keyring.gpg | sudo tee -a /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
 # 2. Add our repository to your list of repositories
-echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main" |\
+echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
 sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
-echo
 # 3. Update your package database and install signal
-sudo apt update && sudo apt -y install signal-desktop
+sudo apt update && sudo apt install signal-desktop
 echo
 echo "VPN stuff"
 cd /tmp
@@ -117,7 +116,7 @@ echo
 # Hackers like SSH
 echo
 echo "Enabling SSH"
-sudo sed -i '32s/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+sudo sed -i '34s/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 sudo systemctl enable ssh
 sudo service ssh restart
 echo
