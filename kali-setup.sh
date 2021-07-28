@@ -7,7 +7,7 @@
 # sudo chmod +x *.sh
 # Usage: sudo ./kali-setup.sh | tee setup.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 07/02/2021
+# Last Updated 07/27/2021, Minor updates: HP Printers added
 ################################################
 echo
 cd /tmp
@@ -19,7 +19,7 @@ echo
 echo
 echo "Be Patient, Installing Kali Dependencies"
 sudo apt update
-sudo apt -y install gobuster tcpxtract at bloodhound ipcalc nload python3-dev python3-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq libreoffice
+sudo apt -y install hplip printer-driver-hpcups cups system-config-printer hp-setup gobuster tcpxtract at bloodhound ipcalc nload python3-dev python3-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq libreoffice
 echo
 #openjdk-13-jdk did not install
 #libindicator3-7 did not install
@@ -438,10 +438,11 @@ sudo systemctl restart ntp
 source ~/.zshrc
 echo
 # VirtualBox Hack for USB Devices
-sudo adduser $USER vboxusers
+sudo usermod -a -G vboxusers $USER
 apt --fix-broken install
 updatedb
 echo
 date > kali-setup-finish-date.txt
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
 reboot
+# Taco Taco
