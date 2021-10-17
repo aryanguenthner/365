@@ -1,13 +1,13 @@
 #!/bin/bash
 ################################################
-# Kali Post Setup Automation Script with ivre.rocks
-# Tested on Kali 2021.2
+# Kali Post Setup Automation Script
+# Tested on Kali 2021.3
 # If you're reading this pat yourself on the back
 # sudo dos2unix *.sh
 # sudo chmod +x *.sh
 # Usage: sudo ./kali-setup.sh | tee setup.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 10/16/2021, Minor updates: Enabled HP Printer Connection
+# Last Updated 10/17/2021, Minor updates: Enabled HP Printer Connection
 ################################################
 echo
 cd /tmp
@@ -26,15 +26,15 @@ echo
 #python3.8-venv did not install
 #libappindicator3-1 did not install
 echo
-# Slack Setup
-wget https://packagecloud.io/install/repositories/slacktechnologies/slack/script.deb.sh 
-chmod +x script.deb.sh
-sudo os=debian dist=stretch ./script.deb.sh
-echo
+# Slack Setup on Kali needs some love
+# curl https://packagecloud.io/install/repositories/slacktechnologies/slack/script.deb.sh . 
+# chmod +x script.deb.sh
+# os=debian dist=stretch ./script.deb.sh
+# echo
 # Download and Install cloudflare tunnel
 cd /tmp
-wget -q https://bin.equinox.io/c/VdrWdbjqyF/cloudflared-stable-linux-amd64.deb
-dpkg -i cloudflared-stable-linux-amd64.deb
+wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/ccloudflared-linux-amd64.deb
+dpkg -i cloudflared-linux-amd64.deb
 echo
 # Download and Install Etcher - USB Bootable Media Creator
 curl -1sLf \
