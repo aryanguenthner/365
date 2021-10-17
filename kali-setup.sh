@@ -7,19 +7,19 @@
 # sudo chmod +x *.sh
 # Usage: sudo ./kali-setup.sh | tee setup.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 07/27/2021, Minor updates: HP Printers added
+# Last Updated 10/16/2021, Minor updates: Enabled HP Printer Connection
 ################################################
 echo
 cd /tmp
 date > kali-setup-date.txt
 echo
-echo "Update and Upgrade first before we do this kali-setup.sh install"
+echo "Good Idea to Update and Upgrade first before we do this kali-setup.sh"
 echo
 # apt update && sudo apt -y upgrade && sudo apt -y full-upgrade && reboot
 echo
 echo "Be Patient, Installing Kali Dependencies"
 sudo apt update
-sudo apt -y install hplip printer-driver-hpcups cups system-config-printer hp-setup gobuster tcpxtract at bloodhound ipcalc nload python3-dev python3-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq libreoffice
+sudo apt -y install docker-compose python3.9-venv python3-dev python3-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
 echo
 #openjdk-13-jdk did not install
 #libindicator3-7 did not install
@@ -31,12 +31,12 @@ wget https://packagecloud.io/install/repositories/slacktechnologies/slack/script
 chmod +x script.deb.sh
 sudo os=debian dist=stretch ./script.deb.sh
 echo
-# Install cloudflare tunnel
+# Download and Install cloudflare tunnel
 cd /tmp
 wget -q https://bin.equinox.io/c/VdrWdbjqyF/cloudflared-stable-linux-amd64.deb
 dpkg -i cloudflared-stable-linux-amd64.deb
 echo
-# Install Etcher - USB Bootable Media Creator
+# Download and Install Etcher - USB Bootable Media Creator
 curl -1sLf \
    'https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh' \
    | sudo -E bash 
