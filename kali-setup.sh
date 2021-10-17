@@ -19,7 +19,7 @@ echo
 echo
 echo "Be Patient, Installing Kali Dependencies"
 sudo apt update
-sudo apt -y install docker docker-compose python3.9-venv python3-dev python3-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
+sudo apt -y install docker docker.io docker-compose containerd python3.9-venv python3-dev python3-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
 echo
 #openjdk-13-jdk did not install
 #libindicator3-7 did not install
@@ -32,16 +32,17 @@ echo
 # os=debian dist=stretch ./script.deb.sh
 # echo
 # Download and Install cloudflare tunnel
-cd /tmp
-wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/ccloudflared-linux-amd64.deb
-dpkg -i cloudflared-linux-amd64.deb
+# cd /tmp
+# wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/ccloudflared-linux-amd64.deb
+# dpkg -i cloudflared-linux-amd64.deb
 echo
 # Download and Install Etcher - USB Bootable Media Creator
-curl -1sLf \
-   'https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh' \
-   | sudo -E bash 
-apt update
-apt -y install balena-etcher-electron
+# curl -1sLf \
+#   'https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh' \
+#   | sudo -E bash 
+echo
+# apt update
+# apt -y install balena-etcher-electron
 echo
 # Upgrade pip
 pip3 install --upgrade pip
