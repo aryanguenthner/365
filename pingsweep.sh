@@ -1,17 +1,19 @@
 #!/bin/bash
 #######################################################
-# Discover Live Hosts by Doing a Ping Sweep
-# Live Hosts Are Output To A File ips.txt
+# Discover targets by doing a ping sweep
+# Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
 # Tested on Kali 2021.3
-# Last updated 11/01/2021
+# Last updated 11/09/2021
 ######################################################
 
 YELLOW='033m'
+BLUE='034m'
 SUBNET=`ip r |awk 'NR==2' |awk '{print $1}'`
 TARGETS=ips.txt
 KALI=`hostname -I`
 EXT=`curl ifconfig.me`
+FILE=$(date +%Y%m%d).nmap-pingsweep
 
 echo $KALI | awk '{print $1}' > KALI.txt
 
@@ -33,7 +35,7 @@ echo
 #echo -e "\e[033mThese Hosts Are Up\e[0m"
 echo  -e "\033[33;5mThese Hosts Are Up\033[0m"
 echo
-cat *nmap-pingsweep | grep "Up" | awk '{print $2}' 2>&1 | tee targets.txt
+cat $FILE | grep "Up" | awk '{print $2}' 2>&1 | tee targets.txt
 echo
 echo -e "\e[033mTarget List Ouput File -> targets.txt\e[0m"
 echo
