@@ -4,7 +4,7 @@
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
 # Tested on Kali 2021.3
-# Last updated 11/09/2021
+# Last updated 11/15/2021
 ######################################################
 
 YELLOW='033m'
@@ -14,6 +14,7 @@ TARGETS=ips.txt
 KALI=`hostname -I`
 EXT=`curl ifconfig.me`
 FILE=$(date +%Y%m%d).nmap-pingsweep
+RANDOM=$$
 
 echo $KALI | awk '{print $1}' > KALI.txt
 
@@ -41,4 +42,4 @@ echo -e "\e[033mTarget List Ouput File -> targets.txt\e[0m"
 echo
 echo -e "\e[033mUse nmap to enumerate more info on your targets:\e[0m"
 echo
-echo "nmap --stats-every=1m -T4 -Pn -v -sTV -p- --open --script http-screenshot --min-rate=5000 --min-hostgroup=256 --min-parallelism=256 --max-retries 0 -iL targets.txt -oA /home/kali/Desktop/testing/$(date +%Y%m%d)_nmapscan"
+echo nmap --stats-every=1m -T4 -Pn -vv -sTV -p- --open --script http-screenshot,vuln --min-rate=5000 --min-hostgroup=256 --min-parallelism=256 --max-retries 0 -iL targets.txt -oA /home/kali/Desktop/testing/$(date +%Y%m%d)_nmapscan_$RANDOM
