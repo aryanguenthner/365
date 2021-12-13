@@ -5,9 +5,9 @@
 # If you're reading this pat yourself on the back
 # sudo dos2unix *.sh
 # sudo chmod +x *.sh
-# Usage: sudo ./kali-setup.sh | tee setup.log
+# Usage: sudo ./kali-setup.sh | tee kali.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 10/17/2021, Minor updates: Enabled HP Printer Connection
+# Last Updated 12/12/2021, Minor updates: Enabled HP Printer Connection
 ################################################
 echo
 cd /tmp
@@ -15,11 +15,11 @@ date > kali-setup-date.txt
 echo
 echo "Good Idea to Update and Upgrade first before we do this kali-setup.sh"
 echo
-# apt update && sudo apt -y upgrade && sudo apt -y full-upgrade && reboot
+# apt update && apt -y upgrade && apt -y full-upgrade && reboot
 echo
 echo "Be Patient, Installing Kali Dependencies"
-sudo apt update
-sudo apt -y install docker docker.io docker-compose containerd python3.9-venv python3-dev python3-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
+apt update
+apt -y install docker docker.io docker-compose containerd python3.9-venv python3-dev python3-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
 echo
 #openjdk-13-jdk did not install
 #libindicator3-7 did not install
@@ -100,7 +100,7 @@ cat signal-desktop-keyring.gpg | sudo tee -a /usr/share/keyrings/signal-desktop-
 echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
 sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
 # 3. Update your package database and install signal
-sudo apt update && sudo apt install signal-desktop
+apt update && apt -y install signal-desktop
 echo
 echo "VPN stuff"
 cd /tmp
@@ -117,9 +117,9 @@ echo
 # Hackers like SSH
 echo
 echo "Enabling SSH"
-sudo sed -i '34s/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-sudo systemctl enable ssh
-sudo service ssh restart
+sed -i '34s/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+systemctl enable ssh
+service ssh restart
 echo
 echo "Your Internal IP Address"
 hostname -I
@@ -137,11 +137,11 @@ echo 'export HISTCONTROL=ignoredups' >> /root/.zshrc
 echo
 # Metasploit Setup
 cd /opt
-sudo curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && chmod 755 msfinstall && ./msfinstall
+curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && chmod 755 msfinstall && ./msfinstall
 echo
 echo "Metasploit Ready Up"
-sudo systemctl start postgresql
-sudo msfdb init
+systemctl start postgresql
+msfdb init
 echo
 # Yeet
 echo
@@ -341,14 +341,14 @@ echo
 #Tor Web Browser Stuff
 echo
 #sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && 
-sudo apt -y install torbrowser-launcher
+apt -y install torbrowser-launcher
 echo
 cd /opt
 git clone https://github.com/aryanguenthner/TorGhost.git
 cd TorGhost
-sudo apt -y install python3-pyinstaller
-sudo apt -y install python3-notify2
-sudo pip3 install . --ignore-installed stem
+apt -y install python3-pyinstaller
+apt -y install python3-notify2
+pip3 install . --ignore-installed stem
 sudo ./build.sh
 echo
 # MongoDB Install
@@ -417,11 +417,11 @@ sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
 sudo update-alternatives --set python3 /usr/bin/python3.8/
 echo
 cd /opt/
-sudo git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF.git
+git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF.git
 cd Mobile-Security-Framework-MobSF/
-sudo pip3 install -r requirements.txt
-sudo python3 -m venv ./venv
-sudo ./setup.sh
+pip3 install -r requirements.txt
+python3 -m venv ./venv
+./setup.sh
 echo
 echo '# MobSF' >> /root/.zshrc
 echo 'export ANDROID_SDK=/root/Android/Sdk/' >> /root/.zshrc
@@ -435,11 +435,11 @@ echo
 sudo chmod -R 777 /home/kali/
 echo
 echo "Hacker Hacker"
-sudo systemctl restart ntp
+systemctl restart ntp
 source ~/.zshrc
 echo
 # VirtualBox Hack for USB Devices
-sudo usermod -a -G vboxusers $USER
+usermod -a -G vboxusers $USER
 apt --fix-broken install
 updatedb
 echo
@@ -447,3 +447,4 @@ date > kali-setup-finish-date.txt
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
 reboot
 # Taco Taco
+# Gucci
