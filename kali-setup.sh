@@ -1,13 +1,13 @@
 #!/bin/bash
 ################################################
 # Kali Post Setup Automation Script
-# Tested on Kali 2021.3
+# Tested on Kali 2021.4
 # If you're reading this pat yourself on the back
 # sudo dos2unix *.sh
 # sudo chmod +x *.sh
 # Usage: sudo ./kali-setup.sh | tee kali.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 12/12/2021, Minor updates: Enabled HP Printer Connection
+# Last Updated 12/23/2021, Minor updates: Enabled HP Printer Connection
 ################################################
 echo
 cd /tmp
@@ -19,7 +19,7 @@ echo
 echo
 echo "Be Patient, Installing Kali Dependencies"
 apt update
-apt -y install docker docker.io docker-compose containerd python3.9-venv python3-dev python3-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
+apt -y install ndiff docker docker.io docker-compose containerd python3.9-venv python3-dev python3-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
 echo
 #openjdk-13-jdk did not install
 #libindicator3-7 did not install
@@ -44,6 +44,9 @@ echo
 # apt update
 # apt -y install balena-etcher-electron
 echo
+# Project Discovery
+apt -y install golang-go
+go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
 # Upgrade pip
 pip3 install --upgrade pip
 echo
