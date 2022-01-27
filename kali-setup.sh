@@ -7,7 +7,7 @@
 # sudo chmod +x *.sh
 # Usage: sudo ./kali-setup.sh | tee kali.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 01/26/2022, Minor updates: Enabled HP Printer Connection
+# Last Updated 01/27/2022, Minor updates: Enabled HP Printer Connection
 ################################################
 echo
 cd /tmp
@@ -38,9 +38,9 @@ echo
 echo
 # Coolest Thing for Nmap
 # nmap -T4 -sVTC -p- --open --max-retries 0 -oA nmap-scan-20220126 --stylesheet nmap-bootstrap.xsl
-# xsltproc -o nmap-new.html nmap-bootstrap.xsl nmap-scan-20220126
+# na
 cd /usr/share/nmap/scripts
-wget https://github.com/aryanguenthner/nmap-bootstrap-xsl/blob/stable/nmap-bootstrap.xsl
+wget https://github.com/aryanguenthner/nmap-bootstrap-xsl/blob/stable/nmap-bootstrap.xsl https://raw.githubusercontent.com/aryanguenthner/nmap-nse-vulnerability-scripts/master/smtp-vuln-cve2020-28017-through-28026-21nails.nse
 nmap --script-updatedb
 # Download and Install Etcher - USB Bootable Media Creator
 # curl -1sLf \
