@@ -1,13 +1,13 @@
 #!/bin/bash
 ################################################
 # Kali Linux Post Setup Automation Script
-# Tested on Kali 2021.4a
+# Tested on Kali 2022.1
 # If you're reading this pat yourself on the back
 # sudo dos2unix *.sh
 # sudo chmod +x *.sh
 # Usage: sudo ./kali-setup.sh | tee kali.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 01/29/2022, Minor updates: Enabled HP Printer Connection
+# Last Updated 02/26/2022, Minor updates: Enabled HP Printer Connection
 ################################################
 echo
 cd /tmp
@@ -433,13 +433,15 @@ python3 -m venv ./venv
 ./setup.sh
 echo
 echo '# MobSF' >> /root/.zshrc
-echo 'export ANDROID_SDK=/root/Android/Sdk/' >> /root/.zshrc
-echo 'export PATH=$ANDROID_SDK/emulator:$ANDROID_SDK/tools:$PATH' >> /root/.zshrc
-echo 'export PATH="/root/Android/Sdk/platform-tools":$PATH' >> /root/.zshrc
-echo 'export PATH="/opt/android-studio/jre/jre/bin":$PATH' >> /root/.zshrc
-echo '# Java Deez Nutz' >> /root/.zshrc
-echo 'export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64' >> /root/.zshrc
-echo 'export PATH=$JAVA_HOME/bin:$PATH' >> /root/.zshrc
+echo 'export PATH=$GOPATH=$HOME/work' >> /root/.zshrc
+echo 'export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin' >> /root/.zshrc
+echo 'export PATH=$HISTCONTROL=ignoredups' >> /root/.zshrc
+echo 'export PATH=$ANDROID_SDK=/root/Android/Sdk/' >> /root/.zshrc
+echo 'export PATH=$ANDROID_SDK/emulator:$ANDROID_SDK/tools' >> /root/.zshrc
+echo 'export PATH=$PATH"/root/Android/Sdk/platform-tools' >> /root/.zshrc
+echo 'export PATH=$PATH"/opt/android-studio/jre/jre/bin/' >> /root/.zshrc
+echo 'export PATH=$JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/' >> /root/.zshrc
+echo 'export PATH=$PATH:/snap/bin/' >> /root/.zshrc
 echo
 sudo chmod -R 777 /home/kali/
 echo
@@ -455,5 +457,6 @@ echo
 date > kali-setup-finish-date.txt
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
 reboot
+# Just in case DNS issues happen nano -c /etc/resolvconf/resolv.conf.d/head
 # Taco Taco
 # Gucci
