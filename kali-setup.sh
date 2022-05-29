@@ -170,9 +170,9 @@ echo
 # Yeet
 echo
 cd /opt
-echo "ShellPhish"
+echo "Kingfisher"
 cd /opt
-git clone https://github.com/aryanguenthner/shellphish.git
+# git clone https://github.com/onevcat/Kingfisher.git
 echo
 echo "Malicious Macro Builder"
 cd /opt
