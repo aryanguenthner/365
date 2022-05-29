@@ -1,13 +1,13 @@
 #!/bin/bash
 ################################################
-# Kali Linux Post Setup Automation Script
-# Tested on Kali 2022.1
+# Kali Linux Post Setup Automation Script VirtualBox
+# Tested on Kali 2022.2
 # If you're reading this pat yourself on the back
 # sudo dos2unix *.sh
 # sudo chmod +x *.sh
 # Usage: sudo ./kali-setup.sh | tee kali.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 03/27/2022, Minor updates: Enabled HP Printer Connection
+# Last Updated 05/25/2022, Minor updates
 ################################################
 echo
 cd /tmp
@@ -19,7 +19,7 @@ echo
 echo
 echo "Be Patient, Installing Kali Dependencies"
 apt update
-apt -y install feroxbuster virtualenv ssmtp mailutils mpack ndiff docker docker.io docker-compose containerd python3.9-venv python3-dev python3-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli sendmail libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
+apt -y install feroxbuster virtualenv ssmtp mailutils mpack ndiff docker docker.io docker-compose containerd python3.9-venv python3-dev python3-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
 echo
 #openjdk-13-jdk did not install
 #libindicator3-7 did not install
@@ -36,12 +36,27 @@ echo
 # wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/ccloudflared-linux-amd64.deb
 # dpkg -i cloudflared-linux-amd64.deb
 echo
-# Coolest Thing for Nmap
-# nmap -T4 -sVTC -p- --open --max-retries 0 -oA nmap-scan-20220126 --stylesheet nmap-bootstrap.xsl
-# na
 cd /usr/share/nmap/scripts
-wget https://github.com/aryanguenthner/nmap-bootstrap-xsl/blob/stable/nmap-bootstrap.xsl https://raw.githubusercontent.com/aryanguenthner/nmap-nse-vulnerability-scripts/master/smtp-vuln-cve2020-28017-through-28026-21nails.nse
+wget https://raw.githubusercontent.com/aryanguenthner/nmap-nse-vulnerability-scripts/master/smtp-vuln-cve2020-28017-through-28026-21nails.nse
 nmap --script-updatedb
+# Nmap bootstrap file checker
+# If file exists skip the download
+# if file is missing download it
+N='nmap-bootstrap.xsl'
+echo "Nmap Bootstrap File Checker"
+echo
+if [ -f $N ]
+then
+    echo "File Found: nmap-bootstrap.xsl"
+
+else
+
+    echo "Downloading Missing File"
+    wget https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl
+
+fi
+cp nmap-bootstrap.xsl /home/kali/Desktop/testing/nmapscans
+echo
 # Download and Install Etcher - USB Bootable Media Creator
 # curl -1sLf \
 #   'https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh' \
@@ -404,13 +419,33 @@ nmap --script-updatedb
 echo
 # Enable Nmap to get Screenshots using Phantomjs v1.9.8
 echo
-cd /opt
+# PhantomJS Checker
+# Used for nmap screenshots
+echo "PhantomJS Checker"
+echo
+P=`phantomjs -v`
+
+if [ $P=1.9.8 ]
+then
+
+echo "Found PhantomJS"
+echo
+phantomjs -v
+else
+
+echo "Downloading PhantomJS"
+cd /tmp
+echo
 wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
+echo
+echo "Extracting and Installing PhantomJS 1.9.8"
 tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2
 mv phantomjs-1.9.8-linux-x86_64 phantomjs
 mv phantomjs /opt
 ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
 phantomjs -v
+
+fi
 echo
 # Windows Exploit Suggester Next Gen
 echo
