@@ -1,13 +1,12 @@
-#!/bin/bash
 ################################################
 # Kali Linux Post Setup Automation Script VirtualBox
-# Tested on Kali 2022.2
+# Tested on Kali 2022.4
 # If you're reading this pat yourself on the back
 # sudo dos2unix *.sh
 # sudo chmod +x *.sh
 # Usage: sudo ./kali-setup.sh | tee kali.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 05/25/2022, Minor updates
+# Last Updated 06/18/2022, Minor updates
 ################################################
 echo
 cd /tmp
@@ -19,7 +18,7 @@ echo
 echo
 echo "Be Patient, Installing Kali Dependencies"
 apt update
-apt -y install feroxbuster virtualenv ssmtp mailutils mpack ndiff docker docker.io docker-compose containerd python3.9-venv python3-dev python3-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
+apt -y install libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv ssmtp mailutils mpack ndiff docker docker.io docker-compose containerd python3.9-venv python3-dev python3-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
 echo
 #openjdk-13-jdk did not install
 #libindicator3-7 did not install
@@ -68,9 +67,7 @@ echo
 # Project Discovery
 apt -y install golang-go
 go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
-# Upgrade pip
-pip3 install --upgrade pip
-echo
+# Updog for the Win!
 pip3 install updog
 echo "Hacker TV" #Works with Python 3.9
 echo
@@ -124,7 +121,7 @@ cat signal-desktop-keyring.gpg | sudo tee -a /usr/share/keyrings/signal-desktop-
 echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
 sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
 # 3. Update your package database and install signal
-apt update && apt -y install signal-desktop
+sudo apt update && apt -y install signal-desktop
 echo
 echo "VPN stuff"
 cd /tmp
@@ -296,32 +293,38 @@ echo
 echo "Pulse VPN Exploit"
 cd /opt
 git clone https://github.com/projectzeroindia/CVE-2019-11510.git
-
+echo
 echo "hruffleHog - Git Enumeration"
 cd /opt
 git clone https://github.com/dxa4481/truffleHog.git
-
+echo
 echo "Git Secrets"
+echo
 cd /opt
 git clone https://github.com/awslabs/git-secrets.git
 echo
 echo "Git Leaks"
+echo
 cd /opt
 git clone https://github.com/zricethezav/gitleaks.git
 echo
 echo "Discover Admin Loging Pages - Breacher"
+echo
 cd /opt
 git clone https://github.com/s0md3v/Breacher.git
 echo
 echo "Search Google Extract Result URLS - degoogle"
+echo
 cd /opt
 git clone https://github.com/deepseagirl/degoogle.git
 echo
 echo "Web SSH (Pretty Cool)"
+echo
 cd /opt
 git clone https://github.com/huashengdun/webssh.git
 echo
 echo "Installing Impacket"
+echo
 cd /opt
 pip3 install jinja2==2.10.1
 git clone https://github.com/SecureAuthCorp/impacket.git
@@ -336,8 +339,8 @@ unzip gitrob_linux_amd64_2.0.0-beta.zip
 mkdir -p /opt/gitrob
 mv gitrob /opt/gitrob/
 echo
-#echo "Google Play CLI" I wish this one actually worked
-#apt -y install gplaycli
+# echo "Google Play CLI" I wish this one actually worked
+# apt -y install gplaycli
 echo
 echo "Lee Baird Discover Script"
 cd /opt
@@ -361,10 +364,9 @@ git clone https://github.com/aryanguenthner/365.git
 cd 365
 sudo dos2unix *.sh *.py && chmod +x *.sh *.py
 echo
+# Tor Web Browser Stuff
 echo
-#Tor Web Browser Stuff
-echo
-#sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && 
+# sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && 
 apt -y install torbrowser-launcher
 echo
 cd /opt
@@ -390,7 +392,7 @@ echo "Hopefully MongoDB Installed"
 echo
 # Install Ivre.Rocks
 echo
-apt -y install ivre
+sudo apt -y install ivre
 echo
 # Dependencies
 pip install tinydb
@@ -434,6 +436,7 @@ phantomjs -v
 else
 
 echo "Downloading PhantomJS"
+echo
 cd /tmp
 echo
 wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
@@ -505,6 +508,7 @@ echo
 # VirtualBox Hack for USB Devices
 usermod -a -G vboxusers $USER
 apt --fix-broken install
+sudo apt autoremove -y
 updatedb
 echo
 date > kali-setup-finish-date.txt
@@ -513,3 +517,6 @@ reboot
 # Just in case DNS issues happen nano -c /etc/resolvconf/resolv.conf.d/head
 # Taco Taco
 # Gucci
+# How to fix apt update
+: ' mv /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d
+'
