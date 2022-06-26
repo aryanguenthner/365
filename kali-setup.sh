@@ -4,9 +4,12 @@
 # If you're reading this pat yourself on the back
 # sudo dos2unix *.sh
 # sudo chmod +x *.sh
-# Usage: sudo ./kali-setup.sh | tee kali.log
+# Usage: cd /opt/365
+# chmod +x *.sh *.py
+# chmod -R 777 .
+# sudo ./kali-setup.sh | tee kali.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 06/18/2022, Minor updates
+# Last Updated 06/25/2022, Minor updates
 ################################################
 echo
 cd /tmp
@@ -73,7 +76,9 @@ apt -y install golang-go
 go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
 # Updog for the Win!
 pip3 install updog
-echo "Hacker TV" #Works with Python 3.9
+echo
+# Works with Python 3.9
+echo "Hacker TV"
 echo
 apt -y install python3-imdbpy
 echo
@@ -106,14 +111,6 @@ sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 2
 sudo update-alternatives --set python3 /usr/bin/python3.9
 '
 echo
-: '# Virtualbox Install if your doing a hard install
-sudo wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
-sudo wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
-sudo echo "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian buster contrib" >> /etc/apt/sources.list
-sudo apt update
-sudo apt -y install dkms
-sudo apt -y install virtualbox virtualbox-ext-pack
-'
 # Signal
 echo
 # NOTE: These instructions only work for 64 bit Debian-based
@@ -165,6 +162,7 @@ cd /opt
 curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && chmod 755 msfinstall && ./msfinstall
 echo
 echo "Metasploit Ready Up"
+echo
 systemctl start postgresql
 msfdb init
 echo
@@ -172,6 +170,7 @@ echo
 echo
 cd /opt
 echo "Kingfisher"
+echo
 cd /opt
 # git clone https://github.com/onevcat/Kingfisher.git
 echo
@@ -190,27 +189,32 @@ cd knock
 pip install -e .
 echo
 echo "Subbrute"
+echo
 cd /opt
 git clone https://github.com/TheRook/subbrute.git
 echo
 echo "dnstwister"
+echo
 cd /opt
 git clone https://github.com/elceef/dnstwist.git
 sudo apt-get -y install python3-dnspython python3-geoip python3-whois python3-requests python3-ssdeep python3-dns
 echo
 echo "RDPY"
+echo
 cd /opt
 git clone https://github.com/citronneur/rdpy.git
 cd rdpy
 sudo python setup.py install
 echo
 echo "EyeWitness"
+echo
 cd /opt
 git clone https://github.com/FortyNorthSecurity/EyeWitness.git
 cd /opt/EyeWitness/Python/setup
 sudo yes | ./setup.sh
 echo
 echo "Cewl"
+echo
 cd /opt
 git clone https://github.com/digininja/CeWL.git
 gem install mime-types
@@ -221,18 +225,22 @@ echo
 echo "This is going to take a minute hold my root-beer"
 echo
 echo "AD Recon - My Fav"
+echo
 cd /opt
 git clone https://github.com/sense-of-security/ADRecon.git
 echo
 echo "enum4linux-ng"
+echo
 cd /opt
 git clone https://github.com/cddmp/enum4linux-ng.git
 echo
 echo "BloodHound"
+echo
 cd /opt
 git clone https://github.com/BloodHoundAD/Bloodhound.git
 echo
 echo "bloodhound-python"
+echo
 # bloodhound-python -u 'bob' -p 'Passw0rd!' -ns 192.168.1.3 -d LAB.local  -c all'
 pip install bloodhound
 echo
@@ -506,8 +514,18 @@ echo
 sudo chmod -R 777 /home/kali/
 echo
 echo "Hacker Hacker"
+echo
 systemctl restart ntp
 source ~/.zshrc
+echo
+# Virtualbox Install if your doing a hard install
+# https://www.kali.org/docs/virtualization/install-virtualbox-host/
+# https://wiki.debian.org/VirtualBox
+sudo wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
+sudo wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+sudo echo "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian buster contrib" >> /etc/apt/sources.list
+sudo apt update
+sudo apt -y install linux-headers-`uname -r` build-essential virtualbox-guest-utils virtualbox-dkms dkms virtualbox virtualbox-ext-pack
 echo
 # VirtualBox Hack for USB Devices
 usermod -a -G vboxusers $USER
@@ -516,11 +534,10 @@ sudo apt autoremove -y
 updatedb
 echo
 date > kali-setup-finish-date.txt
+# How to fix apt update
+mv /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
 reboot
 # Just in case DNS issues happen nano -c /etc/resolvconf/resolv.conf.d/head
 # Taco Taco
 # Gucci
-# How to fix apt update
-: ' mv /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d
-'
