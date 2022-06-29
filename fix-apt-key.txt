@@ -1,0 +1,25 @@
+# Tested on Kali 2022.4
+# 06/29/2022
+
+==How to fix apt key warnings==
+
+sudo apt-key list
+
+pub   rsa4096 2016-04-22 [SC]
+      B9F8 D658 297A F3EF C18D  5CDF A2F6 83C5 2980 AECF
+uid           [ unknown] Oracle Corporation (VirtualBox archive signing key) <info@virtualbox.org>
+sub   rsa4096 2016-04-22 [E]
+
+pub   dsa1024 2010-05-18 [SC]
+      7B0F AB3A 13B9 0743 5925  D9C9 5442 2A4B 98AB 5139
+uid           [ unknown] Oracle Corporation (VirtualBox archive signing key) <info@virtualbox.org>
+
+
+sudo apt-key export 2980AECF | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/virtualbox.gpg
+sudo apt-key export 98AB5139 | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/virtualbox02.gpg
+
+pub   rsa4096 2016-02-18 [SCEA]
+      DB08 5A08 CA13 B8AC B917  E0F6 D938 EC0D 0386 51BD
+uid           [ unknown] https://packagecloud.io/slacktechnologies/slack (https://packagecloud.io/docs#gpg_signing) <support@packagecloud.io>
+
+sudo apt-key export 038651BD | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/packagecloud.gpg
