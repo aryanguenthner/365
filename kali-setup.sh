@@ -9,7 +9,7 @@
 # chmod -R 777 .
 # sudo ./kali-setup.sh | tee kali.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 06/25/2022, Minor updates
+# Last Updated 06/28/2022, Minor updates
 ################################################
 echo
 cd /tmp
@@ -72,10 +72,10 @@ echo
 # apt -y install balena-etcher-electron
 echo
 # Project Discovery
-apt -y install golang-go
+sudo apt -y install golang-go
 go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
 # Updog for the Win!
-pip3 install updog
+sudo pip3 install updog
 echo
 # Works with Python 3.9
 echo "Hacker TV"
@@ -91,7 +91,7 @@ wget http://ftp.us.debian.org/debian/pool/main/i/imdbpy/python3-imdbpy_6.8-2_all
 sudo dpkg -i python3-imdbpy_6.8-2_all.deb
 sudo dpkg-buildpackage -b -uc
 sudo python3 -m venv ./venv
-sudo dpkg -i ../hypnotix*.deb
+sudo dpkg -i hypnotix*.deb
 echo
 # How to Update Python Alternatives
 echo
@@ -113,7 +113,7 @@ sudo update-alternatives --set python3 /usr/bin/python3.9
 echo
 # Signal
 echo
-# NOTE: These instructions only work for 64 bit Debian-based
+# NOTE: These instructions only work for 64 bit Debian-based Kali Linux
 # Linux distributions such as Ubuntu, Mint etc.
 # 1. Install our official public software signing key
 wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
@@ -140,14 +140,14 @@ echo
 echo
 echo "Enabling SSH"
 sed -i '34s/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-systemctl enable ssh
-service ssh restart
+sudo systemctl enable ssh
+sudo service ssh restart
 echo
 echo "Your Internal IP Address"
 hostname -I
 echo
 echo "External Internal IP Address"
-curl ifconfig.me
+sudo curl ifconfig.me
 echo
 echo '# IP Address' >> /root/.zshrc
 echo 'hostname -I' >> /root/.zshrc
@@ -158,7 +158,8 @@ echo 'export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin' >> /root/.zshrc
 echo 'export HISTCONTROL=ignoredups' >> /root/.zshrc
 echo
 # Metasploit Setup
-cd /opt
+mkdir -p /opt/metasploit
+cd /opt/metasploit
 curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && chmod 755 msfinstall && ./msfinstall
 echo
 echo "Metasploit Ready Up"
@@ -173,6 +174,10 @@ echo "Kingfisher"
 echo
 cd /opt
 # git clone https://github.com/onevcat/Kingfisher.git
+echo
+echo "PWN AD"
+cd /opt
+git clone https://github.com/Wh04m1001/DFSCoerce
 echo
 echo "Malicious Macro Builder"
 cd /opt
@@ -242,7 +247,7 @@ echo
 echo "bloodhound-python"
 echo
 # bloodhound-python -u 'bob' -p 'Passw0rd!' -ns 192.168.1.3 -d LAB.local  -c all'
-pip install bloodhound
+sudo pip install bloodhound
 echo
 echo "Daniel Miessler Security List Collection"
 cd /opt
@@ -338,7 +343,7 @@ echo
 echo "Installing Impacket"
 echo
 cd /opt
-pip3 install jinja2==2.10.1
+sudo pip3 install jinja2==2.10.1
 git clone https://github.com/SecureAuthCorp/impacket.git
 cd /opt
 cd impacket
@@ -353,11 +358,6 @@ mv gitrob /opt/gitrob/
 echo
 # echo "Google Play CLI" I wish this one actually worked
 # apt -y install gplaycli
-echo
-echo "Lee Baird Discover Script"
-cd /opt
-git clone https://github.com/leebaird/discover.git
-echo "Just Don't Update Kali Using the Lee Baird Discover Update Script"
 echo
 # Save these two for later
 # git clone https://github.com/jschicht/RawCopy.git
@@ -379,14 +379,14 @@ echo
 # Tor Web Browser Stuff
 echo
 # sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && 
-apt -y install torbrowser-launcher
+sudo apt -y install torbrowser-launcher
 echo
 cd /opt
 git clone https://github.com/aryanguenthner/TorGhost.git
 cd TorGhost
-apt -y install python3-pyinstaller
-apt -y install python3-notify2
-pip3 install . --ignore-installed stem
+sudo apt -y install python3-pyinstaller
+sudo apt -y install python3-notify2
+sudo pip3 install . --ignore-installed stem
 sudo ./build.sh
 echo
 # MongoDB Install
@@ -397,7 +397,7 @@ cd /tmp
 wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add -
 echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.2.list
 apt update
-apt -y install mongodb-org
+sudo apt -y install mongodb-org
 service mongod start
 systemctl enable mongod.service
 echo "Hopefully MongoDB Installed"
@@ -407,48 +407,59 @@ echo
 sudo apt -y install ivre
 echo
 # Dependencies
-pip install tinydb
-pip install py2neo
+sudo pip install tinydb
+sudo pip install py2neo
 echo
 # Ivre Database init, data download & importation
 echo
 echo -e '\r'
-yes | ivre ipinfo --init # Run to Clear Dashboard
-yes | ivre scancli --init #Run to Clear Dashboard
-yes | ivre view --init #Run to Clear Dashboard
+yes | ivre ipinfo --init
+yes | ivre scancli --init
+yes | ivre view --init
 yes | ivre flowcli --init
-yes | ivre runscansagentdb --init
+yes | sudo ivre runscansagentdb --init
 sudo ivre ipdata --download
 echo -e '\r'
 echo
 # Nmap Magic
 echo
 echo "Copying IVRE Nmap Scripts to Nmap"
-sudo apt -y install nmap
 echo
 cp /usr/share/ivre/nmap_scripts/*.nse /usr/share/nmap/scripts/
 yes | patch /usr/share/nmap/scripts/rtsp-url-brute.nse \
 /usr/share/ivre/nmap_scripts/patches/rtsp-url-brute.patch
-nmap --script-updatedb
+nmap --script-updatedb > /dev/null
+echo
+echo "Got Nmap http-screenshot script?"
+N='/usr/share/nmap/scripts/http-screenshot.nse'
+if [ -f $N ]
+then
+   echo "File found: http-screenshot.nse"
+
+ls -l /usr/share/nmap/scripts/http-screenshot.nse
+else
+    echo "Downloading missing file http-screenshot.nse"
+cd /usr/share/nmap/scripts
+wget https://raw.githubusercontent.com/ivre/ivre/master/patches/nmap/scripts/http-screenshot.nse
+fi
+nmap --script-updatedb >/dev/null
 echo
 # Enable Nmap to get Screenshots using Phantomjs v1.9.8
 echo
 # PhantomJS Checker
 # Used for nmap screenshots
+# PhantomJS Checker
+# Used for nmap screenshots
 echo "PhantomJS Checker"
-echo
 P=`phantomjs -v`
-
+echo
 if [ $P=1.9.8 ]
 then
+    echo "Found PhantomJS"
 
-echo "Found PhantomJS"
-echo
 phantomjs -v
 else
-
-echo "Downloading PhantomJS"
-echo
+    echo "Downloading PhantomJS"
 cd /tmp
 echo
 wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
@@ -528,16 +539,16 @@ sudo apt update
 sudo apt -y install linux-headers-`uname -r` build-essential virtualbox-guest-utils virtualbox-dkms dkms virtualbox virtualbox-ext-pack
 echo
 # VirtualBox Hack for USB Devices
-usermod -a -G vboxusers $USER
-apt --fix-broken install
+sudo usermod -a -G vboxusers $USER
+sudo apt --fix-broken install
 sudo apt autoremove -y
 updatedb
 echo
 date > kali-setup-finish-date.txt
-# How to fix apt update
-mv /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d
+# Potential temporary fix apt key warning when you update
+# mv /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
 reboot
-# Just in case DNS issues happen nano -c /etc/resolvconf/resolv.conf.d/head
+# Just in case DNS issues: nano -c /etc/resolvconf/resolv.conf.d/head
 # Taco Taco
 # Gucci
