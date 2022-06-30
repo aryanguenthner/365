@@ -418,7 +418,7 @@ yes | ivre scancli --init
 yes | ivre view --init
 yes | ivre flowcli --init
 yes | sudo ivre runscansagentdb --init
-sudo ivre ipdata --download
+# 40 Min download --> sudo ivre ipdata --download
 echo -e '\r'
 echo
 # Nmap Magic
