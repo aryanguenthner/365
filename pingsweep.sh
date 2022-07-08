@@ -1,10 +1,10 @@
 #!/bin/bash
 #######################################################
 # Discover targets by doing a ping sweep
-# Hosts that responded to ICMP ping sweep are output to targets.txt 
+# Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
 # Tested on Kali 2022.2
-# Last updated 07/02/2022
+# Last updated 06/29/2022
 ######################################################
 # Setting Variables
 YELLOW='033m'
@@ -59,7 +59,7 @@ phantomjs -v
 
 fi
 echo
-echo "Got Nmap http-screenshot script?"
+#echo "Got Nmap http-screenshot script?
 N='/usr/share/nmap/scripts/http-screenshot.nse'
 if [ -f $N ]
 then
@@ -73,6 +73,8 @@ wget https://raw.githubusercontent.com/ivre/ivre/master/patches/nmap/scripts/htt
 fi
 nmap --script-updatedb >/dev/null
 echo
+#echo $KALI | awk '{print $1}' > KALI.txt
+#echo
 echo
 echo -e "\e[033mGetting Network Information\e[0m"
 echo
@@ -90,19 +92,19 @@ nmap --stats-every=1m -sn -n $SUBNET --exclude $KALI -oG $FILE0
 echo
 echo -e "\e[033mPing Sweep Completed\e[0m"
 echo
-#echo -e "\e[033mThese Hosts Responded to ICMP\e[0m"
+#echo -e "\e[033mThese Hosts Are Up\e[0m"
 echo  -e "\033[33;5mThese Hosts Are Up\033[0m"
 echo
 cat $FILE0 | grep "Up" | awk '{print $2}' 2>&1 | tee targets.txt
 echo
 echo -e "\e[033mTarget List Ouput File -> targets.txt\e[0m"
 echo
-echo -e "\e[033m***Using nmap to enumerate more info on the targets***\e[0m"
+echo -e "\e[033m***Using nmap to enumerate more info on your targets***\e[0m"
 echo
-echo "Hack The Planet"
+echo "Hack The Planet Happening Now"
 echo
 echo
-nmap $SUBNET --stats-every=1m -T4 -Pn -vvvv -sCVS -p- --open --script http-screenshot --min-rate=256 --min-hostgroup=256 --min-parallelism=256 --max-retries 0 -oA /home/kali/Desktop/testing/nmapscans/$FILE1 --stylesheet nmap-bootstrap.xsl
+nmap --stats-every=1m -T4 -Pn -vvvv -sCV -p- --open --script http-screenshot --min-rate=256 --min-hostgroup=256 --min-parallelism=256 --max-retries 0 -oA /home/kali/Desktop/testing/nmapscans/$FILE1 --stylesheet nmap-bootstrap.xsl $SUBNET
 echo
 xsltproc -o $FILE1.html nmap-bootstrap.xsl $FILE1.xml
 echo

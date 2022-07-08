@@ -9,7 +9,7 @@
 # chmod -R 777 .
 # sudo ./kali-setup.sh | tee kali.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 06/28/2022, Minor updates
+# Last Updated 07/07/2022, Minor updates
 ################################################
 echo
 cd /tmp
@@ -44,7 +44,7 @@ echo
 echo
 cd /usr/share/nmap/scripts
 wget https://raw.githubusercontent.com/aryanguenthner/nmap-nse-vulnerability-scripts/master/smtp-vuln-cve2020-28017-through-28026-21nails.nse
-nmap --script-updatedb
+nmap --script-updatedb > /dev/null
 # Nmap bootstrap file checker
 # If file exists skip the download
 # if file is missing download it
@@ -73,14 +73,36 @@ echo
 echo
 # Project Discovery
 sudo apt -y install golang-go
+echo
 go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
-# Updog for the Win!
+echo
+pip install --upgrade pip
+pip install psycopg
+echo
+# How to Update Python Alternatives
+echo
+# kali python Config
+sudo update-alternatives --list python
+sudo update-alternatives --config python
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.9 2
+sudo update-alternatives --set python /usr/bin/python3.9
+# update-alternatives --remove-all python
+
+#kali python3 Config
+sudo update-alternatives --list python3
+sudo update-alternatives --config python3
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 2
+sudo update-alternatives --set python3 /usr/bin/python3.9
+echo
+# Updog for the Win, if you have python 3.9. 
 sudo pip3 install updog
 echo
 # Works with Python 3.9
 echo "Hacker TV"
 echo
-apt -y install python3-imdbpy
+sudo apt -y install python3-imdbpy
 echo
 sudo apt -y install libmpv1 gir1.2-xapp-1.0 debhelper python3-setproctitle dpkg-dev git
 echo
@@ -92,24 +114,6 @@ sudo dpkg -i python3-imdbpy_6.8-2_all.deb
 sudo dpkg-buildpackage -b -uc
 sudo python3 -m venv ./venv
 sudo dpkg -i hypnotix*.deb
-echo
-# How to Update Python Alternatives
-echo
-: 'kali python Config
-sudo update-alternatives --list python
-sudo update-alternatives --config python
-sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
-sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.8 3
-sudo update-alternatives --set python /usr/bin/python3.8
-# update-alternatives --remove-all python
-
-kali python3 Config
-update-alternatives --list python3
-sudo update-alternatives --config python3
-sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 3 #MobSF
-sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 2 #hypnotix, apt work, not MobSF
-sudo update-alternatives --set python3 /usr/bin/python3.9
-'
 echo
 # Signal
 echo
@@ -540,6 +544,7 @@ sudo apt -y install linux-headers-`uname -r` build-essential virtualbox-guest-ut
 echo
 # VirtualBox Hack for USB Devices
 sudo usermod -a -G vboxusers $USER
+echo
 sudo apt --fix-broken install
 sudo apt autoremove -y
 updatedb
