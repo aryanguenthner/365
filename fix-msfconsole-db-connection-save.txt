@@ -1,0 +1,6 @@
+cd /usr/share/metasploit-framework/config
+msfdb reinit
+/usr/share/metasploit-framework/config
+cp database.yml /root/.msf4/
+service postgresql restart
+msfconsole
