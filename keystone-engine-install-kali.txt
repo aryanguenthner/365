@@ -1,0 +1,15 @@
+cd /opt
+git clone https://github.com/keystone-engine/keystone
+cd keystone
+sudo apt-get install cmake
+mkdir build
+cd build
+../make-share.sh
+sudo make install
+sudo ldconfig
+
+go install github.com/EgeBalci/amber@latest
+docker pull egee/amber
+docker run -it egee/amber
+
+
