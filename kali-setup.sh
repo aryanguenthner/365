@@ -9,7 +9,7 @@
 # chmod -R 777 .
 # sudo ./kali-setup.sh | tee kali.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 07/14/2022, Minor updates
+# Last Updated 07/18/2022, Minor updates
 ################################################
 echo
 cd /tmp
@@ -39,9 +39,12 @@ echo
 # os=debian dist=stretch ./script.deb.sh
 # echo
 # Download and Install cloudflare tunnel
-# cd /tmp
-# wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/ccloudflared-linux-amd64.deb
-# dpkg -i cloudflared-linux-amd64.deb
+cd /tmp
+wget https://github.com/aryanguenthner/365/blob/master/cloudflared-linux-amd64.deb
+dpkg -i cloudflared-linux-amd64.deb
+# python3 -m http.server 443
+# cloudflared tunnel --url localhost:443
+
 echo
 cd /usr/share/nmap/scripts
 wget https://raw.githubusercontent.com/aryanguenthner/nmap-nse-vulnerability-scripts/master/smtp-vuln-cve2020-28017-through-28026-21nails.nse
