@@ -9,7 +9,7 @@
 # chmod -R 777 .
 # sudo ./kali-setup.sh | tee kali.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 07/18/2022, Minor updates
+# Last Updated 07/27/2022, Minor updates
 ################################################
 echo
 cd /tmp
@@ -17,10 +17,7 @@ date > kali-setup-date.txt
 echo
 echo "Good Idea to Update and Upgrade first before we do this kali-setup.sh"
 echo
-# apt update && apt -y upgrade && apt -y full-upgrade && reboot
-echo
-# Nmap Testing
-mkdir -p /home/kali/Desktop/testing/nmapscans
+apt update && apt -y upgrade && apt -y full-upgrade && updatedb && apt autoclean && reboot
 echo
 echo "Be Patient, Installing Kali Dependencies"
 echo
@@ -49,6 +46,12 @@ echo
 cd /usr/share/nmap/scripts
 wget https://raw.githubusercontent.com/aryanguenthner/nmap-nse-vulnerability-scripts/master/smtp-vuln-cve2020-28017-through-28026-21nails.nse
 nmap --script-updatedb > /dev/null
+echo
+# Nmap Testing
+mkdir -p /home/kali/Desktop/testing/nmapscans
+cd /home/kali/
+chmod -R 777 .
+echo
 # Nmap bootstrap file checker
 # If file exists skip the download
 # if file is missing download it
@@ -75,21 +78,26 @@ echo
 # apt update
 # apt -y install balena-etcher-electron
 echo
-# Project Discovery
+# Project Discovery Install go
 sudo apt -y install golang-go
 echo
 go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
 echo
 pip install --upgrade pip
+python3 -m pip install -U pip
+pip3 install --upgrade setuptools
+echo "Installing Updog"
+pip3 install updog
+echo "Installing psycopg"
 pip install psycopg
 echo
 # How to Update Python Alternatives
 echo
-# kali python Config
+''' # kali python Config
 sudo update-alternatives --list python
 sudo update-alternatives --config python
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
-sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.9 2
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.9 3
 sudo update-alternatives --set python /usr/bin/python3.9
 # update-alternatives --remove-all python
 
@@ -99,9 +107,7 @@ sudo update-alternatives --config python3
 sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
 sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 2
 sudo update-alternatives --set python3 /usr/bin/python3.9
-echo
-# Updog for the Win, if you have python 3.9. 
-sudo pip3 install updog
+'''
 echo
 # Works with Python 3.9
 echo "Hacker TV"
@@ -147,7 +153,7 @@ echo
 # Hackers like SSH
 echo
 echo "Enabling SSH"
-sed -i '34s/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+sed -i '33s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
 sudo systemctl enable ssh
 sudo service ssh restart
 echo
@@ -212,7 +218,7 @@ cd /opt
 git clone https://github.com/elceef/dnstwist.git
 sudo apt-get -y install python3-dnspython python3-geoip python3-whois python3-requests python3-ssdeep python3-dns
 echo
-echo "RDPY"
+''' echo "RDPY"
 echo
 cd /opt
 git clone https://github.com/citronneur/rdpy.git
@@ -225,6 +231,7 @@ cd /opt
 git clone https://github.com/FortyNorthSecurity/EyeWitness.git
 cd /opt/EyeWitness/Python/setup
 sudo yes | ./setup.sh
+'''
 echo
 echo "Cewl"
 echo
