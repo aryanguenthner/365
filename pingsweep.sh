@@ -3,9 +3,10 @@
 # Discover targets by doing a ping sweep
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
-# Tested on Kali 2022.2
-# Last updated 06/29/2022
+# Tested on Kali 2022.3
+# Last updated 08/18/2022
 ######################################################
+mkdir -p /home/kali/Desktop/testing/nmapscans/
 # Setting Variables
 YELLOW='033m'
 BLUE='034m'
@@ -59,7 +60,7 @@ phantomjs -v
 
 fi
 echo
-#echo "Got Nmap http-screenshot script?
+echo "Got Nmap Screenshots?"
 N='/usr/share/nmap/scripts/http-screenshot.nse'
 if [ -f $N ]
 then
@@ -73,9 +74,6 @@ wget https://raw.githubusercontent.com/ivre/ivre/master/patches/nmap/scripts/htt
 fi
 nmap --script-updatedb >/dev/null
 echo
-#echo $KALI | awk '{print $1}' > KALI.txt
-#echo
-echo
 echo -e "\e[033mGetting Network Information\e[0m"
 echo
 echo -e "\e[033mExternal IP\e[0m"
@@ -88,11 +86,10 @@ echo -e "\e[033mThe Target Subnet\e[0m"
 echo $SUBNET
 echo
 echo -e "\e[033mGenerating a Target List\e[0m"
-nmap --stats-every=1m -sn -n $SUBNET --exclude $KALI -oG $FILE0
+nmap $SUBNET --stats-every=1m -sn -n --exclude $KALI -oG $FILE0
 echo
 echo -e "\e[033mPing Sweep Completed\e[0m"
 echo
-#echo -e "\e[033mThese Hosts Are Up\e[0m"
 echo  -e "\033[33;5mThese Hosts Are Up\033[0m"
 echo
 cat $FILE0 | grep "Up" | awk '{print $2}' 2>&1 | tee targets.txt
@@ -101,10 +98,10 @@ echo -e "\e[033mTarget List Ouput File -> targets.txt\e[0m"
 echo
 echo -e "\e[033m***Using nmap to enumerate more info on your targets***\e[0m"
 echo
-echo "Hack The Planet Happening Now"
+echo "Hack The Planet"
 echo
 echo
-nmap --stats-every=1m -T4 -Pn -vvvv -sCV -p- --open --script http-screenshot --min-rate=256 --min-hostgroup=256 --min-parallelism=256 --max-retries 0 -oA /home/kali/Desktop/testing/nmapscans/$FILE1 --stylesheet nmap-bootstrap.xsl $SUBNET
+nmap $SUBNET --stats-every=1m -T4 -Pn -vvvv -sCV -p- --open --exclude $KALI --script http-screenshot --min-rate=256 --min-hostgroup=256 --min-parallelism=256 --max-retries 0 -oA /home/kali/Desktop/testing/nmapscans/$FILE1 --stylesheet nmap-bootstrap.xsl
 echo
 xsltproc -o $FILE1.html nmap-bootstrap.xsl $FILE1.xml
 echo
