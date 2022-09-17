@@ -3,20 +3,26 @@
 # Discover targets by doing a ping sweep
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
-# Tested on Kali 2022.3
-# Last updated 08/18/2022
+# Tested on Kali 2022.4
+# Last updated 09/16/2022
+# The future is now
 ######################################################
+# Stay Organized
 mkdir -p /home/kali/Desktop/testing/nmapscans/
 # Setting Variables
 YELLOW='033m'
 BLUE='034m'
 SUBNET=`ip r |awk 'NR==2' |awk '{print $1}'`
-TARGETS=ips.txt
+TARGETS='targets.txt'
+TARGETCOUNT=`wc targets.txt | awk '{print $1}'`
 KALI=`hostname -I`
 EXT=`curl ifconfig.me`
 RANDOM=$$
 FILE0=$(date +%Y%m%d).nmap-pingsweep_$RANDOM
 FILE1=$(date +%Y%m%d).nmapscan_$RANDOM
+BOOTSTRAP='nmap-bootstrap.xsl'
+echo
+echo -e "\e[034mRunning Dependency-check\e[0m"
 echo
 # Nmap bootstrap file checker
 # If file exists skip the download
@@ -30,7 +36,7 @@ then
 
 else
 
-    echo "Downloading Missing File"
+    echo "Downloading $BOOTSTRAP File"
     wget https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl
 
 fi
@@ -46,6 +52,7 @@ then
 
 phantomjs -v
 else
+
     echo "Downloading PhantomJS"
 cd /tmp
 echo
@@ -68,6 +75,7 @@ then
 
 ls -l /usr/share/nmap/scripts/http-screenshot.nse
 else
+
     echo "Downloading missing file http-screenshot.nse"
 cd /usr/share/nmap/scripts
 wget https://raw.githubusercontent.com/ivre/ivre/master/patches/nmap/scripts/http-screenshot.nse
@@ -86,11 +94,12 @@ echo -e "\e[033mThe Target Subnet\e[0m"
 echo $SUBNET
 echo
 echo -e "\e[033mGenerating a Target List\e[0m"
+# Ping Sweep
 nmap $SUBNET --stats-every=1m -sn -n --exclude $KALI -oG $FILE0
 echo
 echo -e "\e[033mPing Sweep Completed\e[0m"
 echo
-echo  -e "\033[33;5mThese Hosts Are Up\033[0m"
+echo  -e "\033[33;5mThese $TARGETCOUNT Hosts Are Up\033[0m"
 echo
 cat $FILE0 | grep "Up" | awk '{print $2}' 2>&1 | tee targets.txt
 echo
@@ -98,16 +107,18 @@ echo -e "\e[033mTarget List Ouput File -> targets.txt\e[0m"
 echo
 echo -e "\e[033m***Using nmap to enumerate more info on your targets***\e[0m"
 echo
-echo "Hack The Planet"
+echo -e "Hack The Planet"
 echo
+# Nmap Scan Syntax
+nmap -iL $TARGETS --stats-every=1m -T4 -Pn -sCV -p- --open --reason -vvvv --exclude $KALI --script=http-screenshot --min-rate=256 --max-retries=0 -oA "/home/kali/Desktop/testing/nmapscans/$FILE1" --stylesheet $BOOTSTRAP
 echo
-nmap $SUBNET --stats-every=1m -T4 -Pn -vvvv -sCV -p- --open --exclude $KALI --script http-screenshot --min-rate=256 --min-hostgroup=256 --min-parallelism=256 --max-retries 0 -oA /home/kali/Desktop/testing/nmapscans/$FILE1 --stylesheet nmap-bootstrap.xsl
-echo
-xsltproc -o $FILE1.html nmap-bootstrap.xsl $FILE1.xml
+xsltproc -o $FILE1.html $BOOTSTRAP $FILE1.xml
 echo
 chmod -R 777 .
 echo
-# TODO su kali
+echo "Nmap scan completed"
+echo $(pwd)/$FILE1.html
+echo
 # firefox $FILE1.html
 # Pay me later
 
