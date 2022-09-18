@@ -9,15 +9,23 @@
 # chmod -R 777 .
 # sudo ./kali-setup.sh | tee kali.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 07/27/2022, Minor updates
+# Last Updated 09/18/2022, Minor updates
 ################################################
+# Stay Organized
+mkdir -p /home/kali/Desktop/testing/nmapscans/
+chmod -R 777 /home/kali/Desktop/
+# Setting Variables
+YELLOW=033m
+BLUE=034m
+EXT=`curl ifconfig.me`
+KALI=`hostname -I`
 echo
 cd /tmp
 date > kali-setup-date.txt
 echo
 echo "Good Idea to Update and Upgrade first before we do this kali-setup.sh"
 echo
-apt update && apt -y upgrade && apt -y full-upgrade && updatedb && apt autoclean && reboot
+apt update && apt -y upgrade && apt -y full-upgrade && updatedb && apt autoclean
 echo
 echo "Be Patient, Installing Kali Dependencies"
 echo
@@ -38,7 +46,8 @@ echo
 # Download and Install cloudflare tunnel
 cd /tmp
 wget https://github.com/aryanguenthner/365/blob/master/cloudflared-linux-amd64.deb
-dpkg -i cloudflared-linux-amd64.deb
+chmod 777 cloudflared-linux-amd64.deb
+sudo dpkg -i cloudflared-linux-amd64.deb
 # python3 -m http.server 443
 # cloudflared tunnel --url localhost:443
 
@@ -55,19 +64,20 @@ echo
 # Nmap bootstrap file checker
 # If file exists skip the download
 # if file is missing download it
-N='nmap-bootstrap.xsl'
+NB=nmap-bootstrap.xsl
 echo "Nmap Bootstrap File Checker"
 echo
-if [ -f $N ]
+if [ -f $NB ]
 then
-    echo "File Found: nmap-bootstrap.xsl"
+    echo "File found: nmap-bootstrap.xsl"
 
 else
 
-    echo "Downloading Missing File"
-    wget https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl
+    echo "Downloading $BOOTSTRAP File"
+wget https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl >/dev/null
 
 fi
+echo
 cp nmap-bootstrap.xsl /home/kali/Desktop/testing/nmapscans
 echo
 # Download and Install Etcher - USB Bootable Media Creator
@@ -84,6 +94,7 @@ echo
 go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
 echo
 pip install --upgrade pip
+echo
 python3 -m pip install -U pip
 pip3 install --upgrade setuptools
 echo "Installing Updog"
@@ -445,24 +456,23 @@ yes | patch /usr/share/nmap/scripts/rtsp-url-brute.nse \
 /usr/share/ivre/nmap_scripts/patches/rtsp-url-brute.patch
 nmap --script-updatedb > /dev/null
 echo
-echo "Got Nmap http-screenshot script?"
-N='/usr/share/nmap/scripts/http-screenshot.nse'
+echo "Got Nmap Screenshots?"
+N=/usr/share/nmap/scripts/http-screenshot.nse
 if [ -f $N ]
 then
-   echo "File found: http-screenshot.nse"
+    echo "File found: http-screenshot.nse"
 
 ls -l /usr/share/nmap/scripts/http-screenshot.nse
 else
+
     echo "Downloading missing file http-screenshot.nse"
 cd /usr/share/nmap/scripts
-wget https://raw.githubusercontent.com/ivre/ivre/master/patches/nmap/scripts/http-screenshot.nse
+wget https://raw.githubusercontent.com/ivre/ivre/master/patches/nmap/scripts/http-screenshot.nse >/dev/null
 fi
 nmap --script-updatedb >/dev/null
 echo
 # Enable Nmap to get Screenshots using Phantomjs v1.9.8
 echo
-# PhantomJS Checker
-# Used for nmap screenshots
 # PhantomJS Checker
 # Used for nmap screenshots
 echo "PhantomJS Checker"
@@ -474,19 +484,21 @@ then
 
 phantomjs -v
 else
-    echo "Downloading PhantomJS"
+
+    echo "Downloading Missing PhantomJS"
 cd /tmp
 echo
-wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
+wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2 >/dev/null
 echo
 echo "Extracting and Installing PhantomJS 1.9.8"
-tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2
+tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2 >/dev/null
 mv phantomjs-1.9.8-linux-x86_64 phantomjs
 mv phantomjs /opt
 ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
 phantomjs -v
-
+echo
 fi
+echo
 echo
 # Windows Exploit Suggester Next Gen
 echo
