@@ -38,7 +38,7 @@ then
 else
 
     echo "Downloading $BOOTSTRAP File"
-    wget https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl >/dev/null
+wget https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl >/dev/null
 
 fi
 echo
@@ -72,7 +72,7 @@ echo "Got Nmap Screenshots?"
 N=/usr/share/nmap/scripts/http-screenshot.nse
 if [ -f $N ]
 then
-   echo "File found: http-screenshot.nse"
+    echo "File found: http-screenshot.nse"
 
 ls -l /usr/share/nmap/scripts/http-screenshot.nse
 else
@@ -110,7 +110,7 @@ echo
 echo -e "\e[034mHack The Planet\e[0m"
 echo
 # Nmap Scan Syntax
-nmap -iL $TARGETS --stats-every=1m -T4 -Pn -sCV -p- --open -vvvv --exclude $KALI --script=http-screenshot --min-rate=256 --max-retries=0 -oA "/home/kali/Desktop/testing/nmapscans/$FILE1" --stylesheet $BOOTSTRAP
+nmap -iL $TARGETS --stats-every=1m -T4 -Pn -sCV -p 0-65535 --open -vvvv --exclude $KALI --script=http-screenshot --max-retries=0 -oA "/home/kali/Desktop/testing/nmapscans/$FILE1" --stylesheet $BOOTSTRAP
 echo
 xsltproc -o $FILE1.html $BOOTSTRAP $FILE1.xml
 echo
