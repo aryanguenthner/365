@@ -4,7 +4,7 @@
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
 # Tested on Kali 2022.4
-# Last updated 09/17/2022
+# Last updated 09/21/2022
 # The future is now
 ######################################################
 # Stay Organized
@@ -99,9 +99,13 @@ echo -e "\e[033mGenerating a Target List\e[0m"
 cd /home/kali/Desktop/testing/nmapscans/
 nmap $SUBNET --stats-every=1m -sn -n --exclude $KALI -oG $FILE0
 echo
-echo -e "\e[033mPing Sweep Completed\e[0m"
 echo
 echo -e "\e[033mTarget List File -> targets.txt\e[0m"
+echo
+echo
+echo -e "\e[033mPing Sweep Completed\e[0m"
+echo
+
 echo
 cat $FILE0 | grep "Up" | awk '{print $2}' 2>&1 | tee targets.txt
 echo
@@ -110,7 +114,7 @@ echo
 echo -e "\e[034mHack The Planet\e[0m"
 echo
 # Nmap Scan Syntax
-nmap -iL $TARGETS --stats-every=1m -T4 -Pn -sCV -p 0-65535 --open -vvvv --exclude $KALI --script=http-screenshot --max-retries=0 -oA "/home/kali/Desktop/testing/nmapscans/$FILE1" --stylesheet $BOOTSTRAP
+nmap -iL $TARGETS --stats-every=1m -T4 -Pn -sCTV -p 0-65535 --open -vvvv --exclude $KALI --script=http-screenshot --max-retries=0 -oA "/home/kali/Desktop/testing/nmapscans/$FILE1" --stylesheet $BOOTSTRAP
 echo
 xsltproc -o $FILE1.html $BOOTSTRAP $FILE1.xml
 echo
