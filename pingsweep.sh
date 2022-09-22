@@ -6,6 +6,7 @@
 # Tested on Kali 2022.4
 # Last updated 09/21/2022
 # The future is now
+# Got nmap 7.93?
 ######################################################
 # Stay Organized
 chmod -R 777 /home/kali/Desktop/
@@ -22,66 +23,85 @@ RANDOM=$$
 FILE0=$(date +%Y%m%d).nmap-pingsweep_$RANDOM
 FILE1=$(date +%Y%m%d).nmapscan_$RANDOM
 BOOTSTRAP=nmap-bootstrap.xsl
+NMAP=`nmap -V | awk 'NR==1' | cut -d " " -f 1,2,3`
 echo
 echo -e "\e[034mRunning Dependency-check\e[0m"
-echo
+
+# Nmap checker
+
+NV=`nmap -V | awk 'NR==1' | cut -d " " -f 3`
+
+if [ $NV=7.93 ]
+then
+    echo "Nmap version 7.93 found"
+
+else
+
+    echo "Downloading and installing Nmap 7.93"
+cd /tmp
+wget https://nmap.org/dist/nmap-7.93.tar.bz2 >/dev/null
+bzip2 -cd nmap-7.93.tar.bz2 | tar xvf - >/dev/null
+cd nmap-7.93
+./configure >/dev/null
+make >/dev/null
+make install >/dev/null
+echo $NMAP Installed
+fi
+
 # Nmap bootstrap file checker
-# If file exists skip the download
-# if file is missing download it
+
 NB=nmap-bootstrap.xsl
-echo "Nmap Bootstrap File Checker"
-echo
+
 if [ -f $NB ]
 then
     echo "File found: nmap-bootstrap.xsl"
 
 else
 
-    echo "Downloading $BOOTSTRAP File"
-wget https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl >/dev/null
+    echo "Downloading Missing $BOOTSTRAP File"
+cd /home/kali/Desktop/testing/nmapscans/
+wget https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl > /dev/null
 
 fi
-echo
+
 # PhantomJS Checker
-# Used for nmap screenshots
-echo "PhantomJS Checker"
+
 P=`phantomjs -v`
 echo
 if [ $P=1.9.8 ]
 then
-    echo "Found PhantomJS"
+    echo "Found PhantomJS 1.9.8"
 
-phantomjs -v
 else
 
     echo "Downloading Missing PhantomJS"
 cd /tmp
-echo
-wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2 >/dev/null
+wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2 > /dev/null
 echo
 echo "Extracting and Installing PhantomJS 1.9.8"
-tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2 >/dev/null
+tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2 > /dev/null
 mv phantomjs-1.9.8-linux-x86_64 phantomjs
 mv phantomjs /opt
 ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
+echo " Phantomjs Version"
 phantomjs -v
 echo
 fi
 echo
 echo "Got Nmap Screenshots?"
 N=/usr/share/nmap/scripts/http-screenshot.nse
+
 if [ -f $N ]
 then
     echo "File found: http-screenshot.nse"
 
-ls -l /usr/share/nmap/scripts/http-screenshot.nse
 else
 
     echo "Downloading missing file http-screenshot.nse"
 cd /usr/share/nmap/scripts
-wget https://raw.githubusercontent.com/ivre/ivre/master/patches/nmap/scripts/http-screenshot.nse >/dev/null
+wget https://raw.githubusercontent.com/ivre/ivre/master/patches/nmap/scripts/http-screenshot.nse > /dev/null
 fi
-nmap --script-updatedb >/dev/null
+nmap --script-updatedb > /dev/null
 echo
 echo -e "\e[033mGetting Network Information\e[0m"
 echo
@@ -99,13 +119,10 @@ echo -e "\e[033mGenerating a Target List\e[0m"
 cd /home/kali/Desktop/testing/nmapscans/
 nmap $SUBNET --stats-every=1m -sn -n --exclude $KALI -oG $FILE0
 echo
-echo
 echo -e "\e[033mTarget List File -> targets.txt\e[0m"
 echo
 echo
 echo -e "\e[033mPing Sweep Completed\e[0m"
-echo
-
 echo
 cat $FILE0 | grep "Up" | awk '{print $2}' 2>&1 | tee targets.txt
 echo
@@ -114,16 +131,16 @@ echo
 echo -e "\e[034mHack The Planet\e[0m"
 echo
 # Nmap Scan Syntax
-nmap -iL $TARGETS --stats-every=1m -T4 -Pn -sCTV -p 0-65535 --open -vvvv --exclude $KALI --script=http-screenshot --max-retries=0 -oA "/home/kali/Desktop/testing/nmapscans/$FILE1" --stylesheet $BOOTSTRAP
+nmap -A --stats-every=1m -Pn -p* --open -v -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1
 echo
-xsltproc -o $FILE1.html $BOOTSTRAP $FILE1.xml
-echo
+cd /home/kali/Desktop/testing/nmapscans/
 echo
 echo "Nmap scan completed"
 echo $(pwd)/$FILE1.html
-chmod -R 777 .
 echo
-
+xsltproc -o $FILE1.html $BOOTSTRAP $FILE1.xml
+echo
+chmod -R 777 /home/kali/Desktop
 # Pay me later
 
 : 'Great Enumeration Scripts -> ssl-cert,ssl-enum-ciphers,ssl-heartbleed,sip-enum-users,sip-brute,sip-methods,rtsp-screenshot,rtsp-url-brute,rpcinfo,vnc-screenshot,x11-access,x11-screenshot,nfs-showmount,nfs-ls,smb-vuln-ms08-067,smb-vuln-ms17-010,smb-ls,smb-enum-shares,http-robots.txt.nse,http-webdav-scan,http-screenshot,http-enum --script-args=http-enum.basepath=200,http-auth --script-args=http-auth.path=/login,http-form-brute,http-sql-injection,http-ntlm-info --script-args=http-ntlm-info.root=/root/,http-git,http-open-redirect,http-vuln-cve2017-5638 --script-args=path=/welcome.action,http-open-proxy,socks-open-proxy,smtp-open-relay,ftp-anon,ftp-bounce,ms-sql-config,ms-sql-info,ms-sql-empty-password,mysql-info,mysql-empty-password,vnc-brute,vnc-screenshot,vmware-version,http-shellshock,http-default-accounts,http-passwd --script-args=http-passwd.root=/test/,smb-vuln-ms17-010,rdp-vuln-ms12-020,vuln,grab_beacon_config,vmware-version,smtp-vuln-cve2020-28017-through-28026-21nails.nse
