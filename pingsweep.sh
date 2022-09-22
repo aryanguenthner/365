@@ -10,7 +10,7 @@
 # Got nmap?
 ######################################################
 # Stay Organized
-chmod -R 775 /home/kali/Desktop/
+chmod -R 777 /home/kali/Desktop/
 mkdir -p /home/kali/Desktop/testing/nmapscans/
 cd /home/kali/Desktop/testing/nmapscans
 # Setting Variables
@@ -29,16 +29,16 @@ echo
 echo -e "\e[034mRunning Dependency-check\e[0m"
 
 # Nmap checker
-
+echo
 NV=`nmap -V | awk 'NR==1' | cut -d " " -f 3`
-
-if [ "$NV=7.93" ]
+if [ "$NV" = "7.93" ]
 then
-    echo "Nmap version 7.93 installed"
+    echo "Found Nmap version 7.93"
 
 else
 
-    echo "Downloading and installing Nmap 7.93"
+    echo -e "\e[034mDownloading and installing Nmap 7.93\e[0m"
+
 cd /tmp
 wget https://nmap.org/dist/nmap-7.93.tar.bz2 >/dev/null
 bzip2 -cd nmap-7.93.tar.bz2 | tar xvf - >/dev/null
@@ -52,30 +52,30 @@ echo
 # Nmap bootstrap file checker
 
 NB=nmap-bootstrap.xsl
-
 if [ -f $NB ]
 then
     echo "Found nmap-bootstrap.xsl"
 
 else
 
-    echo "Downloading Missing $BOOTSTRAP File"
+    echo -e "\e[034mDownloading Missing $BOOTSTRAP File\e[0m"
+
 cd /home/kali/Desktop/testing/nmapscans/
 wget https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl > /dev/null
 
 fi
 
 # PhantomJS Checker
-
-P=`phantomjs -v` > /dev/null
-
-if [ "$P=1.9.8" ]
+echo
+P=`phantomjs -v`
+if [ "$P" = "1.9.8" ]
 then
     echo "Found PhantomJS 1.9.8"
 
 else
 
-    echo "Downloading Missing PhantomJS"
+    echo -e "\e[034mDownloading Missing PhantomJS\e[0m"
+
 cd /tmp
 wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2 > /dev/null
 echo
@@ -89,17 +89,17 @@ echo " Phantomjs Version"
 phantomjs -v
 
 fi
+
 echo
-
 N=/usr/share/nmap/scripts/http-screenshot.nse
-
 if [ -f $N ]
 then
     echo "Found http-screenshot.nse"
 
 else
 
-    echo "Downloading missing file http-screenshot.nse"
+    echo -e "\e[034mDownloading missing file http-screenshot.nse\e[0m"
+
 cd /usr/share/nmap/scripts
 wget https://raw.githubusercontent.com/ivre/ivre/master/patches/nmap/scripts/http-screenshot.nse > /dev/null
 fi
@@ -139,6 +139,9 @@ cd /home/kali/Desktop/testing/nmapscans/
 echo
 echo "Nmap scan completed"
 echo $(pwd)/$FILE1.html
+echo
+echo "Import results into Metasploit"
+echo msfconsole db_import $(pwd)/$FILE1.xml
 echo
 xsltproc -o $FILE1.html $BOOTSTRAP $FILE1.xml
 echo
