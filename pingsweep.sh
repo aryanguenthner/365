@@ -34,7 +34,7 @@ NV=`nmap -V | awk 'NR==1' | cut -d " " -f 3`
 
 if [ $NV=7.93 ]
 then
-    echo "Nmap version 7.93 found"
+    echo "Nmap version 7.93 installed"
 
 else
 
@@ -55,7 +55,7 @@ NB=nmap-bootstrap.xsl
 
 if [ -f $NB ]
 then
-    echo "File found: nmap-bootstrap.xsl"
+    echo "Found nmap-bootstrap.xsl"
 
 else
 
@@ -89,12 +89,12 @@ phantomjs -v
 echo
 fi
 echo
-echo "Got Nmap Screenshots?"
+
 N=/usr/share/nmap/scripts/http-screenshot.nse
 
 if [ -f $N ]
 then
-    echo "File found: http-screenshot.nse"
+    echo "Found http-screenshot.nse"
 
 else
 
