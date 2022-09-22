@@ -5,12 +5,12 @@
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
 # Tested on Kali 2022.3
-# Last updated 09/21/2022
+# Last updated 09/22/2022
 # The future is now
 # Got nmap?
 ######################################################
 # Stay Organized
-chmod -R 777 /home/kali/Desktop/
+chmod -R 775 /home/kali/Desktop/
 mkdir -p /home/kali/Desktop/testing/nmapscans/
 cd /home/kali/Desktop/testing/nmapscans
 # Setting Variables
@@ -32,7 +32,7 @@ echo -e "\e[034mRunning Dependency-check\e[0m"
 
 NV=`nmap -V | awk 'NR==1' | cut -d " " -f 3`
 
-if [ $NV=7.93 ]
+if [ "$NV=7.93" ]
 then
     echo "Nmap version 7.93 installed"
 
@@ -67,9 +67,9 @@ fi
 
 # PhantomJS Checker
 
-P=`phantomjs -v`
-echo
-if [ $P=1.9.8 ]
+P=`phantomjs -v` > /dev/null
+
+if [ "$P=1.9.8" ]
 then
     echo "Found PhantomJS 1.9.8"
 
@@ -84,9 +84,10 @@ tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2 > /dev/null
 mv phantomjs-1.9.8-linux-x86_64 phantomjs
 mv phantomjs /opt
 ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
+
 echo " Phantomjs Version"
 phantomjs -v
-echo
+
 fi
 echo
 
