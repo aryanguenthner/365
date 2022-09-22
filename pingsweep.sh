@@ -132,7 +132,7 @@ echo
 echo -e "\e[034mHack The Planet\e[0m"
 echo
 # Nmap Scan Syntax
-nmap -sCTV --stats-every=1m -Pn -p* --open -v -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1
+nmap -A -sCT -vvv --stats-every=1m -Pn -p* --open -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1
 echo
 cd /home/kali/Desktop/testing/nmapscans/
 echo
