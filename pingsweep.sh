@@ -1,12 +1,13 @@
 #!/bin/bash
 #######################################################
 # Discover targets by doing a ping sweep
+# Enumerate open ports and services
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
-# Tested on Kali 2022.4
+# Tested on Kali 2022.3
 # Last updated 09/21/2022
 # The future is now
-# Got nmap 7.93?
+# Got nmap?
 ######################################################
 # Stay Organized
 chmod -R 777 /home/kali/Desktop/
@@ -47,7 +48,7 @@ make >/dev/null
 make install >/dev/null
 echo $NMAP Installed
 fi
-
+echo
 # Nmap bootstrap file checker
 
 NB=nmap-bootstrap.xsl
@@ -131,7 +132,7 @@ echo
 echo -e "\e[034mHack The Planet\e[0m"
 echo
 # Nmap Scan Syntax
-nmap -A --stats-every=1m -Pn -p* --open -v -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1
+nmap -sCTV --stats-every=1m -Pn -p* --open -v -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1
 echo
 cd /home/kali/Desktop/testing/nmapscans/
 echo
