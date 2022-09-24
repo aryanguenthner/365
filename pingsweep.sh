@@ -139,7 +139,7 @@ echo -e "\e[034mHack The Planet\e[0m"
 echo "$SYNTAX"
 echo
 # Nmap Scan Syntax
-nmap -A -sCT -vvvv --stats-every=1m -Pn -p* --open -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/
+nmap -A -sCT -vvvv --stats-every=1m -Pn -p* --open -iL $TARGETS --script=http-screenshot,vuln --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/
 echo
 echo "Nmap scan completed"
 echo $(pwd)/$FILE1.html
