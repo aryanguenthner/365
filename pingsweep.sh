@@ -33,6 +33,7 @@ SYNTAX="nmap -A -sCT -vvv --stats-every=1m -Pn -p* --open -iL $TARGETS --script=
 # TODO - Uninstall older version of Nmap
 #sudo dpkg -r --force-depends nmap
 # Install latest version
+echo
 echo -e "\e[034mRunning Dependency-check\e[0m"
 : ' # Nmap checker
 NV=`nmap -V | awk 'NR==1' | cut -d " " -f 3`
@@ -81,7 +82,7 @@ else
     echo -e "\e[034mDownloading Missing PhantomJS\e[0m"
 
 cd /tmp
-wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
+wget https://github.com/aryanguenthner/365/blob/f5a069eec95557f2741c16d0dbf27653ddb85e25/phantomjs-1.9.8-linux-x86_64.tar.bz2
 
 echo "Extracting and Installing PhantomJS 1.9.8"
 tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2
@@ -104,12 +105,12 @@ else
 
     echo -e "\e[034mDownloading missing file http-screenshot.nse\e[0m"
 
-wget https://raw.githubusercontent.com/ivre/ivre/master/patches/nmap/scripts/http-screenshot.nse
+wget https://raw.githubusercontent.com/aryanguenthner/365/master/http-screenshot.nse
 
 fi
 nmap --script-updatedb > /dev/null
 echo
-echo -e "\e[033mGetting Network Information\e[0m"
+echo -e "\e[033m***Getting Network Information***\e[0m"
 echo
 echo -e "\e[033mExternal IP\e[0m"
 echo $EXT
@@ -138,7 +139,7 @@ echo -e "\e[034mHack The Planet\e[0m"
 echo "$SYNTAX"
 echo
 # Nmap Scan Syntax
-nmap -A -sCT -vvv --stats-every=1m -Pn -p* --open -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/
+nmap -A -sCT -vvvv --stats-every=1m -Pn -p* --open -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/
 echo
 echo "Nmap scan completed"
 echo $(pwd)/$FILE1.html
@@ -146,7 +147,8 @@ echo
 xsltproc -o $FILE1.html $BOOTSTRAP $FILE1.xml
 echo
 echo "Import results into Metasploit"
-echo msfconsole db_import $(pwd)/$FILE1.xml
+echo msfconsole
+echo db_import $(pwd)/$FILE1.xml
 # Pay me later
 chmod -R 777 /home/kali/Desktop
 
