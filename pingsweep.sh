@@ -5,7 +5,7 @@
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
 # Tested on Kali 2022.4
-# Last updated 09/24/2022
+# Last updated 09/25/2022
 # The future is now
 # Got nmap?
 ######################################################
@@ -28,7 +28,7 @@ FILE1=$(date +%Y%m%d).nmapscan_$RANDOM
 BOOTSTRAP=nmap-bootstrap.xsl
 NMAP=`nmap -V | awk 'NR==1' | cut -d " " -f 1,2,3`
 RANDOM=$$
-SYNTAX="nmap -A -sCT -vvv --stats-every=1m -Pn -p* --open -iL $TARGETS --script=http-screenshot,vuln --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/"
+SYNTAX="nmap -A -sCT -vvv --stats-every=1m -Pn -p* --open -iL $TARGETS --script http-screenshot,vuln --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/"
 
 # TODO - Uninstall older version of Nmap
 #sudo dpkg -r --force-depends nmap
@@ -95,7 +95,7 @@ phantomjs -v
 
 fi
 
-cd /usr/share/nmap/scripts/
+# http-screenshot Checker
 N=/usr/share/nmap/scripts/http-screenshot.nse
 if [ -f $N ]
 then
@@ -104,12 +104,13 @@ then
 else
 
     echo -e "\e[034mDownloading missing file http-screenshot.nse\e[0m"
-
+cd /usr/share/nmap/scripts/
 wget https://raw.githubusercontent.com/aryanguenthner/365/master/http-screenshot.nse
+nmap --script-updatedb > /dev/null
 
 fi
-nmap --script-updatedb > /dev/null
-echo
+
+# Networking
 echo -e "\e[033m***Getting Network Information***\e[0m"
 echo
 echo -e "\e[033mExternal IP\e[0m"
@@ -139,7 +140,7 @@ echo -e "\e[034mHack The Planet\e[0m"
 echo "$SYNTAX"
 echo
 # Nmap Scan Syntax
-nmap -A -sCT -vvvv --stats-every=1m -Pn -p* --open -iL $TARGETS --script=http-screenshot,vuln --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/
+nmap -A -sCT -vvvv --stats-every=1m -Pn -p* --open -iL $TARGETS --script http-screenshot,vuln --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/
 echo
 echo "Nmap scan completed"
 echo $(pwd)/$FILE1.html
@@ -151,7 +152,6 @@ echo msfconsole
 echo db_import $(pwd)/$FILE1.xml
 # Pay me later
 chmod -R 777 /home/kali/Desktop
-
 
 : 'Great Enumeration Scripts -> ssl-cert,ssl-enum-ciphers,ssl-heartbleed,sip-enum-users,sip-brute,sip-methods,rtsp-screenshot,rtsp-url-brute,rpcinfo,vnc-screenshot,x11-access,x11-screenshot,nfs-showmount,nfs-ls,smb-vuln-ms08-067,smb-vuln-ms17-010,smb-ls,smb-enum-shares,http-robots.txt.nse,http-webdav-scan,http-screenshot,http-enum --script-args=http-enum.basepath=200,http-auth --script-args=http-auth.path=/login,http-form-brute,http-sql-injection,http-ntlm-info --script-args=http-ntlm-info.root=/root/,http-git,http-open-redirect,http-vuln-cve2017-5638 --script-args=path=/welcome.action,http-open-proxy,socks-open-proxy,smtp-open-relay,ftp-anon,ftp-bounce,ms-sql-config,ms-sql-info,ms-sql-empty-password,mysql-info,mysql-empty-password,vnc-brute,vnc-screenshot,vmware-version,http-shellshock,http-default-accounts,http-passwd --script-args=http-passwd.root=/test/,smb-vuln-ms17-010,rdp-vuln-ms12-020,vuln,grab_beacon_config,vmware-version,smtp-vuln-cve2020-28017-through-28026-21nails.nse
 '
