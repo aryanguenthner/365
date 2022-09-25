@@ -67,7 +67,7 @@ then
 else
 
     echo -e "\e[034mDownloading Missing $BOOTSTRAP File\e[0m"
-wget https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl > /dev/null
+wget -O /home/kali/Desktop/testing/nmapscans/nmap-bootstrap.xsl https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl > /dev/null
 
 fi
 
@@ -81,8 +81,7 @@ else
 
     echo -e "\e[034mDownloading Missing PhantomJS\e[0m"
 
-cd /tmp
-wget https://github.com/aryanguenthner/365/blob/f5a069eec95557f2741c16d0dbf27653ddb85e25/phantomjs-1.9.8-linux-x86_64.tar.bz2
+wget -O /tmp/phantomjs-1.9.8-linux-x86_64.tar.bz2 https://github.com/aryanguenthner/365/blob/f5a069eec95557f2741c16d0dbf27653ddb85e25/phantomjs-1.9.8-linux-x86_64.tar.bz2
 
 echo "Extracting and Installing PhantomJS 1.9.8"
 tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2
@@ -104,13 +103,13 @@ then
 else
 
     echo -e "\e[034mDownloading missing file http-screenshot.nse\e[0m"
-cd /usr/share/nmap/scripts/
-wget https://raw.githubusercontent.com/aryanguenthner/365/master/http-screenshot.nse
+wget -O /usr/share/nmap/scripts/http-screenshot.nse https://raw.githubusercontent.com/aryanguenthner/365/master/http-screenshot.nse
 nmap --script-updatedb > /dev/null
 
 fi
 
 # Networking
+echo
 echo -e "\e[033m***Getting Network Information***\e[0m"
 echo
 echo -e "\e[033mExternal IP\e[0m"
@@ -140,7 +139,7 @@ echo -e "\e[034mHack The Planet\e[0m"
 echo "$SYNTAX"
 echo
 # Nmap Scan Syntax
-nmap -A -sCT -vvvv --stats-every=1m -Pn -p* --open -iL $TARGETS --script http-screenshot,vuln --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/
+nmap -A -sCT -vvvv --stats-every=1m -Pn -p* --script http-screenshot,vuln --open -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/
 echo
 echo "Nmap scan completed"
 echo $(pwd)/$FILE1.html
@@ -152,6 +151,7 @@ echo msfconsole
 echo db_import $(pwd)/$FILE1.xml
 # Pay me later
 chmod -R 777 /home/kali/Desktop
+updatedb
 
 : 'Great Enumeration Scripts -> ssl-cert,ssl-enum-ciphers,ssl-heartbleed,sip-enum-users,sip-brute,sip-methods,rtsp-screenshot,rtsp-url-brute,rpcinfo,vnc-screenshot,x11-access,x11-screenshot,nfs-showmount,nfs-ls,smb-vuln-ms08-067,smb-vuln-ms17-010,smb-ls,smb-enum-shares,http-robots.txt.nse,http-webdav-scan,http-screenshot,http-enum --script-args=http-enum.basepath=200,http-auth --script-args=http-auth.path=/login,http-form-brute,http-sql-injection,http-ntlm-info --script-args=http-ntlm-info.root=/root/,http-git,http-open-redirect,http-vuln-cve2017-5638 --script-args=path=/welcome.action,http-open-proxy,socks-open-proxy,smtp-open-relay,ftp-anon,ftp-bounce,ms-sql-config,ms-sql-info,ms-sql-empty-password,mysql-info,mysql-empty-password,vnc-brute,vnc-screenshot,vmware-version,http-shellshock,http-default-accounts,http-passwd --script-args=http-passwd.root=/test/,smb-vuln-ms17-010,rdp-vuln-ms12-020,vuln,grab_beacon_config,vmware-version,smtp-vuln-cve2020-28017-through-28026-21nails.nse
 '
