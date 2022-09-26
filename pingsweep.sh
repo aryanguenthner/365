@@ -89,7 +89,7 @@ mv phantomjs-1.9.8-linux-x86_64 phantomjs
 mv phantomjs /opt
 ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
 
-echo "Phantomjs Version"
+    echo "Phantomjs Version"
 phantomjs -v
 
 fi
@@ -103,7 +103,7 @@ then
 else
 
     echo -e "\e[034mDownloading missing file http-screenshot.nse\e[0m"
-wget -O /usr/share/nmap/scripts/http-screenshot.nse https://raw.githubusercontent.com/aryanguenthner/365/master/http-screenshot.nse
+wget https://raw.githubusercontent.com/aryanguenthner/365/master/http-screenshot.nse
 nmap --script-updatedb > /dev/null
 
 fi
