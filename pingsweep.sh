@@ -9,6 +9,11 @@
 # The future is now
 # Got nmap?
 ######################################################
+echo
+# Todays Date
+echo -e "\e[034mToday is\e[0m"
+date
+echo
 # Stay Organized
 chmod -R 777 /home/kali/Desktop/
 mkdir -p /home/kali/Desktop/testing/nmapscans/
@@ -27,7 +32,7 @@ BOOTSTRAP=nmap-bootstrap.xsl
 NMAP=`nmap -V | awk 'NR==1' | cut -d " " -f 1,2,3`
 RANDOM=$$
 LS=`ls`
-SYNTAX="nmap -A -sCT -vvvv --stats-every=1m -Pn -p* --script http-screenshot -iL $TARGETS --script http-screenshot,vuln,banner --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/"
+SYNTAX="nmap -A -sCT -vvvv --stats-every=1m -Pn -p* --script http-screenshot,banner -iL $TARGETS --script http-screenshot,vuln,banner --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/"
 
 # TODO - Uninstall older version of Nmap
 #sudo dpkg -r --force-depends nmap
@@ -146,7 +151,7 @@ echo "$SYNTAX"
 echo
 
 # Nmap Scan Syntax
-nmap -A -sCT -vvvv --stats-every=1m -Pn -p* --script http-screenshot --open -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/
+nmap -A -sCT -vvvv --stats-every=1m -Pn -p* --script http-screenshot,banner --open -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/
 echo
 echo
 xsltproc -o $FILE1.html $BOOTSTRAP $FILE1.xml
