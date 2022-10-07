@@ -9,29 +9,49 @@
 # chmod -R 777 .
 # sudo ./kali-setup.sh | tee kali.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 09/18/2022, Minor updates
+# Last Updated 10/07/2022, Minor evil updates
 ################################################
-# Stay Organized
-mkdir -p /home/kali/Desktop/testing/nmapscans/
-chmod -R 777 /home/kali/Desktop/
+echo
+# Todays Date
+echo -e "\e[034mToday is\e[0m"
+date
+
 # Setting Variables
 YELLOW=033m
 BLUE=034m
 EXT=`curl ifconfig.me`
 KALI=`hostname -I`
+LS=`ls`
+
+echo
+# Stay Organized
+chmod -R 777 /home/kali/Desktop/
+mkdir -p /home/kali/Desktop/testing/nmapscans/
+cd /home/kali/Desktop/testing/nmapscans
+
+echo
+# Files
+echo -e "\e[034mFiles in your current directory\e[0m"
+echo "$LS"
+
+# Stay Organized
+mkdir -p /home/kali/Desktop/testing/nmapscans/
+chmod -R 777 /home/kali/Desktop/
+
 echo
 cd /tmp
 date > kali-setup-date.txt
 echo
 echo "Good Idea to Update and Upgrade first before we do this kali-setup.sh"
 echo
-apt update && apt -y upgrade && apt -y full-upgrade && updatedb && apt autoclean
+apt update && apt -y upgrade && apt -y full-upgrade && updatedb && apt -y autoclean
 echo
 echo "Be Patient, Installing Kali Dependencies"
 echo
 apt update
-apt -y install gconf-service gconf2-common libc++1 libc++1-13 libc++abi1-13 libgconf-2-4 libunwind-13 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3.9-venv python3-dev python3-venv pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
+apt -y install obfs4proxy kbtin gconf-service gconf2-common libc++1 libc++1-13 libc++abi1-13 libgconf-2-4 libunwind-13 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
 echo
+# ansi2html -a > report.html
 # ssmtp <--works good, just doesnt play with sendmail.
 #openjdk-13-jdk did not install
 #libindicator3-7 did not install
@@ -42,43 +62,55 @@ echo
 # curl https://packagecloud.io/install/repositories/slacktechnologies/slack/script.deb.sh . 
 # chmod +x script.deb.sh
 # os=debian dist=stretch ./script.deb.sh
-# echo
-# Download and Install cloudflare tunnel
+
+# Nmap checker
+NV=`nmap -V | awk 'NR==1' | cut -d " " -f 3`
+if [ "$NV" = "7.93" ]
+then
+    echo "Found Nmap version 7.93"
+
+else
+
+    echo -e "\e[034mDownloading and installing Nmap 7.93\e[0m"
+
 cd /tmp
-wget https://github.com/aryanguenthner/365/blob/master/cloudflared-linux-amd64.deb
-chmod 777 cloudflared-linux-amd64.deb
-sudo dpkg -i cloudflared-linux-amd64.deb
-# python3 -m http.server 443
-# cloudflared tunnel --url localhost:443
+wget https://nmap.org/dist/nmap-7.93.tar.bz2
+bzip2 -cd nmap-7.93.tar.bz2 | tar xvf -
+cd nmap-7.93
+./configure
+make
+make install
+echo $NMAP Installed
+fi
 
 echo
 cd /usr/share/nmap/scripts
 wget https://raw.githubusercontent.com/aryanguenthner/nmap-nse-vulnerability-scripts/master/smtp-vuln-cve2020-28017-through-28026-21nails.nse
-nmap --script-updatedb > /dev/null
+nmap --script-updatedb
 echo
-# Nmap Testing
-mkdir -p /home/kali/Desktop/testing/nmapscans
+
 cd /home/kali/
 chmod -R 777 .
+
+# Nmap Testing
+mkdir -p /home/kali/Desktop/testing/nmapscans
 echo
+
 # Nmap bootstrap file checker
-# If file exists skip the download
-# if file is missing download it
+cd /home/kali/Desktop/testing/nmapscans/
 NB=nmap-bootstrap.xsl
-echo "Nmap Bootstrap File Checker"
-echo
 if [ -f $NB ]
 then
-    echo "File found: nmap-bootstrap.xsl"
+    echo "Found nmap-bootstrap.xsl"
 
 else
 
-    echo "Downloading $BOOTSTRAP File"
-wget https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl >/dev/null
+    echo -e "\e[034mDownloading Missing $BOOTSTRAP File\e[0m"
+
+wget https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl > /dev/null
 
 fi
-echo
-cp nmap-bootstrap.xsl /home/kali/Desktop/testing/nmapscans
+
 echo
 # Download and Install Etcher - USB Bootable Media Creator
 # curl -1sLf \
@@ -105,6 +137,7 @@ echo
 # How to Update Python Alternatives
 echo
 ''' # kali python Config
+ls -l /usr/bin/python*
 sudo update-alternatives --list python
 sudo update-alternatives --config python
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
@@ -113,11 +146,13 @@ sudo update-alternatives --set python /usr/bin/python3.9
 # update-alternatives --remove-all python
 
 #kali python3 Config
+ls -l /usr/bin/python*
 sudo update-alternatives --list python3
 sudo update-alternatives --config python3
 sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
 sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 2
 sudo update-alternatives --set python3 /usr/bin/python3.9
+# update-alternatives --remove-all python
 '''
 echo
 # Works with Python 3.9
@@ -375,6 +410,10 @@ cd /opt
 cd impacket
 pip3 install -e .
 echo
+echo "The devils eye"
+pip install thedevilseye
+# eye -q "hacker tools" | grep .onion > hackertoolse+onions.txt
+echo
 echo "GitRob"
 cd /tmp
 sudo wget --no-check-certificate https://github.com/michenriksen/gitrob/releases/download/v2.0.0-beta/gitrob_linux_amd64_2.0.0-beta.zip
@@ -389,7 +428,7 @@ echo
 # git clone https://github.com/jschicht/RawCopy.git
 # git clone https://github.com/khr0x40sh/MacroShop.git
 echo
-echo "Phone Info Gathering Tool"
+echo "Phone Number Info Gathering Tool"
 cd /opt
 git clone https://github.com/sundowndev/PhoneInfoga.git
 cd PhoneInfoga
@@ -458,47 +497,44 @@ nmap --script-updatedb > /dev/null
 echo
 echo "Got Nmap Screenshots?"
 N=/usr/share/nmap/scripts/http-screenshot.nse
+
 if [ -f $N ]
 then
-    echo "File found: http-screenshot.nse"
+    echo "Found http-screenshot.nse"
 
-ls -l /usr/share/nmap/scripts/http-screenshot.nse
 else
 
     echo "Downloading missing file http-screenshot.nse"
 cd /usr/share/nmap/scripts
-wget https://raw.githubusercontent.com/ivre/ivre/master/patches/nmap/scripts/http-screenshot.nse >/dev/null
+wget https://raw.githubusercontent.com/ivre/ivre/master/patches/nmap/scripts/http-screenshot.nse > /dev/null
 fi
-nmap --script-updatedb >/dev/null
+nmap --script-updatedb > /dev/null
 echo
 # Enable Nmap to get Screenshots using Phantomjs v1.9.8
 echo
 # PhantomJS Checker
-# Used for nmap screenshots
-echo "PhantomJS Checker"
 P=`phantomjs -v`
-echo
-if [ $P=1.9.8 ]
+if [ "$P" = "1.9.8" ]
 then
-    echo "Found PhantomJS"
+    echo "Found PhantomJS 1.9.8"
 
-phantomjs -v
 else
 
-    echo "Downloading Missing PhantomJS"
+    echo -e "\e[034mDownloading Missing PhantomJS\e[0m"
+
 cd /tmp
-echo
-wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2 >/dev/null
+wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2 > /dev/null
 echo
 echo "Extracting and Installing PhantomJS 1.9.8"
-tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2 >/dev/null
+tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2 > /dev/null
 mv phantomjs-1.9.8-linux-x86_64 phantomjs
 mv phantomjs /opt
 ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
+
+echo " Phantomjs Version"
 phantomjs -v
-echo
+
 fi
-echo
 echo
 # Windows Exploit Suggester Next Gen
 echo
@@ -507,18 +543,10 @@ sudo git clone https://github.com/bitsadmin/wesng.git
 echo
 # MobSF Setup
 echo
-echo "Installing MobSF on kali 2020.4"
 # nano -c /opt/Mobile-Security-Framework-MobSF/run.sh
 # MobSF working with Python 3.7/3.8
-sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
-sudo update-alternatives --set python3 /usr/bin/python3.8/
-echo
-cd /opt/
-git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF.git
-cd Mobile-Security-Framework-MobSF/
-pip3 install -r requirements.txt
-python3 -m venv ./venv
-./setup.sh
+#sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
+#sudo update-alternatives --set python3 /usr/bin/python3.8/
 echo
 # Go Fix Go
 echo export GOPATH=$HOME/go >> /root/.zshrc
@@ -549,6 +577,7 @@ echo export PATH=/usr/bin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bi
 echo export PATH=/usr/sbin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/ >> /root/.zshrc
 echo export PATH=/usr/local/bin:$PATH >> /root/.zshrc
 echo
+echo
 sudo chmod -R 777 /home/kali/
 echo
 echo "Hacker Hacker"
@@ -572,9 +601,16 @@ sudo apt --fix-broken install
 sudo apt autoremove -y
 updatedb
 echo
+echo
+cd /opt/
+git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF.git
+cd Mobile-Security-Framework-MobSF/
+pip3 install -r requirements.txt
+python3 -m venv ./venv
+./setup.sh
+echo
+pip3 install --upgrade requests
 date > kali-setup-finish-date.txt
-# Potential temporary fix apt key warning when you update
-# mv /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
 reboot
 # Just in case DNS issues: nano -c /etc/resolvconf/resolv.conf.d/head
