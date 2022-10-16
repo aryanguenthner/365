@@ -9,10 +9,6 @@
 # Learn more at https://github.com/aryanguenthner/
 # Last Updated 10/16/2022, Minor evil updates
 ################################################
-echo
-# Todays Date
-echo -e "\e[034mToday is\e[0m"
-date
 
 # Setting Variables
 YELLOW=033m
@@ -23,13 +19,19 @@ SUBNET=`ip r | awk 'NR==2' | awk '{print $1}'`
 NMAP=`nmap -V | awk 'NR==1' | cut -d " " -f 1,2,3`
 LS=`ls`
 
+echo
+# Todays Date 
+echo -e "\e[034mToday is\e[0m"
+date | tee kali-setup-date.txt
+echo
+
 # Files
-echo -e "\e[034mFiles in your current directory\e[0m"
+echo -e "\e[034mFiles in your current directory ->$PWD\e[0m"
 echo "$LS"
+echo
 
 # Networking
-echo
-echo -e "\e[033m***Getting Network Information***\e[0m"
+echo -e "\e[033mNetwork Information\e[0m"
 echo
 echo -e "\e[033mExternal IP\e[0m"
 echo $EXT
@@ -39,21 +41,23 @@ echo $KALI | awk '{print $1}'
 echo
 echo -e "\e[033mCurrent Subnet\e[0m"
 echo $SUBNET
+echo
 
 # Stay Organized
 mkdir -p /home/kali/Desktop/testing/nmapscans/
 chmod -R 777 /home/kali/
+echo
 
-echo
-date > kali-setup-date.txt
-echo
+# Kali Updates
 echo "Good Idea to Update and Upgrade first before we do this kali-setup.sh"
 echo
-apt update && apt -y upgrade && apt -y full-upgrade && updatedb && apt -y autoclean
+apt-get update && apt-get -y upgrade && apt-get -y full-upgrade && updatedb && apt-get -y autoclean
 echo
 echo "Be Patient, Installing Kali Dependencies"
+
+# Kali installs
 echo
-sudo apt -y install shotwell obfs4proxy kbtin gconf-service gconf2-common libc++1 libc++1-13 libc++abi1-13 libgconf-2-4 libunwind-13 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
+sudo apt-get -y install shotwell obfs4proxy kbtin gconf-service gconf2-common libc++1 libc++1-13 libc++abi1-13 libgconf-2-4 libunwind-13 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
 echo
 # ansi2html -a > report.html
 # ssmtp <--works good, just doesnt play with sendmail.
@@ -131,11 +135,14 @@ pip install --upgrade pip
 echo
 python3 -m pip install -U pip
 pip3 install --upgrade setuptools
+
+# Updog works on python 3.9
 echo "Installing Updog"
 pip3 install updog
 echo "Installing psycopg"
 pip install psycopg
 echo
+
 # How to Update Python Alternatives
 echo
 ''' # kali python Config
@@ -157,13 +164,11 @@ sudo update-alternatives --set python3 /usr/bin/python3.9
 # update-alternatives --remove-all python
 '''
 echo
+
 # Works with Python 3.9
 echo "Hacker TV"
-echo
-sudo apt -y install python3-imdbpy
-echo
-sudo apt -y install libmpv1 gir1.2-xapp-1.0 debhelper python3-setproctitle dpkg-dev git
-echo
+sudo apt -y install python3-imdbpy libmpv1 gir1.2-xapp-1.0 debhelper python3-setproctitle dpkg-dev
+
 cd /opt
 sudo git clone https://github.com/aryanguenthner/hypnotix.git
 cd hypnotix
@@ -230,7 +235,6 @@ systemctl start postgresql
 msfdb init
 echo
 # Yeet
-
 #echo "Kingfisher"
 #echo
 #cd /opt
@@ -279,6 +283,7 @@ git clone https://github.com/FortyNorthSecurity/EyeWitness.git
 cd /opt/EyeWitness/Python/setup
 sudo yes | ./setup.sh
 '''
+# TODO get gowitness
 echo
 echo "Cewl"
 echo
@@ -425,7 +430,6 @@ echo
 
 # echo "Google Play CLI" I wish this one actually worked
 # apt -y install gplaycli
-
 echo
 # Save these two for later
 # git clone https://github.com/jschicht/RawCopy.git
@@ -439,17 +443,19 @@ cd PhoneInfoga
 curl -sSL https://raw.githubusercontent.com/sundowndev/PhoneInfoga/master/support/scripts/install | bash\n
 ./phoneinfoga version
 echo
+
 echo "Hacker Hacker"
 cd /opt
 git clone https://github.com/aryanguenthner/365.git
 cd 365
 sudo dos2unix *.sh *.py && chmod +x *.sh *.py
 echo
+
 # Tor Web Browser Stuff
 echo
 # sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && 
 sudo apt -y install torbrowser-launcher
-echo
+
 cd /opt
 git clone https://github.com/aryanguenthner/TorGhost.git
 cd TorGhost
@@ -458,6 +464,7 @@ sudo apt -y install python3-notify2
 sudo pip3 install . --ignore-installed stem
 sudo ./build.sh
 echo
+
 # MongoDB Install
 echo
 echo "Installing MongoDB 4.2 from Ubuntu Repo, Because It Works"
@@ -471,14 +478,17 @@ service mongod start
 systemctl enable mongod.service
 echo "Hopefully MongoDB Installed"
 echo
+
 # Install Ivre.Rocks
 echo
 sudo apt -y install ivre
 echo
+
 # Dependencies
 sudo pip install tinydb
 sudo pip install py2neo
 echo
+
 # Ivre Database init, data download & importation
 echo
 echo -e '\r'
@@ -512,12 +522,10 @@ else
     echo "Downloading missing file http-screenshot.nse"
 cd /usr/share/nmap/scripts
 wget https://raw.githubusercontent.com/ivre/ivre/master/patches/nmap/scripts/http-screenshot.nse > /dev/null
-fi
 nmap --script-updatedb > /dev/null
 
-echo
-# Enable Nmap to get Screenshots using Phantomjs v1.9.8
-echo
+fi
+
 # PhantomJS Checker
 P=`phantomjs -v`
 if [ "$P" = "1.9.8" ]
@@ -591,7 +599,7 @@ echo
 systemctl restart ntp
 source ~/.zshrc
 echo
-# Virtualbox Install if your doing a hard install
+# Virtualbox Install if your doing a hard install. If not then comment out the virtualbox commands below
 # https://www.kali.org/docs/virtualization/install-virtualbox-host/
 # https://wiki.debian.org/VirtualBox
 sudo wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
@@ -607,7 +615,7 @@ sudo apt --fix-broken install
 sudo apt autoremove -y
 updatedb
 echo
-echo
+: ' # Mobile Security Assessment Tool MobSF
 cd /opt/
 git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF.git
 cd Mobile-Security-Framework-MobSF/
@@ -615,8 +623,9 @@ pip3 install -r requirements.txt
 python3 -m venv ./venv
 ./setup.sh
 echo
+'
 pip3 install --upgrade requests
-date > kali-setup-finish-date.txt
+date | tee kali-setup-finish-date.txt
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
 reboot
 # Just in case DNS issues: nano -c /etc/resolvconf/resolv.conf.d/head
