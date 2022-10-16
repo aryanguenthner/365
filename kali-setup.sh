@@ -19,7 +19,11 @@ SUBNET=`ip r | awk 'NR==2' | awk '{print $1}'`
 NMAP=`nmap -V | awk 'NR==1' | cut -d " " -f 1,2,3`
 LS=`ls`
 
+# Are you installling in a virtual machine or physical hardware
+dmidecode -t system
+sleep 5
 echo
+
 # Todays Date 
 echo -e "\e[034mToday is\e[0m"
 date | tee kali-setup-date.txt
@@ -167,17 +171,18 @@ echo
 
 # Works with Python 3.9
 echo "Hacker TV"
-sudo apt -y install python3-imdbpy libmpv1 gir1.2-xapp-1.0 debhelper python3-setproctitle dpkg-dev
-
+sudo apt-get -y install python3-imdbpy libmpv1 gir1.2-xapp-1.0 debhelper python3-setproctitle dpkg-dev
 cd /opt
 sudo git clone https://github.com/aryanguenthner/hypnotix.git
 cd hypnotix
+sudo apt-get install -y python3.10-venv
 wget http://ftp.us.debian.org/debian/pool/main/i/imdbpy/python3-imdbpy_6.8-2_all.deb &&
 sudo dpkg -i python3-imdbpy_6.8-2_all.deb
 sudo dpkg-buildpackage -b -uc
 sudo python3 -m venv ./venv
 sudo dpkg -i hypnotix*.deb
 echo
+
 # Signal
 echo
 # NOTE: These instructions only work for 64 bit Debian-based Kali Linux
@@ -189,7 +194,7 @@ cat signal-desktop-keyring.gpg | sudo tee -a /usr/share/keyrings/signal-desktop-
 echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
 sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
 # 3. Update your package database and install signal
-sudo apt update && apt -y install signal-desktop
+sudo apt update && apt-get -y install signal-desktop
 echo
 echo "VPN stuff"
 cd /tmp
