@@ -5,17 +5,13 @@
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
 # Tested on Kali 2022.4
-# Last updated 10/05/2022
+# Last updated 10/16/2022
 # The future is now
 # Got nmap?
 ######################################################
 echo
-# Todays Date
-echo -e "\e[034mToday is\e[0m"
-date
-
 # Stay Organized
-chmod -R 777 /home/kali/Desktop/
+chmod -R 777 /home/kali/
 mkdir -p /home/kali/Desktop/testing/nmapscans/
 cd /home/kali/Desktop/testing/nmapscans
 
@@ -29,15 +25,17 @@ TARGETS=targets.txt
 FILE0=$(date +%Y%m%d).nmap-pingsweep_$RANDOM
 FILE1=$(date +%Y%m%d).nmapscan_$RANDOM
 BOOTSTRAP=nmap-bootstrap.xsl
-NMAP=`nmap -V | awk 'NR==1' | cut -d " " -f 1,2,3`
+NV=`nmap -V | awk 'NR==1' | cut -d " " -f 1,2,3`
 RANDOM=$$
 LS=`ls`
+PWD=`pwd`
 SYNTAX="nmap -A -sCT -vvvv --stats-every=1m -Pn -p* --script http-screenshot,banner -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/"
+echo
 
+# Depencency Check
 # TODO - Uninstall older version of Nmap
 #sudo dpkg -r --force-depends nmap
 # Install latest version
-echo
 echo -e "\e[034mRunning Dependency-check\e[0m"
 : ' # Nmap checker
 NV=`nmap -V | awk 'NR==1' | cut -d " " -f 3`
@@ -59,7 +57,7 @@ echo $NMAP Installed
 
 fi
 '
-echo "Found $NMAP"
+echo "Found $NV"
 cd /home/kali/Desktop/testing/nmapscans/
 
 # Nmap bootstrap file checker
@@ -100,6 +98,7 @@ fi
 
 # http-screenshot Checker
 N=/usr/share/nmap/scripts/http-screenshot.nse
+
 if [ -f $N ]
 then
     echo "Found http-screenshot.nse"
@@ -107,20 +106,39 @@ then
 else
 
     echo -e "\e[034mDownloading missing file http-screenshot.nse\e[0m"
+cd /usr/share/nmap/scripts
 wget https://raw.githubusercontent.com/aryanguenthner/365/master/http-screenshot.nse
 nmap --script-updatedb > /dev/null
 
 fi
+echo
 
+: '# gowitness
+gow=somefile
+if [ -f $gow ]
+then
+    echo "Found gowitness"
+
+else
+
+    echo -e "\e[034mDownloading Missing $gow File\e[0m"
+wget -O /home/kali/Desktop/testing/nmapscans/nmap-bootstrap.xsl https://raw.githubusercontent.com/aryanguenthner/gowitness > /dev/null
+
+fi
+'
+# Todays Date
+echo -e "\e[034mToday is\e[0m"
+date
 echo
 
 # Files
-echo -e "\e[034mFiles in your current directory\e[0m"
+echo -e "\e[034mFiles in your current directory -->$PWD\e[0m"
 echo "$LS"
+sleep 5
 
 # Networking
 echo
-echo -e "\e[033m***Getting Network Information***\e[0m"
+echo -e "\e[033mGetting Network Information\e[0m"
 echo
 echo -e "\e[033mExternal IP\e[0m"
 echo $EXT
@@ -130,7 +148,9 @@ echo $KALI | awk '{print $1}'
 echo
 echo -e "\e[033mThe Target Subnet\e[0m"
 echo $SUBNET
+sleep 5
 echo
+
 echo -e "\e[033mGenerating a Target List\e[0m"
 
 # Ping Sweep
@@ -144,8 +164,9 @@ echo -e "\e[033mPing Sweep Completed\e[0m"
 echo
 cat $FILE0 | grep "Up" | awk '{print $2}' 2>&1 | tee targets.txt
 echo
-echo -e "\e[033m***Using nmap to enumerate more info on your targets***\e[0m"
+echo -e "\e[033mUsing nmap to enumerate more info on your targets\e[0m"
 echo
+sleep 5
 echo -e "\e[034mHack The Planet\e[0m"
 echo "$SYNTAX"
 echo
@@ -161,6 +182,8 @@ echo msfconsole
 echo db_import $(pwd)/$FILE1.xml
 echo "Nmap scan completed"
 sudo su -c "firefox $(pwd)/$FILE1.html" kali
+
+# TODO add gowitness
 
 # Pay me later
 chmod -R 777 /home/kali/Desktop

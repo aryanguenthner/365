@@ -2,14 +2,12 @@
 # Kali Linux Post Setup Automation Script VirtualBox
 # Tested on Kali 2022.4
 # If you're reading this pat yourself on the back
-# sudo dos2unix *.sh
-# sudo chmod +x *.sh
+# sudo dos2unix *.sh && sudo chmod +x *.sh
 # Usage: cd /opt/365
-# chmod +x *.sh *.py
-# chmod -R 777 .
+# chmod +x *.sh *.py && chmod -R 777 .
 # sudo ./kali-setup.sh | tee kali.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 10/07/2022, Minor evil updates
+# Last Updated 10/16/2022, Minor evil updates
 ################################################
 echo
 # Todays Date
@@ -21,25 +19,32 @@ YELLOW=033m
 BLUE=034m
 EXT=`curl ifconfig.me`
 KALI=`hostname -I`
+SUBNET=`ip r | awk 'NR==2' | awk '{print $1}'`
+NMAP=`nmap -V | awk 'NR==1' | cut -d " " -f 1,2,3`
 LS=`ls`
 
-echo
-# Stay Organized
-chmod -R 777 /home/kali/Desktop/
-mkdir -p /home/kali/Desktop/testing/nmapscans/
-cd /home/kali/Desktop/testing/nmapscans
-
-echo
 # Files
 echo -e "\e[034mFiles in your current directory\e[0m"
 echo "$LS"
 
+# Networking
+echo
+echo -e "\e[033m***Getting Network Information***\e[0m"
+echo
+echo -e "\e[033mExternal IP\e[0m"
+echo $EXT
+echo
+echo -e "\e[033mKali IP\e[0m"
+echo $KALI | awk '{print $1}'
+echo
+echo -e "\e[033mCurrent Subnet\e[0m"
+echo $SUBNET
+
 # Stay Organized
 mkdir -p /home/kali/Desktop/testing/nmapscans/
-chmod -R 777 /home/kali/Desktop/
+chmod -R 777 /home/kali/
 
 echo
-cd /tmp
 date > kali-setup-date.txt
 echo
 echo "Good Idea to Update and Upgrade first before we do this kali-setup.sh"
@@ -48,8 +53,7 @@ apt update && apt -y upgrade && apt -y full-upgrade && updatedb && apt -y autocl
 echo
 echo "Be Patient, Installing Kali Dependencies"
 echo
-apt update
-apt -y install obfs4proxy kbtin gconf-service gconf2-common libc++1 libc++1-13 libc++abi1-13 libgconf-2-4 libunwind-13 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
+sudo apt -y install shotwell obfs4proxy kbtin gconf-service gconf2-common libc++1 libc++1-13 libc++abi1-13 libgconf-2-4 libunwind-13 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
 echo
 # ansi2html -a > report.html
 # ssmtp <--works good, just doesnt play with sendmail.
@@ -67,7 +71,7 @@ echo
 NV=`nmap -V | awk 'NR==1' | cut -d " " -f 3`
 if [ "$NV" = "7.93" ]
 then
-    echo "Found Nmap version 7.93"
+    echo "Found $NV"
 
 else
 
@@ -97,7 +101,6 @@ mkdir -p /home/kali/Desktop/testing/nmapscans
 echo
 
 # Nmap bootstrap file checker
-cd /home/kali/Desktop/testing/nmapscans/
 NB=nmap-bootstrap.xsl
 if [ -f $NB ]
 then
@@ -106,8 +109,7 @@ then
 else
 
     echo -e "\e[034mDownloading Missing $BOOTSTRAP File\e[0m"
-
-wget https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl > /dev/null
+wget -O /home/kali/Desktop/testing/nmapscans/nmap-bootstrap.xsl https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl > /dev/null
 
 fi
 
@@ -228,11 +230,10 @@ systemctl start postgresql
 msfdb init
 echo
 # Yeet
-echo
-cd /opt
-echo "Kingfisher"
-echo
-cd /opt
+
+#echo "Kingfisher"
+#echo
+#cd /opt
 # git clone https://github.com/onevcat/Kingfisher.git
 echo
 echo "PWN AD"
@@ -421,14 +422,17 @@ unzip gitrob_linux_amd64_2.0.0-beta.zip
 mkdir -p /opt/gitrob
 mv gitrob /opt/gitrob/
 echo
+
 # echo "Google Play CLI" I wish this one actually worked
 # apt -y install gplaycli
+
 echo
 # Save these two for later
 # git clone https://github.com/jschicht/RawCopy.git
 # git clone https://github.com/khr0x40sh/MacroShop.git
+
 echo
-echo "Phone Number Info Gathering Tool"
+echo "OSINT Phone Number Info Gathering Tool"
 cd /opt
 git clone https://github.com/sundowndev/PhoneInfoga.git
 cd PhoneInfoga
@@ -495,7 +499,8 @@ yes | patch /usr/share/nmap/scripts/rtsp-url-brute.nse \
 /usr/share/ivre/nmap_scripts/patches/rtsp-url-brute.patch
 nmap --script-updatedb > /dev/null
 echo
-echo "Got Nmap Screenshots?"
+
+# http-screenshot Checker
 N=/usr/share/nmap/scripts/http-screenshot.nse
 
 if [ -f $N ]
@@ -509,6 +514,7 @@ cd /usr/share/nmap/scripts
 wget https://raw.githubusercontent.com/ivre/ivre/master/patches/nmap/scripts/http-screenshot.nse > /dev/null
 fi
 nmap --script-updatedb > /dev/null
+
 echo
 # Enable Nmap to get Screenshots using Phantomjs v1.9.8
 echo
@@ -522,19 +528,19 @@ else
 
     echo -e "\e[034mDownloading Missing PhantomJS\e[0m"
 
-cd /tmp
-wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2 > /dev/null
-echo
+wget -O /tmp/phantomjs-1.9.8-linux-x86_64.tar.bz2 https://github.com/aryanguenthner/365/blob/f5a069eec95557f2741c16d0dbf27653ddb85e25/phantomjs-1.9.8-linux-x86_64.tar.bz2
+
 echo "Extracting and Installing PhantomJS 1.9.8"
-tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2 > /dev/null
+tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2
 mv phantomjs-1.9.8-linux-x86_64 phantomjs
 mv phantomjs /opt
 ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
 
-echo " Phantomjs Version"
+    echo "Phantomjs Version"
 phantomjs -v
 
 fi
+
 echo
 # Windows Exploit Suggester Next Gen
 echo
