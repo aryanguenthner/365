@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 ################################################
 # Kali Linux Post Setup Automation Script VirtualBox
 # Tested on Kali 2022.4

@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 #######################################################
 # Discover targets by doing a ping sweep
 # Enumerate open ports and services
@@ -9,11 +10,6 @@
 # The future is now
 # Got nmap?
 ######################################################
-echo
-# Stay Organized
-chmod -R 777 /home/kali/
-mkdir -p /home/kali/Desktop/testing/nmapscans/
-cd /home/kali/Desktop/testing/nmapscans
 
 # Setting Variables
 YELLOW=033m
@@ -31,6 +27,11 @@ LS=`ls`
 PWD=`pwd`
 SYNTAX="nmap -A -sCT -vvvv --stats-every=1m -Pn -p* --script http-screenshot,banner -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/"
 echo
+
+# Stay Organized
+chmod -R 777 /home/kali/
+mkdir -p /home/kali/Desktop/testing/nmapscans/
+cd /home/kali/Desktop/testing/nmapscans
 
 # Depencency Check
 # TODO - Uninstall older version of Nmap
