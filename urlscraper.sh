@@ -7,11 +7,16 @@
 # Learn more at https://github.com/aryanguenthner/
 # Last Updated 10/25/2022
 ################################################
-
 # wget -qO- -np --trust-server-names --max-redirect=1 --content-disposition --show-progress --no-check-certificate ‐‐user-agent=iPhone --connect-timeout=4 -4 --reject=gif,js,ico,jpg,jpeg,png,css,woff,woof2,svg https://yahoo.com/ | grep -Eo (http|https)://[a-zA-Z0-9./?=_-]* | sort -u | tee example.txt
 #
+echo "
+        _____  _         _____  _____ _____            _____  ______ _____  
+       |  __ \| |       / ____|/ ____|  __ \     /\   |  __ \|  ____|  __ \ 
+  _   _| |__) | |      | (___ | |    | |__) |   /  \  | |__) | |__  | |__) |
+ | | | |  _  /| |       \___ \| |    |  _  /   / /\ \ |  ___/|  __| |  _  / 
+ | |_| | | \ \| |____   ____) | |____| | \ \  / ____ \| |    | |____| | \ \ 
+  \__,_|_|  \_\______| |_____/ \_____|_|  \_\/_/    \_\_|    |______|_|  \_\ "
 
-echo
 # Setting Variables
 YELLOW=033m
 BLUE=034m
@@ -65,7 +70,7 @@ echo
 echo -e "\e[034mResults\e[0m"
 echo $URL+results.txt
 echo $URL+no-prefix.txt
-echo
+echo $URL+urls.txt
 
 # Count URLS
 echo -e "\e[034mTotal URLs\e[0m"
