@@ -71,6 +71,7 @@ echo -e "\e[034mResults\e[0m"
 echo $URL+results.txt
 echo $URL+no-prefix.txt
 echo $URL+urls.txt
+echo
 
 # Count URLS
 echo -e "\e[034mTotal URLs\e[0m"
