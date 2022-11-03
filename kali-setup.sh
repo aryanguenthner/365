@@ -2,26 +2,25 @@
 
 ################################################
 # Kali Linux Post Setup Automation Script VirtualBox
-# Tested on Kali 2022.4
+# Tested on Kali 2022.4.2
 # If you're reading this pat yourself on the back
 # sudo dos2unix *.sh && sudo chmod +x *.sh
 # Usage: cd /opt/365
 # chmod +x *.sh *.py && chmod -R 777 .
 # sudo ./kali-setup.sh | tee kali.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 10/16/2022, Minor evil updates
+# Last Updated 11/2/2022, Minor evil updates
 ################################################
 
 # Setting Variables
 YELLOW=033m
 BLUE=034m
-EXT=`curl ifconfig.me`
 KALI=`hostname -I`
 SUBNET=`ip r | awk 'NR==2' | awk '{print $1}'`
 NMAP=`nmap -V | awk 'NR==1' | cut -d " " -f 1,2,3`
 LS=`ls`
 
-# Are you installling in a virtual machine or physical hardware
+# Are you installling Kali in a virtual machine or bare metal?
 dmidecode -t system
 sleep 5
 echo
@@ -39,12 +38,16 @@ echo
 # Networking
 echo -e "\e[033mNetwork Information\e[0m"
 echo
-echo -e "\e[033mExternal IP\e[0m"
-echo $EXT
+echo -e "\e[033mPublic IP\e[0m"
+curl ifconfig.me
 echo
+
+# Internal IP Address
 echo -e "\e[033mKali IP\e[0m"
 echo $KALI | awk '{print $1}'
 echo
+
+# Subnet
 echo -e "\e[033mCurrent Subnet\e[0m"
 echo $SUBNET
 echo
@@ -55,7 +58,7 @@ chmod -R 777 /home/kali/
 echo
 
 # Kali Updates
-echo "Good Idea to Update and Upgrade first before we do this kali-setup.sh"
+echo "Good Idea to Update and Upgrade first before running kali-setup.sh"
 echo
 apt-get update && apt-get -y upgrade && apt-get -y full-upgrade && updatedb && apt-get -y autoclean
 echo
@@ -65,13 +68,15 @@ echo "Be Patient, Installing Kali Dependencies"
 echo
 sudo apt-get -y install shotwell obfs4proxy kbtin gconf-service gconf2-common libc++1 libc++1-13 libc++abi1-13 libgconf-2-4 libunwind-13 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
 echo
-# ansi2html -a > report.html
+
+# text in your terminal > ansi2html -a > report.html
 # ssmtp <--works good, just doesnt play with sendmail.
 #openjdk-13-jdk did not install
 #libindicator3-7 did not install
 #python3.8-venv did not install
 #libappindicator3-1 did not install
 echo
+
 # Slack Setup on Kali needs some love
 # curl https://packagecloud.io/install/repositories/slacktechnologies/slack/script.deb.sh . 
 # chmod +x script.deb.sh
@@ -96,8 +101,8 @@ make
 make install
 echo $NMAP Installed
 fi
-
 echo
+
 cd /usr/share/nmap/scripts
 wget https://raw.githubusercontent.com/aryanguenthner/nmap-nse-vulnerability-scripts/master/smtp-vuln-cve2020-28017-through-28026-21nails.nse
 nmap --script-updatedb
@@ -122,19 +127,17 @@ else
 wget -O /home/kali/Desktop/testing/nmapscans/nmap-bootstrap.xsl https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl > /dev/null
 
 fi
-
 echo
+
+# apt update
+# apt -y install balena-etcher-electron
 # Download and Install Etcher - USB Bootable Media Creator
 # curl -1sLf \
 #   'https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh' \
 #   | sudo -E bash 
-echo
-# apt update
-# apt -y install balena-etcher-electron
-echo
+
 # Project Discovery Install go
 sudo apt -y install golang-go
-echo
 go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
 echo
 pip install --upgrade pip
@@ -142,15 +145,15 @@ echo
 python3 -m pip install -U pip
 pip3 install --upgrade setuptools
 
-# Updog works on python 3.9
-echo "Installing Updog"
-pip3 install updog
+# Updog works on python 3.9 not 3.10
+# echo "Installing Updog"
+# pip3 install updog
+
 echo "Installing psycopg"
 pip install psycopg
 echo
 
 # How to Update Python Alternatives
-echo
 ''' # kali python Config
 ls -l /usr/bin/python*
 sudo update-alternatives --list python
@@ -186,7 +189,6 @@ sudo dpkg -i hypnotix*.deb
 echo
 
 # Signal
-echo
 # NOTE: These instructions only work for 64 bit Debian-based Kali Linux
 # Linux distributions such as Ubuntu, Mint etc.
 # 1. Install our official public software signing key
@@ -196,13 +198,15 @@ cat signal-desktop-keyring.gpg | sudo tee -a /usr/share/keyrings/signal-desktop-
 echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
 sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
 # 3. Update your package database and install signal
-sudo apt update && apt-get -y install signal-desktop
+sudo apt-get update && apt-get -y install signal-desktop
 echo
+
 echo "VPN stuff"
 cd /tmp
 wget --no-check-certificate https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub
 apt-key add openvpn-repo-pkg-key.pub
 echo
+
 echo "Getting tmpmail"
 # Hackers like tmpmail
 # tmpmail --generate hackermaill@1secmail.com
@@ -210,6 +214,7 @@ curl -L "https://git.io/tmpmail" > tmpmail && chmod +x tmpmail
 mv tmpmail ~/bin/
 ./tmpmail --generate
 echo
+
 # Hackers like SSH
 echo
 echo "Enabling SSH"
@@ -217,25 +222,13 @@ sed -i '33s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/s
 sudo systemctl enable ssh
 sudo service ssh restart
 echo
-echo "Your Internal IP Address"
-hostname -I
-echo
-echo "External Internal IP Address"
-sudo curl ifconfig.me
-echo
-echo '# IP Address' >> /root/.zshrc
-echo 'hostname -I' >> /root/.zshrc
-echo
-echo '# Go' >> /root/.zshrc
-echo 'export GOPATH=$HOME/work' >> /root/.zshrc
-echo 'export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin' >> /root/.zshrc
-echo 'export HISTCONTROL=ignoredups' >> /root/.zshrc
-echo
+
 # Metasploit Setup
 mkdir -p /opt/metasploit
 cd /opt/metasploit
 curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && chmod 755 msfinstall && ./msfinstall
 echo
+
 echo "Metasploit Ready Up"
 echo
 systemctl start postgresql
@@ -247,6 +240,7 @@ echo
 #cd /opt
 # git clone https://github.com/onevcat/Kingfisher.git
 echo
+
 echo "PWN AD"
 cd /opt
 git clone https://github.com/Wh04m1001/DFSCoerce
@@ -303,43 +297,53 @@ gem install spider
 echo
 echo "This is going to take a minute hold my root-beer"
 echo
+
 echo "AD Recon - My Fav"
 echo
 cd /opt
 git clone https://github.com/sense-of-security/ADRecon.git
 echo
+
 echo "enum4linux-ng"
 echo
 cd /opt
 git clone https://github.com/cddmp/enum4linux-ng.git
 echo
+
 echo "BloodHound"
 echo
+
 cd /opt
 git clone https://github.com/BloodHoundAD/Bloodhound.git
 echo
+
 echo "bloodhound-python"
 echo
 # bloodhound-python -u 'bob' -p 'Passw0rd!' -ns 192.168.1.3 -d LAB.local  -c all'
 sudo pip install bloodhound
 echo
+
 echo "Daniel Miessler Security List Collection"
 cd /opt
 git clone https://github.com/danielmiessler/SecLists.git
 cd SecLists
 echo
+
 echo "Awesome Incident Response"
 cd /opt
 git clone https://github.com/meirwah/awesome-incident-response.git
 echo
+
 echo "Fuzzdb"
 cd /opt
 git clone https://github.com/fuzzdb-project/fuzzdb.git
 echo
+
 echo "Payloads All The Things"
 cd /opt
 git clone https://github.com/swisskyrepo/PayloadsAllTheThings.git
 echo
+
 echo "OneListForAll"
 cd /opt
 git clone https://github.com/six2dez/OneListForAll.git
@@ -350,6 +354,7 @@ wget https://github.com/NotSoSecure/password_cracking_rules/blob/master/OneRuleT
 wget https://contest-2010.korelogic.com/rules.txt
 cat rules.txt >> /etc/john/john.conf
 echo
+
 echo "SprayingToolKit"
 cd /opt
 git clone https://github.com/byt3bl33d3r/SprayingToolkit.git
@@ -357,63 +362,77 @@ git clone https://github.com/byt3bl33d3r/SprayingToolkit.git
 echo
 : ' Hydra works dont forget --> hydra -p Summer2019 -l Administrator smb://192.168.1.23 '
 : ' Metasploit works dont forget --> set smbpass Summer2019 / set smbuser Administrator / set rhosts 192.168.1.251 / run '
+
 echo "Awesome XSS"
 cd /opt
 git clone https://github.com/s0md3v/AwesomeXSS.git
 echo
+
 echo "XSS Payloads"
 cd /opt
 git clone https://github.com/payloadbox/xss-payload-list.git
 echo
+
 echo "Foospidy Payloads"
 cd /opt
 git clone https://github.com/foospidy/payloads.git
 echo
+
 echo "Java Deserialization Exploitation (jexboss)"
 cd /opt
 git clone https://github.com/joaomatosf/jexboss.git
 echo
+
 echo "theHarvester"
 cd /opt
 git clone https://github.com/laramies/theHarvester.git
 echo
+
 echo "OWASP Cheat Sheet"
 cd /opt
 git clone https://github.com/OWASP/CheatSheetSeries.git
 echo
+
 echo "Pulse VPN Exploit"
 cd /opt
 git clone https://github.com/projectzeroindia/CVE-2019-11510.git
 echo
+
 echo "hruffleHog - Git Enumeration"
 cd /opt
 git clone https://github.com/dxa4481/truffleHog.git
 echo
+
 echo "Git Secrets"
 echo
 cd /opt
 git clone https://github.com/awslabs/git-secrets.git
 echo
+
 echo "Git Leaks"
 echo
 cd /opt
 git clone https://github.com/zricethezav/gitleaks.git
 echo
+
 echo "Discover Admin Loging Pages - Breacher"
 echo
 cd /opt
 git clone https://github.com/s0md3v/Breacher.git
 echo
+
 echo "Search Google Extract Result URLS - degoogle"
 echo
 cd /opt
 git clone https://github.com/deepseagirl/degoogle.git
 echo
+
 echo "Web SSH (Pretty Cool)"
 echo
 cd /opt
 git clone https://github.com/huashengdun/webssh.git
 echo
+
 echo "Installing Impacket"
 echo
 cd /opt
@@ -423,6 +442,7 @@ cd /opt
 cd impacket
 pip3 install -e .
 echo
+
 echo "The devils eye"
 pip install thedevilseye
 # eye -q "hacker tools" | grep .onion > hackertoolse+onions.txt
@@ -455,14 +475,13 @@ echo "Hacker Hacker"
 cd /opt
 git clone https://github.com/aryanguenthner/365.git
 cd 365
-sudo dos2unix *.sh *.py && chmod +x *.sh *.py
+sudo dos2unix *.sh *.py && chmod +x *.sh *.py && chmod -R 777 .
 echo
 
 # Tor Web Browser Stuff
 echo
 # sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && 
 sudo apt -y install torbrowser-launcher
-
 cd /opt
 git clone https://github.com/aryanguenthner/TorGhost.git
 cd TorGhost
@@ -491,7 +510,7 @@ echo
 sudo apt -y install ivre
 echo
 
-# Dependencies
+# Ivre Dependencies
 sudo pip install tinydb
 sudo pip install py2neo
 echo
@@ -507,7 +526,8 @@ yes | sudo ivre runscansagentdb --init
 # 40 Min download --> sudo ivre ipdata --download
 echo -e '\r'
 echo
-# Nmap Magic
+
+# Ivre Nmap Magic
 echo
 echo "Copying IVRE Nmap Scripts to Nmap"
 echo
@@ -555,13 +575,35 @@ ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
 phantomjs -v
 
 fi
-
 echo
+
+# Can I get a Witness?
+# Get Screenshots
+# cd /opt/gowitness
+# ./gowitness-2.4.2-linux-amd64 file -f url-results.txt
+# "View Report http://localhost:7171"
+# ./gowitness-2.4.2-linux-amd64 server report
+GWIT=/opt/gowitness/gowitness-2.4.2-linux-amd64
+if [ -f $GWIT ]
+then
+    echo "Found gowitness-2.4.2-linux-amd64"
+
+else
+
+    echo -e "\e[034mDownloading Missing $GWIT File\e[0m"
+cd /opt
+mkdir -p /opt/gowitness
+wget -O $PWD/gowitness-2.4.2-linux-amd64 https://github.com/aryanguenthner/gowitness/releases/download/gowitness/gowitness-2.4.2-linux-amd64
+
+fi
+echo
+
 # Windows Exploit Suggester Next Gen
 echo
 cd /opt
 sudo git clone https://github.com/bitsadmin/wesng.git
 echo
+
 # MobSF Setup
 echo
 # nano -c /opt/Mobile-Security-Framework-MobSF/run.sh
@@ -569,36 +611,8 @@ echo
 #sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
 #sudo update-alternatives --set python3 /usr/bin/python3.8/
 echo
-# Go Fix Go
-echo export GOPATH=$HOME/go >> /root/.zshrc
-echo export PATH=$PATH:$GOROOT/bin:$GOPATH/bin >> /root/.zshrc
-# MobSF
-echo export PATH=$ANDROID_SDK=/root/Android/Sdk/:$PATH >> /root/.zshrc
-echo export PATH=$ANDROID_SDK/emulator:$ANDROID_SDK/tools:$PATH >> /root/.zshrc
-echo export PATH=/root/Android/Sdk/platform-tools:$PATH >> /root/.zshrc
-echo export PATH=/opt/android-studio/jre/jre/bin:$PATH >> /root/.zshrc
-# Java Deez Nutz
-echo export PATH=$JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64:$PATH >> /root/.zshrc
-echo export PATH=$JAVA_HOME/bin:$PATH >> /root/.zshrc
-# Arachni
-echo export PATH=$arachni_dir=/opt/arachni/bin:$PATH >> /root/.zshrc
-# Others
-echo export PATH=$PATH:/snap/bin:$PATH >> /root/.zshrc
-echo export PATH=$PATH:/snap/bin >> /root/.zshrc
-echo export PATH=$GOPATH=$HOME/work >> /root/.zshrc
-echo export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin >> /root/.zshrc
-echo export PATH=$HISTCONTROL=ignoredups >> /root/.zshrc
-echo export PATH=$ANDROID_SDK=/root/Android/Sdk/ >> /root/.zshrc
-echo export PATH=$ANDROID_SDK/emulator:$ANDROID_SDK/tools >> /root/.zshrc
-echo export PATH=$PATH/root/Android/Sdk/platform-tools >> /root/.zshrc
-echo export PATH=$PATH/opt/android-studio/jre/jre/bin/ >> /root/.zshrc
-echo export PATH=$JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/ >> /root/.zshrc
-echo export PATH=$PATH:/snap/bin/ >> /root/.zshrc
-echo export PATH=/usr/bin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/ >> /root/.zshrc
-echo export PATH=/usr/sbin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/ >> /root/.zshrc
-echo export PATH=/usr/local/bin:$PATH >> /root/.zshrc
-echo
-echo
+
+# Fix permissions
 sudo chmod -R 777 /home/kali/
 echo
 echo "Hacker Hacker"
@@ -606,9 +620,24 @@ echo
 systemctl restart ntp
 source ~/.zshrc
 echo
-# Virtualbox Install if your doing a hard install. If not then comment out the virtualbox commands below
+
+# Bare metal Kali install or Virtual Machine install
 # https://www.kali.org/docs/virtualization/install-virtualbox-host/
 # https://wiki.debian.org/VirtualBox
+echo "Are you installing a Kali Virtual Machine? "
+echo "Enter y/n: "
+read answer
+echo
+
+if [ $answer == "y" ]
+then
+
+    echo "Good Choice"
+
+else
+
+    echo "Bare Metal installling Vbox"
+
 sudo wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
 sudo wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
 sudo echo "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian buster contrib" >> /etc/apt/sources.list
@@ -621,7 +650,42 @@ echo
 sudo apt --fix-broken install
 sudo apt autoremove -y
 updatedb
+fi
 echo
+
+echo
+# Customize Kali
+echo 'hostname -I' >> /root/.zshrc
+echo 'export GOPATH=$HOME/work' >> /root/.zshrc
+echo 'export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin' >> /root/.zshrc
+echo 'export PATH=$HISTCONTROL=ignoredups' >> /root/.zshrc
+# Go Fix Go
+echo 'export GOPATH=$HOME/go' >> /root/.zshrc
+echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' >> /root/.zshrc
+# MobSF
+echo 'export PATH=$ANDROID_SDK=/root/Android/Sdk/:$PATH' >> /root/.zshrc
+echo 'export PATH=$ANDROID_SDK/emulator:$ANDROID_SDK/tools:$PATH' >> /root/.zshrc
+echo 'export PATH=/root/Android/Sdk/platform-tools:$PATH' >> /root/.zshrc
+echo 'export PATH=/opt/android-studio/jre/jre/bin:$PATH' >> /root/.zshrc
+# Java Deez Nutz
+echo 'export PATH=$JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64:$PATH' >> /root/.zshrc
+echo 'export PATH=$JAVA_HOME/bin:$PATH' >> /root/.zshrc
+# Arachni
+echo 'export PATH=$arachni_dir=/opt/arachni/bin:$PATH' >> /root/.zshrc
+# Other
+echo 'export PATH=$PATH:/snap/bin:$PATH' >> /root/.zshrc
+echo 'export PATH=$GOPATH=$HOME/work' >> /root/.zshrc
+echo 'export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin' >> /root/.zshrc
+echo 'export PATH=$ANDROID_SDK=/root/Android/Sdk/' >> /root/.zshrc
+echo 'export PATH=$ANDROID_SDK/emulator:$ANDROID_SDK/tools' >> /root/.zshrc
+echo 'export PATH=$PATH/root/Android/Sdk/platform-tools' >> /root/.zshrc
+echo 'export PATH=$PATH/opt/android-studio/jre/jre/bin/' >> /root/.zshrc
+echo 'export PATH=$JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/' >> /root/.zshrc
+echo 'export PATH=/usr/bin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/' >> /root/.zshrc
+echo 'export PATH=/usr/sbin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/' >> /root/.zshrc
+echo 'export PATH=/usr/local/bin:$PATH' >> /root/.zshrc
+echo
+
 : ' # Mobile Security Assessment Tool MobSF
 cd /opt/
 git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF.git
@@ -631,7 +695,7 @@ python3 -m venv ./venv
 ./setup.sh
 echo
 '
-pip3 install --upgrade requests
+sudo pip3 install --upgrade requests
 date | tee kali-setup-finish-date.txt
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
 reboot
