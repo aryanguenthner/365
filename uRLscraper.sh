@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
 ################################################
-# Reconnaissance Tool used to Scrape URLs from a website
+# Reconnaissance Tool used to scrape URLs from a website
+# Open http://localhost:7171 to view the report
 # Tested on Kali 2022.4
 # If you're reading this pat yourself on the back
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 10/31/2022
+# Last Updated 11/2/2022
 # https://blog.intigriti.com/2021/06/08/hacker-tools-amass-hunting-for-subdomains/
 # https://github.com/OWASP/Amass/blob/master/doc/tutorial.md
 # https://github.com/sensepost/gowitness/releases
@@ -48,13 +49,44 @@ echo
 echo -e "\e[034mPublic IP Address\e[0m"
 curl ifconfig.me
 echo
-echo
 
 echo -e "\e[034mKali IP Address\e[0m"
 echo $KALI
 echo
 
+# Check yo shit
+echo -e "\e[034mRequirements Check\e[0m"
+# Google browser download if needed
+echo
+GOOG=/opt/google/chrome/google-chrome
+if [ -f $GOOG ]
+then
+  echo "Found Google Chrome"
+    
+else
+  echo "Downloading Google Chrome Stable Browser"
+cd /tmp
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo dpkg -i google-chrome-stable_current_amd64.deb
+
+fi
+echo
+
+# Can I get a Witness?
+GWIT=gowitness-2.4.2-linux-amd64
+if [ -f $GWIT ]
+then
+  echo "Found gowitness-2.4.2-linux-amd64"
+
+else
+  echo -e "\e[034mDownloading Missing $GWIT File\e[0m"
+wget -O $PWD/gowitness-2.4.2-linux-amd64 https://github.com/aryanguenthner/gowitness/releases/download/gowitness/gowitness-2.4.2-linux-amd64
+
+fi
+echo
+
 # Start uRLscraping
+cd /home/kali/Desktop/testing/urlscraper
 echo -n "Enter the site to scrape URLs: "
 read URL
 echo
@@ -64,7 +96,7 @@ wget -4 -qO- $URL -np --trust-server-names --max-redirect=1 --content-dispositio
 echo
 
 # Strippers
-grep -v '\.\(css\|js\|png\|gif\|jpg\|JPG\|ico\|jpeg\|woff\|woff2\|svg\|wav\|mp4\|mp3\|dtd\|eot\|ttf\)$' urls.txt | tee url-results.txt
+grep -v '\.\(css\|js\|png\|gif\|jpg\|JPG\|ico\|jpeg\|woff\|woff2\|svg\|wav\|mp4\|mp3\|dtd\|eot\|ttf\)$' urls.txt | tee url-results.txt && sed -i '/s.yimg/d' url-results.txt
 
 # Get domains
 cat url-results.txt | awk -F/ '{print $3}' | tee url-domains1.txt
@@ -97,27 +129,13 @@ echo -e "\e[034mTotal Domains Found\e[0m"
 wc url-domains.txt | awk '{print $1}'
 echo
 
-# Can I get a Witness?
-GWIT=gowitness-2.4.2-linux-amd64
-if [ -f $GWIT ]
-then
-    echo "Found gowitness-2.4.2-linux-amd64"
-
-else
-
-    echo -e "\e[034mDownloading Missing $GWIT File\e[0m"
-wget -O $PWD/gowitness-2.4.2-linux-amd64 https://github.com/aryanguenthner/gowitness/releases/download/gowitness/gowitness-2.4.2-linux-amd64
-
-fi
-echo
-
 # Get Screenshots
 echo "Getting Screenshots"
 echo
-chmod -R 777 $PWD
+chmod -R 777 /home/kali/
 ./gowitness-2.4.2-linux-amd64 file -f url-results.txt
 echo
-echo "View Report http://localhost:7171"
+echo  -e "\033[33;5mReport Finished http://localhost:7171\033[0m"
 echo
 ./gowitness-2.4.2-linux-amd64 server report
 echo
