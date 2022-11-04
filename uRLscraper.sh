@@ -2,11 +2,11 @@
 
 ################################################
 # Reconnaissance Tool used to scrape URLs from a website
-# Open http://localhost:7171 to view the report
+# Open http://localhost:7171 to view the Gowitness report
 # Tested on Kali 2022.4
 # If you're reading this pat yourself on the back
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 11/2/2022
+# Last Updated 11/3/2022
 # https://blog.intigriti.com/2021/06/08/hacker-tools-amass-hunting-for-subdomains/
 # https://github.com/OWASP/Amass/blob/master/doc/tutorial.md
 # https://github.com/sensepost/gowitness/releases
@@ -76,7 +76,7 @@ echo
 GWIT=gowitness-2.4.2-linux-amd64
 if [ -f $GWIT ]
 then
-  echo "Found gowitness-2.4.2-linux-amd64"
+  echo "Found Gowitness"
 
 else
   echo -e "\e[034mDownloading Missing $GWIT File\e[0m"
@@ -96,7 +96,7 @@ wget -4 -qO- $URL -np --trust-server-names --max-redirect=1 --content-dispositio
 echo
 
 # Strippers
-grep -v '\.\(css\|js\|png\|gif\|jpg\|JPG\|ico\|jpeg\|woff\|woff2\|svg\|wav\|mp4\|mp3\|dtd\|eot\|ttf\)$' urls.txt | tee url-results.txt && sed -i '/s.yimg/d' url-results.txt
+grep -v '\.\(css\|js\|png\|gif\|jpg\|JPG\|ico\|jpeg\|woff\|woff2\|svg\|wav\|mp4\|mp3\|dtd\|eot\|ttf\|webp)$' urls.txt | tee url-results.txt && sed -i '/s.yimg/d' url-results.txt
 
 # Get domains
 cat url-results.txt | awk -F/ '{print $3}' | tee url-domains1.txt
