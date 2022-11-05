@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 
 ################################################
-# Kali Linux Post Setup Automation Script VirtualBox
+# Kali Linux Post Setup Automation Script
 # Tested on Kali 2022.4.2
 # If you're reading this pat yourself on the back
-# sudo dos2unix *.sh && sudo chmod +x *.sh
-# Usage: cd /opt/365
+# Usage: cd /opt/
+# git clone https://github.com/aryanguenthner/365
+# cd 365
 # chmod +x *.sh *.py && chmod -R 777 .
 # sudo ./kali-setup.sh | tee kali.log
 # Learn more at https://github.com/aryanguenthner/
-# Last Updated 11/2/2022, Minor evil updates
+# Last Updated 11/5/2022, minor evil updates
 ################################################
 
 # Setting Variables
@@ -19,11 +20,6 @@ KALI=`hostname -I`
 SUBNET=`ip r | awk 'NR==2' | awk '{print $1}'`
 NMAP=`nmap -V | awk 'NR==1' | cut -d " " -f 1,2,3`
 LS=`ls`
-
-# Are you installling Kali in a virtual machine or bare metal?
-dmidecode -t system | tee kali-system-info.log
-sleep 5
-echo
 
 # Todays Date 
 echo -e "\e[034mToday is\e[0m"
@@ -457,8 +453,7 @@ sudo apt -y install torbrowser-launcher
 cd /opt
 git clone https://github.com/aryanguenthner/TorGhost.git
 cd TorGhost
-sudo apt -y install python3-pyinstaller
-sudo apt -y install python3-notify2
+sudo apt -y install python3-pyinstaller python3-notify2
 sudo pip3 install . --ignore-installed stem
 sudo ./build.sh
 echo
@@ -615,28 +610,17 @@ echo
 #sudo update-alternatives --set python3 /usr/bin/python3.8/
 echo
 
-# Fix permissions
-sudo chmod -R 777 /home/kali/
-echo
-echo "Hacker Hacker"
-echo
-systemctl restart ntp
-source ~/.zshrc
-echo
-
-# Bare metal Kali install or Virtual Machine install
 # https://www.kali.org/docs/virtualization/install-virtualbox-host/
 # https://wiki.debian.org/VirtualBox
+# Bare metal Kali install or Virtual Machine install
 echo "Are you installing a Kali Virtual Machine? "
-echo "Enter y/n: "
-read answer
-echo
-
-if [ $answer == "y" ]
+sudo dmidecode -t system | tee kali-system-info.log
+VM="$(grep 'Family: Virtual Machine' kali-system-info.log)"
+echo $VM
+if [ $VM == "Family: Virtual Machine" ]
 then
 
     echo "Good Choice"
-sleep 3
 
 else
 
@@ -700,6 +684,16 @@ python3 -m venv ./venv
 echo
 '
 sudo pip3 install --upgrade requests
+
+# Fix permissions
+sudo chmod -R 777 /home/kali/
+echo
+echo "Hacker Hacker"
+echo
+systemctl restart ntp
+source ~/.zshrc
+echo
+
 date | tee kali-setup-finish-date.txt
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
 reboot
