@@ -21,7 +21,7 @@ NMAP=`nmap -V | awk 'NR==1' | cut -d " " -f 1,2,3`
 LS=`ls`
 
 # Are you installling Kali in a virtual machine or bare metal?
-dmidecode -t system
+dmidecode -t system | tee kali-system-info.log
 sleep 5
 echo
 
@@ -33,6 +33,7 @@ echo
 # Files
 echo -e "\e[034mFiles in your current directory ->$PWD\e[0m"
 echo "$LS"
+sleep 3
 echo
 
 # Networking
@@ -176,6 +177,7 @@ echo
 
 # Works with Python 3.9
 echo "Hacker TV"
+# Channels --> https://github.com/iptv-org/iptv
 sudo apt-get -y install python3-imdbpy libmpv1 gir1.2-xapp-1.0 debhelper python3-setproctitle dpkg-dev
 cd /opt
 sudo git clone https://github.com/aryanguenthner/hypnotix.git
@@ -447,6 +449,20 @@ echo "The devils eye"
 pip install thedevilseye
 # eye -q "hacker tools" | grep .onion > hackertoolse+onions.txt
 echo
+
+# Tor Web Browser Stuff
+echo
+# sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && 
+sudo apt -y install torbrowser-launcher
+cd /opt
+git clone https://github.com/aryanguenthner/TorGhost.git
+cd TorGhost
+sudo apt -y install python3-pyinstaller
+sudo apt -y install python3-notify2
+sudo pip3 install . --ignore-installed stem
+sudo ./build.sh
+echo
+
 echo "GitRob"
 cd /tmp
 sudo wget --no-check-certificate https://github.com/michenriksen/gitrob/releases/download/v2.0.0-beta/gitrob_linux_amd64_2.0.0-beta.zip
@@ -476,19 +492,6 @@ cd /opt
 git clone https://github.com/aryanguenthner/365.git
 cd 365
 sudo dos2unix *.sh *.py && chmod +x *.sh *.py && chmod -R 777 .
-echo
-
-# Tor Web Browser Stuff
-echo
-# sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && 
-sudo apt -y install torbrowser-launcher
-cd /opt
-git clone https://github.com/aryanguenthner/TorGhost.git
-cd TorGhost
-sudo apt -y install python3-pyinstaller
-sudo apt -y install python3-notify2
-sudo pip3 install . --ignore-installed stem
-sudo ./build.sh
 echo
 
 # MongoDB Install
@@ -633,6 +636,7 @@ if [ $answer == "y" ]
 then
 
     echo "Good Choice"
+sleep 3
 
 else
 
