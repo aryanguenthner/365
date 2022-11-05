@@ -615,12 +615,14 @@ echo
 # Bare metal Kali install or Virtual Machine install
 echo "Are you installing a Kali Virtual Machine? "
 sudo dmidecode -t system | tee kali-system-info.log
-VM="$(grep 'Family: Virtual Machine' kali-system-info.log)"
-echo $VM
-if [ $VM == "Family: Virtual Machine" ]
+VM="$(grep 'Product Name: Virtual Machine\|Product Name: VMware Virtual Platform' kali-system-info.log)"
+VM1="Product Name: Virtual Machine"
+VM2="Product Name: VMware Virtual Platform"
+
+if [ $VM "Product Name: Virtual Machine" -o $VM "Product Name: VMware Virtual Platform" ]
 then
 
-    echo "Good Choice"
+    echo "Virtualization Detected"
 
 else
 
@@ -639,7 +641,6 @@ sudo apt --fix-broken install
 sudo apt autoremove -y
 updatedb
 fi
-echo
 
 echo
 # Customize Kali
