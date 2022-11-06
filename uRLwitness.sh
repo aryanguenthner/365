@@ -4,10 +4,9 @@
 # Reconnaissance Tool used to scrape URLs from a website
 # Open http://localhost:7171 to view the Gowitness report
 # Tested on Kali 2022.4
-# If you're reading this pat yourself on the back
 # Learn more at https://github.com/aryanguenthner/
 # credit: https://github.com/sensepost/gowitness/releases
-# Last Updated 11/5/2022
+# Last Updated 11/6/2022
 ################################################
 echo "
 ██╗░░░██╗██████╗░██╗░░░░░░██╗░░░░░░░██╗██╗████████╗███╗░░██╗███████╗░██████╗░██████╗
@@ -17,8 +16,8 @@ echo "
 ╚██████╔╝██║░░██║███████╗░░╚██╔╝░╚██╔╝░██║░░░██║░░░██║░╚███║███████╗██████╔╝██████╔╝
 ░╚═════╝░╚═╝░░╚═╝╚══════╝░░░╚═╝░░░╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░╚══╝╚══════╝╚═════╝░╚═════╝░"
 
-echo
-# wget -4 -qO- https://www.defense.gov/Resources/Military-Departments/DOD-Websites/category/ | grep -Eo (http|https)://[a-zA-Z0-9./?=_-]* | sort -u | tee url-results.txt
+echo "uRLwitness v1.0"
+# wget --user-agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9' https://www.defense.gov/Resources/Military-Departments/DOD-Websites/category/ -qO- --no-check-certificate --progress=bar --show-progress --ignore-length --ignore-case -H --max-redirect=1024 --follow-tags=* --random-wait --trust-server-names --connect-timeout=4 | grep -Eo (http|https)://[a-zA-Z0-9./?=_-]* | sort -u | tee url-results.txt
 # Remove http,https,www
 # cat url-results.txt | sed -e 's/^http:\/\///g' -e 's/^https:\/\///g' -e 's/^www.//g' | tee dod-domains.txt
 
@@ -88,14 +87,14 @@ wget -O $PWD/gowitness-2.4.2-linux-amd64 https://github.com/aryanguenthner/gowit
 fi
 echo
 
-# Start urlwitness
+# Start uRLwitness
 cd /home/kali/Desktop/testing/urlwitness
-echo -en "\e[034mEnter the site to scrape URLs:\e[0m"
+echo -en "\e[034mEnter the site to scrape URLs: \e[0m"
 read URL
 echo
 
 # wget magic
-wget -4 -qO- $URL -np --trust-server-names --max-redirect=1 --content-disposition --show-progress --no-check-certificate ‐‐user-agent=Googlebot --connect-timeout=4 | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*' | $SORT > urls.txt
+wget --user-agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9' $URL -qO- --no-check-certificate --progress=bar --show-progress --ignore-length --ignore-case -H --max-redirect=1024 --follow-tags=* --random-wait --trust-server-names --connect-timeout=4 | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*' | $SORT > urls.txt
 echo
 
 # Strippers
@@ -136,6 +135,7 @@ echo
 # Get Screenshots
 echo "Getting Screenshots"
 echo
+sleep 2
 chmod -R 777 /home/kali/
 ./gowitness-2.4.2-linux-amd64 file -f url-results.txt
 echo
