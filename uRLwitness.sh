@@ -6,7 +6,7 @@
 # Tested on Kali 2022.4
 # Learn more at https://github.com/aryanguenthner/
 # credit: https://github.com/sensepost/gowitness/releases
-# Last Updated 11/6/2022
+# Last Updated 11/7/2022
 ################################################
 echo "
 ██╗░░░██╗██████╗░██╗░░░░░░██╗░░░░░░░██╗██╗████████╗███╗░░██╗███████╗░██████╗░██████╗
@@ -15,9 +15,9 @@ echo "
 ██║░░░██║██╔══██╗██║░░░░░░░████╔═████║░██║░░░██║░░░██║╚████║██╔══╝░░░╚═══██╗░╚═══██╗
 ╚██████╔╝██║░░██║███████╗░░╚██╔╝░╚██╔╝░██║░░░██║░░░██║░╚███║███████╗██████╔╝██████╔╝
 ░╚═════╝░╚═╝░░╚═╝╚══════╝░░░╚═╝░░░╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░╚══╝╚══════╝╚═════╝░╚═════╝░"
-
 echo "uRLwitness v1.0"
-# wget --user-agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9' https://www.defense.gov/Resources/Military-Departments/DOD-Websites/category/ -qO- --no-check-certificate --progress=bar --show-progress --ignore-length --ignore-case -H --max-redirect=1024 --follow-tags=* --random-wait --trust-server-names --connect-timeout=4 | grep -Eo (http|https)://[a-zA-Z0-9./?=_-]* | sort -u | tee url-results.txt
+echo
+# wget --user-agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)' --no-check-certificate --progress=bar --show-progress --ignore-length --ignore-case -H --max-redirect=1024 --follow-tags=* --random-wait --trust-server-names --connect-timeout=4 -qO- https://www.defense.gov/Resources/Military-Departments/DOD-Websites/category/ | grep -Eo (http|https)://[a-zA-Z0-9./?=_-]* | sort -u | tee url-results.txt
 # Remove http,https,www
 # cat url-results.txt | sed -e 's/^http:\/\///g' -e 's/^https:\/\///g' -e 's/^www.//g' | tee dod-domains.txt
 
@@ -30,6 +30,7 @@ LS=`ls -l`
 PWD=`pwd`
 SORT="sort -u"
 RANDOM=$$
+UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)"
 echo
 
 # Stay Organized
@@ -49,7 +50,7 @@ echo
 
 # Networking
 echo -e "\e[034mPublic IP Address\e[0m"
-curl ifconfig.me
+dig +short @resolver1.opendns.com myip.opendns.com
 echo
 
 echo -e "\e[034mKali IP Address\e[0m"
@@ -94,11 +95,11 @@ read URL
 echo
 
 # wget magic
-wget --user-agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9' $URL -qO- --no-check-certificate --progress=bar --show-progress --ignore-length --ignore-case -H --max-redirect=1024 --follow-tags=* --random-wait --trust-server-names --connect-timeout=4 | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*' | $SORT > urls.txt
+wget -d -U "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)" --no-check-certificate --progress=bar --show-progress -e --robots=on --random-wait --trust-server-names -H --ignore-length --ignore-case -H --max-redirect=24 -qO- $URL | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*' | grep --color=always "$URL" | sort | uniq > urls.txt
 echo
 
 # Strippers
-grep -v '\.\(css\|js\|png\|gif\|jpg\|JPG\|ico\|jpeg\|woff\|woff2\|svg\|wav\|mp4\|mp3\|dtd\|eot\|ttf\|webp\)$' urls.txt | tee url-results.txt
+grep -v '\.\(css\|js\|png\|gif\|jpg\|JPG\|ico\|jpeg\|woff\|woff2\|svg\|wav\|mp4\|mp3\|dtd\|eot\|ttf\|webp\|map\)$' urls.txt | tee url-results.txt
 sed -i '/s.yimg/d' url-results.txt
 
 # Get domains
@@ -141,7 +142,8 @@ chmod -R 777 /home/kali/
 echo
 echo  -e "\033[33;5mReport Finished http://localhost:7171\033[0m"
 echo
-./gowitness-2.4.2-linux-amd64 server report
+./gowitness-2.4.2-linux-amd64 server report;
+sudo su -c "firefox http://localhost:7171" kali
 echo
 
 # May the force be with you!
