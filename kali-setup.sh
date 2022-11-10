@@ -647,30 +647,16 @@ fi
 echo
 # Customize Kali
 echo 'hostname -I' >> /root/.zshrc
-echo 'export PATH=$HISTCONTROL=ignoredups' >> /root/.zshrc
-# Go Fix Go
-echo 'export GOPATH=$HOME/work' >> /root/.zshrc
-echo 'export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin' >> /root/.zshrc
-echo 'export GOPATH=$HOME/go' >> /root/.zshrc
-echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' >> /root/.zshrc
-echo 'export PATH=$GOPATH=$HOME/work' >> /root/.zshrc
-# Mobile
-echo 'export PATH=$ANDROID_SDK=/root/Android/Sdk/:$PATH' >> /root/.zshrc
-echo 'export PATH=$ANDROID_SDK=/root/Android/Sdk/' >> /root/.zshrc
-echo 'export PATH=$ANDROID_SDK/emulator:$ANDROID_SDK/tools:$PATH' >> /root/.zshrc
-echo 'export PATH=$ANDROID_SDK/emulator:$ANDROID_SDK/tools' >> /root/.zshrc
-echo 'export PATH=$PATH/root/Android/Sdk/platform-tools' >> /root/.zshrc
-echo 'export PATH=$PATH/opt/android-studio/jre/jre/bin/' >> /root/.zshrc
-echo 'export PATH=/opt/android-studio/jre/jre/bin:$PATH' >> /root/.zshrc
-# Java Deez Nutz
-echo 'export PATH=$JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64:$PATH' >> /root/.zshrc
-echo 'export PATH=$JAVA_HOME/bin:$PATH' >> /root/.zshrc
-# Arachni
-echo 'export PATH=$arachni_dir=/opt/arachni/bin:$PATH' >> /root/.zshrc
-# Other
-echo 'export PATH=$PATH:/snap/bin:$PATH' >> /root/.zshrc
-echo 'export PATH=/usr/bin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/' >> /root/.zshrc
-echo 'export PATH=/usr/sbin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/' >> /root/.zshrc
+echo 'export HISTCONTROL="ignoredups:$PATH"' >> /root/.zshrc
+echo 'export GOPATH="$HOME/work:$PATH"' >> /root/.zshrc
+echo 'export PATH="/root/go:$PATH"' >> /root/.zshrc
+echo 'export PATH=/"usr/local/go/bin:$PATH"' >> /root/.zshrc
+echo 'export PATH="/root/work:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/bin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc 
+echo 'export PATH="/usr/sbin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/lib/jvm/java-11-openjdk-amd64/:$PATH"' >> /root/.zshrc
+echo 'export PATH="/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
 echo 'export PATH=/usr/local/bin:$PATH' >> /root/.zshrc
 
 : ' # Mobile Security Assessment Tool MobSF
