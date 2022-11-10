@@ -6,7 +6,7 @@
 # Usage: cd /opt/
 # git clone https://github.com/aryanguenthner/365
 # cd 365
-# chmod +x *.sh *.py && chmod -R 777 .
+# sudo chmod +x *.sh *.py && chmod -R 777 .
 # sudo ./kali-setup.sh | tee kali.log
 # Learn more at https://github.com/aryanguenthner/
 # Last Updated 11/8/2022, minor evil updates
@@ -135,6 +135,9 @@ echo
 # Project Discovery Install go
 sudo apt -y install golang-go
 go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
+echo
+# Install Katana
+go install github.com/projectdiscovery/katana/cmd/katana@latest
 echo
 pip install --upgrade pip
 echo
