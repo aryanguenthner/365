@@ -35,6 +35,7 @@ echo
 
 # Stay Organized
 mkdir -p /home/kali/Desktop/testing/urlwitness/
+wget https://raw.githubusercontent.com/aryanguenthner/365/master/uRLwitness-DEV.sh && chmod +x *.sh
 cd /home/kali/Desktop/testing/urlwitness/
 chmod -R 777 /home/kali/
 
@@ -68,7 +69,6 @@ then
     
 else
   echo "Downloading Google Chrome Stable Browser"
-cd /tmp
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo dpkg -i google-chrome-stable_current_amd64.deb
 
@@ -84,8 +84,8 @@ then
 else
   echo -e "\e[034mDownloading Missing $GWIT File\e[0m"
 
-cd /home/kali/Desktop/testing/urlwitness
-wget -O $PWD/gowitness-2.4.2-linux-amd64 https://github.com/aryanguenthner/gowitness/releases/download/gowitness/gowitness-2.4.2-linux-amd64
+
+wget -O /home/kali/Desktop/testing/urlwitness/gowitness-2.4.2-linux-amd64 https://github.com/aryanguenthner/gowitness/releases/download/gowitness/gowitness-2.4.2-linux-amd64
 
 fi
 echo
