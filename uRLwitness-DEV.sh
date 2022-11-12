@@ -50,9 +50,9 @@ echo
 
 # Networking
 echo -e "\e[034mPublic IP Address\e[0m"
-dig +short @resolver1.opendns.com myip.opendns.com
+curl -s ifconfig.me
 echo
-
+echo
 echo -e "\e[034mKali IP Address\e[0m"
 echo $KALI
 echo
@@ -70,22 +70,6 @@ else
   echo "Downloading Google Chrome Stable Browser"
 curl -s https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb --output google-chrome-stable_current_amd64.deb
 sudo dpkg -i google-chrome-stable_current_amd64.deb
-
-fi
-echo
-
-# Is there a witness?
-echo -e "\e[034mRequirements Check\e[0m"
-# Google browser download if needed
-echo
-WIT=urlwitness.sh
-if [ -f $WIT ]
-then
-  echo "Found uRLwitness"
-    
-else
-  echo "Downloading uRLwitness.sh"
-curl -s curl -s https://raw.githubusercontent.com/aryanguenthner/365/master/uRLwitness-DEV.sh --output uRLwitness-DEV.sh && chmod a+x *.sh
 
 fi
 echo
