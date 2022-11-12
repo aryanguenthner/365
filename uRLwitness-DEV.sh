@@ -35,7 +35,6 @@ echo
 
 # Stay Organized
 mkdir -p /home/kali/Desktop/testing/urlwitness/
-wget https://raw.githubusercontent.com/aryanguenthner/365/master/uRLwitness-DEV.sh && chmod +x *.sh
 cd /home/kali/Desktop/testing/urlwitness/
 chmod -R 777 /home/kali/
 
@@ -66,26 +65,40 @@ GOOG=/opt/google/chrome/google-chrome
 if [ -f $GOOG ]
 then
   echo "Found Google Chrome"
-    
+
 else
   echo "Downloading Google Chrome Stable Browser"
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+curl -s https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb --output google-chrome-stable_current_amd64.deb
 sudo dpkg -i google-chrome-stable_current_amd64.deb
 
 fi
 echo
 
-# Can I get a Witness?
+# Is there a witness?
+echo -e "\e[034mRequirements Check\e[0m"
+# Google browser download if needed
+echo
+WIT=urlwitness.sh
+if [ -f $WIT ]
+then
+  echo "Found uRLwitness"
+    
+else
+  echo "Downloading uRLwitness.sh"
+curl -s curl -s https://raw.githubusercontent.com/aryanguenthner/365/master/uRLwitness-DEV.sh --output uRLwitness-DEV.sh && chmod a+x *.sh
+
+fi
+echo
+
+# Can I get a gowitness?
 GWIT=gowitness-2.4.2-linux-amd64
 if [ -f $GWIT ]
 then
-  echo "Found Gowitness"
+  echo "Found gowitness"
 
 else
   echo -e "\e[034mDownloading Missing $GWIT File\e[0m"
-
-
-wget -O /home/kali/Desktop/testing/urlwitness/gowitness-2.4.2-linux-amd64 https://github.com/aryanguenthner/gowitness/releases/download/gowitness/gowitness-2.4.2-linux-amd64
+curl -s https://github.com/aryanguenthner/gowitness/releases/download/gowitness/gowitness-2.4.2-linux-amd64 --output /home/kali/Desktop/testing/urlwitness/gowitness-2.4.2-linux-amd64
 
 fi
 echo
