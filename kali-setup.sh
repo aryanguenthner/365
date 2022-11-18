@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
 ################################################
-# Kali Linux Post Setup Automation Script
+# Kali Linux Red Team Setup Automation Script
 # Tested on Kali 2022.4.2
 # Usage: cd /opt/
-# git clone https://github.com/aryanguenthner/365
+# sudo git clone https://github.com/aryanguenthner/365
 # cd 365
-# sudo chmod +x *.sh *.py && chmod -R 777 .
+# chmod -R 777 .
+# sudo chmod a+x *.sh *.py && 
 # sudo ./kali-setup.sh | tee kali.log
-# Learn more at https://github.com/aryanguenthner/
-# Last Updated 11/8/2022, minor evil updates
+# Last Updated 11/17/2022, minor evil updates
 ################################################
 
 # Setting Variables
@@ -28,14 +28,14 @@ echo
 # Files
 echo -e "\e[034mFiles in your current directory ->$PWD\e[0m"
 echo "$LS"
-sleep 3
+sleep 1
 echo
 
 # Networking
 echo -e "\e[033mNetwork Information\e[0m"
 echo
 echo -e "\e[033mPublic IP\e[0m"
-dig +short @resolver1.opendns.com myip.opendns.com
+curl -s ifconfig.me
 echo
 
 # Internal IP Address
@@ -47,6 +47,7 @@ echo
 echo -e "\e[033mCurrent Subnet\e[0m"
 echo $SUBNET
 echo
+sleep 2
 
 # Stay Organized
 mkdir -p /home/kali/Desktop/testing/nmapscans/
@@ -62,7 +63,7 @@ echo "Be Patient, Installing Kali Dependencies"
 
 # Kali installs
 echo
-sudo apt-get -y install shotwell obfs4proxy kbtin gconf-service gconf2-common libc++1 libc++1-13 libc++abi1-13 libgconf-2-4 libunwind-13 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
+sudo apt-get -y install ncat shotwell obfs4proxy kbtin gconf-service gconf2-common libc++1 libc++1-13 libc++abi1-13 libgconf-2-4 libunwind-13 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
 echo
 
 # text in your terminal > ansi2html -a > report.html
@@ -80,22 +81,27 @@ echo
 
 # Nmap checker
 NV=`nmap -V | awk 'NR==1' | cut -d " " -f 3`
-if [ "$NV" = "7.93" ]
+echo $NV 
+echo
+
+if [ "$NV" = 7.93 ]
 then
     echo "Found $NV"
+echo
 
 else
 
     echo -e "\e[034mDownloading and installing Nmap 7.93\e[0m"
-
-cd /tmp
-wget https://nmap.org/dist/nmap-7.93.tar.bz2
+    
+sudo dpkg -r --force-depends nmap
+wget --no-check-certificate https://nmap.org/dist/nmap-7.93.tar.bz2
 bzip2 -cd nmap-7.93.tar.bz2 | tar xvf -
 cd nmap-7.93
 ./configure
 make
 make install
-echo $NMAP Installed
+echo
+echo Installed $NMAP
 fi
 echo
 
@@ -223,13 +229,14 @@ sudo systemctl enable ssh
 sudo service ssh restart
 echo
 
+echo "Metasploit Ready Up"
+
 # Metasploit Setup
 mkdir -p /opt/metasploit
 cd /opt/metasploit
 curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && chmod 755 msfinstall && ./msfinstall
 echo
 
-echo "Metasploit Ready Up"
 echo
 systemctl start postgresql
 msfdb init
@@ -427,12 +434,6 @@ cd /opt
 git clone https://github.com/deepseagirl/degoogle.git
 echo
 
-echo "Web SSH (Pretty Cool)"
-echo
-cd /opt
-git clone https://github.com/huashengdun/webssh.git
-echo
-
 echo "Installing Impacket"
 echo
 cd /opt
@@ -488,7 +489,7 @@ echo "Hacker Hacker"
 cd /opt
 git clone https://github.com/aryanguenthner/365.git
 cd 365
-sudo dos2unix *.sh *.py && chmod +x *.sh *.py && chmod -R 777 .
+sudo dos2unix *.sh *.py && chmod a+x *.sh *.py && chmod -R 777 /opt/365
 echo
 
 # MongoDB Install
@@ -539,8 +540,7 @@ echo
 
 # http-screenshot Checker
 N=/usr/share/nmap/scripts/http-screenshot.nse
-
-if [ -f $N ]
+if [ -f "$N" ]
 then
     echo "Found http-screenshot.nse"
 
@@ -563,7 +563,7 @@ else
 
     echo -e "\e[034mDownloading Missing PhantomJS\e[0m"
 
-wget -O /tmp/phantomjs-1.9.8-linux-x86_64.tar.bz2 https://github.com/aryanguenthner/365/blob/f5a069eec95557f2741c16d0dbf27653ddb85e25/phantomjs-1.9.8-linux-x86_64.tar.bz2
+wget --no-check-certificate -O /tmp/phantomjs-1.9.8-linux-x86_64.tar.bz2 https://github.com/aryanguenthner/365/blob/f5a069eec95557f2741c16d0dbf27653ddb85e25/phantomjs-1.9.8-linux-x86_64.tar.bz2
 
 echo "Extracting and Installing PhantomJS 1.9.8"
 tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2
@@ -584,7 +584,7 @@ echo
 # "View Report http://localhost:7171"
 # ./gowitness-2.4.2-linux-amd64 server report
 GWIT=/opt/gowitness/gowitness-2.4.2-linux-amd64
-if [ -f $GWIT ]
+if [ -f "$GWIT" ]
 then
     echo "Found gowitness-2.4.2-linux-amd64"
 
@@ -593,7 +593,7 @@ else
     echo -e "\e[034mDownloading Missing $GWIT File\e[0m"
 cd /opt
 mkdir -p /opt/gowitness
-wget -O $PWD/gowitness-2.4.2-linux-amd64 https://github.com/aryanguenthner/gowitness/releases/download/gowitness/gowitness-2.4.2-linux-amd64
+wget --no-check-certificate -O $PWD/gowitness-2.4.2-linux-amd64 https://github.com/aryanguenthner/gowitness/releases/download/gowitness/gowitness-2.4.2-linux-amd64
 
 fi
 echo
@@ -643,6 +643,7 @@ sudo apt --fix-broken install
 sudo apt autoremove -y
 updatedb
 fi
+echo
 
 echo
 # Customize Kali
