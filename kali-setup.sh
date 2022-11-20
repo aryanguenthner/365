@@ -9,7 +9,7 @@
 # chmod -R 777 .
 # sudo chmod a+x *.sh *.py && 
 # sudo ./kali-setup.sh | tee kali.log
-# Last Updated 11/17/2022, minor evil updates
+# Last Updated 11/20/2022, minor evil updates
 ################################################
 
 # Setting Variables
@@ -65,6 +65,10 @@ echo "Be Patient, Installing Kali Dependencies"
 echo
 sudo apt-get -y install ncat shotwell obfs4proxy kbtin gconf-service gconf2-common libc++1 libc++1-13 libc++abi1-13 libgconf-2-4 libunwind-13 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
 echo
+echo
+python3 -m pip install --upgrade pip
+pip3 install --upgrade setuptools
+echo
 
 # text in your terminal > ansi2html -a > report.html
 # ssmtp <--works good, just doesnt play with sendmail.
@@ -106,12 +110,12 @@ fi
 echo
 
 cd /usr/share/nmap/scripts
-wget https://raw.githubusercontent.com/aryanguenthner/nmap-nse-vulnerability-scripts/master/smtp-vuln-cve2020-28017-through-28026-21nails.nse
+wget --no-check-certificate https://raw.githubusercontent.com/aryanguenthner/nmap-nse-vulnerability-scripts/master/smtp-vuln-cve2020-28017-through-28026-21nails.nse
 nmap --script-updatedb
 echo
 
 cd /home/kali/
-chmod -R 777 .
+chmod -R 777 /home/kali/
 
 # Nmap Testing
 mkdir -p /home/kali/Desktop/testing/nmapscans
@@ -126,7 +130,7 @@ then
 else
 
     echo -e "\e[034mDownloading Missing $BOOTSTRAP File\e[0m"
-wget -O /home/kali/Desktop/testing/nmapscans/nmap-bootstrap.xsl https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl > /dev/null
+wget --no-check-certificate -O /home/kali/Desktop/testing/nmapscans/nmap-bootstrap.xsl https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl > /dev/null
 
 fi
 echo
@@ -144,15 +148,10 @@ go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
 echo
 # Install Katana
 go install github.com/projectdiscovery/katana/cmd/katana@latest
-echo
-pip install --upgrade pip
-echo
-python3 -m pip install -U pip
-pip3 install --upgrade setuptools
-
 # Updog works on python 3.9 not 3.10
 # echo "Installing Updog"
 # pip3 install updog
+echo
 
 echo "Installing psycopg"
 pip install psycopg
@@ -187,7 +186,7 @@ cd /opt
 sudo git clone https://github.com/aryanguenthner/hypnotix.git
 cd hypnotix
 sudo apt-get install -y python3.10-venv
-wget http://ftp.us.debian.org/debian/pool/main/i/imdbpy/python3-imdbpy_6.8-2_all.deb &&
+wget --no-check-certificate http://ftp.us.debian.org/debian/pool/main/i/imdbpy/python3-imdbpy_6.8-2_all.deb &&
 sudo dpkg -i python3-imdbpy_6.8-2_all.deb
 sudo dpkg-buildpackage -b -uc
 sudo python3 -m venv ./venv
@@ -198,7 +197,7 @@ echo
 # NOTE: These instructions only work for 64 bit Debian-based Kali Linux
 # Linux distributions such as Ubuntu, Mint etc.
 # 1. Install our official public software signing key
-wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
+wget --no-check-certificate -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
 cat signal-desktop-keyring.gpg | sudo tee -a /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
 # 2. Add our repository to your list of repositories
 echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
@@ -266,6 +265,7 @@ cd knock
 #nano knockpy/config.json <- set your virustotal API_KEY
 pip install -e .
 echo
+
 echo "Subbrute"
 echo
 cd /opt
@@ -291,7 +291,6 @@ git clone https://github.com/FortyNorthSecurity/EyeWitness.git
 cd /opt/EyeWitness/Python/setup
 sudo yes | ./setup.sh
 '''
-# TODO get gowitness
 echo
 echo "Cewl"
 echo
