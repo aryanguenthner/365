@@ -5,9 +5,17 @@
 # torghost -a -c ca 
 # libreoffice --calc results+onions.txt
 # Tested on Kali 2022.4
-# Last updated 11/18/2022
+# Last updated 11/23/2022
 # The future is now
 ######################################################
+echo "
+██████╗░░█████╗░██████╗░██╗░░██╗░██████╗██╗░░██╗███████╗███████╗████████╗░██████╗
+██╔══██╗██╔══██╗██╔══██╗██║░██╔╝██╔════╝██║░░██║██╔════╝██╔════╝╚══██╔══╝██╔════╝
+██║░░██║███████║██████╔╝█████═╝░╚█████╗░███████║█████╗░░█████╗░░░░░██║░░░╚█████╗░
+██║░░██║██╔══██║██╔══██╗██╔═██╗░░╚═══██╗██╔══██║██╔══╝░░██╔══╝░░░░░██║░░░░╚═══██╗
+██████╔╝██║░░██║██║░░██║██║░╚██╗██████╔╝██║░░██║███████╗███████╗░░░██║░░░██████╔╝
+╚═════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░╚═╝░░╚═╝╚══════╝╚══════╝░░░╚═╝░░░╚═════╝░"
+echo "v1.0"
 # Setting Variables
 YELLOW=033m
 BLUE=034m
@@ -98,9 +106,6 @@ apt update && apt -y install libreoffice
 fi
 echo
 
-echo "Let's Get Evil Onions"
-echo
-
 # User Input
 echo -en "\e[034mWhat are you looking for: \e[0m"
 read SEARCH
@@ -122,7 +127,7 @@ echo
 sleep 2
 echo
 
-echo -n 'Connect to the Dark Web y/n: '
+echo -en "\e[033mConnect to the Dark Web y/n: \e[0m"
 read DWEB0
 echo
 echo
@@ -134,7 +139,7 @@ echo "Trying to get on the Dark Web"
 torghost -a -c us
 echo
 
-echo -e "\e[033mNew Public IP\e[0m"
+echo -e "\e[033mDark Web IP\e[0m"
 curl -s ifconfig.me
 echo
 else
@@ -147,8 +152,7 @@ echo
 # Add http prefix to onion links
 for x in $(cat results+onions.txt); do echo http://$x; done > results.txt;
 echo
-echo "Top 10 Results"
-echo
+echo -e "\e[033mFirst 10 Results\e[0m"
 
 echo "Be Good"
 head results.txt
