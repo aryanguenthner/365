@@ -9,7 +9,7 @@
 # chmod -R 777 .
 # sudo chmod a+x *.sh *.py && 
 # sudo ./kali-setup.sh | tee kali.log
-# Last Updated 11/20/2022, minor evil updates
+# Last Updated 11/23/2022, minor evil updates
 ################################################
 
 # Setting Variables
@@ -37,7 +37,7 @@ echo
 echo -e "\e[033mPublic IP\e[0m"
 curl -s ifconfig.me
 echo
-
+echo
 # Internal IP Address
 echo -e "\e[033mKali IP\e[0m"
 echo $KALI | awk '{print $1}'
@@ -63,7 +63,7 @@ echo "Be Patient, Installing Kali Dependencies"
 
 # Kali installs
 echo
-sudo apt-get -y install ncat shotwell obfs4proxy kbtin gconf-service gconf2-common libc++1 libc++1-13 libc++abi1-13 libgconf-2-4 libunwind-13 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
+sudo apt-get install ncat shotwell obfs4proxy kbtin gconf-service gconf2-common libc++1 libgconf-2-4 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice -y
 echo
 echo
 python3 -m pip install --upgrade pip
@@ -72,10 +72,8 @@ echo
 
 # text in your terminal > ansi2html -a > report.html
 # ssmtp <--works good, just doesnt play with sendmail.
-#openjdk-13-jdk did not install
-#libindicator3-7 did not install
-#python3.8-venv did not install
-#libappindicator3-1 did not install
+# did not install > openjdk-13-jdk libc++1-13 libc++abi1-13 libindicator3-7 libunwind-13 python3.8-venv libappindicator3-1 
+
 echo
 
 # Slack Setup on Kali needs some love
@@ -90,13 +88,13 @@ echo
 
 if [ "$NV" = 7.93 ]
 then
+
     echo "Found $NV"
-echo
 
 else
 
     echo -e "\e[034mDownloading and installing Nmap 7.93\e[0m"
-    
+  
 sudo dpkg -r --force-depends nmap
 wget --no-check-certificate https://nmap.org/dist/nmap-7.93.tar.bz2
 bzip2 -cd nmap-7.93.tar.bz2 | tar xvf -
@@ -105,7 +103,7 @@ cd nmap-7.93
 make
 make install
 echo
-echo Installed $NMAP
+echo Just Installed Nmap $NMAP
 fi
 echo
 
@@ -125,6 +123,7 @@ echo
 NB=nmap-bootstrap.xsl
 if [ -f $NB ]
 then
+
     echo "Found nmap-bootstrap.xsl"
 
 else
@@ -153,10 +152,6 @@ go install github.com/projectdiscovery/katana/cmd/katana@latest
 # pip3 install updog
 echo
 
-echo "Installing psycopg"
-pip install psycopg
-echo
-
 # How to Update Python Alternatives
 ''' # kali python Config
 ls -l /usr/bin/python*
@@ -176,6 +171,10 @@ sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 
 sudo update-alternatives --set python3 /usr/bin/python3.9
 # update-alternatives --remove-all python
 '''
+echo
+
+echo "Installing psycopg"
+pip install psycopg
 echo
 
 # Works with Python 3.9
@@ -221,7 +220,6 @@ mv tmpmail ~/bin/
 echo
 
 # Hackers like SSH
-echo
 echo "Enabling SSH"
 sed -i '33s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
 sudo systemctl enable ssh
@@ -235,11 +233,10 @@ mkdir -p /opt/metasploit
 cd /opt/metasploit
 curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && chmod 755 msfinstall && ./msfinstall
 echo
-
-echo
 systemctl start postgresql
 msfdb init
 echo
+
 # Yeet
 #echo "Kingfisher"
 #echo
@@ -306,19 +303,17 @@ echo
 
 echo "AD Recon - My Fav"
 echo
+
 cd /opt
 git clone https://github.com/sense-of-security/ADRecon.git
 echo
 
 echo "enum4linux-ng"
-echo
 cd /opt
 git clone https://github.com/cddmp/enum4linux-ng.git
 echo
 
 echo "BloodHound"
-echo
-
 cd /opt
 git clone https://github.com/BloodHoundAD/Bloodhound.git
 echo
@@ -427,7 +422,7 @@ cd /opt
 git clone https://github.com/s0md3v/Breacher.git
 echo
 
-echo "Search Google Extract Result URLS - degoogle"
+echo "Google Search commandline Extract Result URLS - degoogle"
 echo
 cd /opt
 git clone https://github.com/deepseagirl/degoogle.git
@@ -449,7 +444,6 @@ pip install thedevilseye
 echo
 
 # Tor Web Browser Stuff
-echo
 # sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && 
 sudo apt -y install torbrowser-launcher
 cd /opt
@@ -541,6 +535,7 @@ echo
 N=/usr/share/nmap/scripts/http-screenshot.nse
 if [ -f "$N" ]
 then
+
     echo "Found http-screenshot.nse"
 
 else
@@ -556,6 +551,7 @@ fi
 P=`phantomjs -v`
 if [ "$P" = "1.9.8" ]
 then
+
     echo "Found PhantomJS 1.9.8"
 
 else
@@ -585,6 +581,7 @@ echo
 GWIT=/opt/gowitness/gowitness-2.4.2-linux-amd64
 if [ -f "$GWIT" ]
 then
+
     echo "Found gowitness-2.4.2-linux-amd64"
 
 else
@@ -638,9 +635,7 @@ echo
 # VirtualBox Hack for USB Devices
 sudo usermod -a -G vboxusers $USER
 echo
-sudo apt --fix-broken install
-sudo apt autoremove -y
-updatedb
+
 fi
 echo
 
@@ -675,11 +670,17 @@ sudo chmod -R 777 /home/kali/
 echo
 echo "Hacker Hacker"
 echo
+# Insurance
+sudo apt --fix-broken install
+sudo apt autoremove -y
+apt-get install --reinstall python3-debian -y
 systemctl restart ntp
 source ~/.zshrc
 echo
 
+# Install Finish Time
 date | tee kali-setup-finish-date.txt
+updatedb
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
 reboot
 # Just in case DNS issues: nano -c /etc/resolvconf/resolv.conf.d/head
