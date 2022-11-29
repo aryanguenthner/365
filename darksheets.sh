@@ -47,8 +47,8 @@ echo
 echo -e "\e[034mGetting Network Information\e[0m"
 echo
 echo -e "\e[033mPublic IP\e[0m"
-curl -s https://ipapi.co/timezone
-echo
+curl -s http://ip-api.com/line?fields=timezone
+
 curl -s ifconfig.me
 echo
 echo
@@ -151,7 +151,7 @@ torghost -a -c us,ca,mx
 echo
 
 echo -e "\e[033mDark Web IP\e[0m"
-curl -s https://ipapi.co/timezone
+curl -s http://ip-api.com/line?fields=timezone
 echo
 curl -s ifconfig.me
 echo
@@ -204,7 +204,7 @@ torghost -x
 echo
 
 echo -e "\e[033mNew Public IP\e[0m"
-curl -s https://ipapi.co/timezone
+curl -s http://ip-api.com/line?fields=timezone
 echo
 curl -s ifconfig.me
 echo
