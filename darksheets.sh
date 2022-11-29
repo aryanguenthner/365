@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
+
 #######################################################
-# Discover targets by doing a ping sweep
+# Made for doing security research on the Dark Deep Web
+# Intended to be used on Kali Linux
 # eye -q "vice lausd" | grep .onion > results+onions.txt
 # torghost -a -c ca 
 # libreoffice --calc results+onions.txt
 # Tested on Kali 2022.4
-# Last updated 11/23/2022
+# Last updated 11/27/2022
 # The future is now
 ######################################################
 echo "
@@ -16,6 +18,7 @@ echo "
 ██████╔╝██║░░██║██║░░██║██║░╚██╗██████╔╝██║░░██║███████╗███████╗░░░██║░░░██████╔╝
 ╚═════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░╚═╝░░╚═╝╚══════╝╚══════╝░░░╚═╝░░░╚═════╝░"
 echo "v1.0"
+
 # Setting Variables
 YELLOW=033m
 BLUE=034m
@@ -23,6 +26,10 @@ KALI=`hostname -I`
 LS=`ls`
 PWD=`pwd`
 echo
+
+# Stay Organized
+mkdir -p /home/kali/Desktop/testing/dark-web/
+cd /home/kali/Desktop/testing/dark-web/
 
 # Todays Date
 echo -e "\e[034mToday is\e[0m"
@@ -40,6 +47,8 @@ echo
 echo -e "\e[034mGetting Network Information\e[0m"
 echo
 echo -e "\e[033mPublic IP\e[0m"
+curl -s https://ipapi.co/timezone
+echo
 curl -s ifconfig.me
 echo
 echo
@@ -47,6 +56,8 @@ echo -e "\e[033mKali IP\e[0m"
 echo $KALI | awk '{print $1}'
 echo
 echo
+
+# Make sure everything is installed for this to work
 echo -e "\e[033mRequirements Check\e[0m"
 echo
 E=/usr/local/bin/eye
@@ -136,10 +147,12 @@ if [ $DWEB0 == y ]
 then
 
 echo "Trying to get on the Dark Web"
-torghost -a -c us
+torghost -a -c us,ca,mx
 echo
 
 echo -e "\e[033mDark Web IP\e[0m"
+curl -s https://ipapi.co/timezone
+echo
 curl -s ifconfig.me
 echo
 else
@@ -149,13 +162,12 @@ echo "Maybe next time"
 fi
 echo
 
-# Add http prefix to onion links
-for x in $(cat results+onions.txt); do echo http://$x; done > results.txt;
+# First 10 Results
 echo
 echo -e "\e[033mFirst 10 Results\e[0m"
 
 echo "Be Good"
-head results.txt
+head results+onions.txt
 echo
 
 # Spreadsheet Results
@@ -192,6 +204,8 @@ torghost -x
 echo
 
 echo -e "\e[033mNew Public IP\e[0m"
+curl -s https://ipapi.co/timezone
+echo
 curl -s ifconfig.me
 echo
 else
