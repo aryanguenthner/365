@@ -32,6 +32,9 @@ echo
 mkdir -p /home/kali/Desktop/testing/dark-web/
 cd /home/kali/Desktop/testing/dark-web/
 
+echo "For the best results run as root: sudo ./darksheets.sh"
+echo
+
 # Todays Date
 echo -e "\e[034mToday is\e[0m"
 date
@@ -44,7 +47,6 @@ sleep 1
 echo
 
 # Networking
-echo
 echo -e "\e[034mGetting Network Information\e[0m"
 echo
 echo -e "\e[033mPublic IP\e[0m"
@@ -55,7 +57,6 @@ echo
 echo
 echo -e "\e[033mKali IP\e[0m"
 echo $KALI | awk '{print $1}'
-echo
 echo
 
 # Make sure everything is installed for this to work
