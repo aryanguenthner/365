@@ -7,7 +7,8 @@
 # torghost -a -c ca 
 # libreoffice --calc results+onions.txt
 # Tested on Kali 2022.4
-# Last updated 11/27/2022
+# Last updated 11/29/2022
+# https://github.com/aryanguenthner
 # The future is now
 ######################################################
 echo "
@@ -47,7 +48,7 @@ echo
 echo -e "\e[034mGetting Network Information\e[0m"
 echo
 echo -e "\e[033mPublic IP\e[0m"
-curl -s http://ip-api.com/line?fields=timezone
+curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2
 
 curl -s ifconfig.me
 echo
@@ -146,18 +147,20 @@ echo
 if [ $DWEB0 == y ]
 then
 
-echo "Trying to get on the Dark Web"
+    echo "Trying to get on the Dark Web"
+echo
+    echo "Exit Tor type: torghost -x"
 torghost -a -c us,ca,mx
 echo
 
-echo -e "\e[033mDark Web IP\e[0m"
-curl -s http://ip-api.com/line?fields=timezone
-echo
+    echo -e "\e[033mDark Web IP\e[0m"
+curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2
+
 curl -s ifconfig.me
 echo
 else
 
-echo "Maybe next time"
+    echo "Maybe next time"
 
 fi
 echo
@@ -167,23 +170,29 @@ echo
 echo -e "\e[033mFirst 10 Results\e[0m"
 
 echo "Be Good"
+echo
 head results+onions.txt
 echo
 
 # Spreadsheet Results
-echo -n 'Open spreadsheet with results in y/n: '
+echo -e "\e[033mOpen darksheet with results in y/n: \e[0m"
 read OPEN1
 echo
 
 if [ $OPEN1 == y ]
 then
-
-echo "Here they are"
+    echo -e "\e[033mHere is your darksheet\e[0m"
+    echo "To exit: CTRL + c"
+    echo "Exit Tor type: torghost -x"
+    echo
+    echo "Use Tor Browser or Firefox to view .onion sites"
+    echo "Edit Firefox: In URL type: about:config"
+    echo "Set network.dns.blockDotOnion to false"
 libreoffice --calc results+onions.txt;
 
 else
 
-echo "Maybe next time"
+    echo "Maybe next time"
 
 fi
 echo
@@ -194,27 +203,24 @@ chmod -R 777 /home/kali
 # Exit the Dark Web
 echo -n 'Exit the Dark Web y/n: '
 read DWEB1
-echo
-echo
 if [ $DWEB1 == y ]
 then
-
-echo "Trying to Exit the Dark Web"
+    echo "Trying to Exit the Dark Web"
 torghost -x
-echo
+    echo
+    echo "Exit Tor type: torghost -x"
+    echo
+    echo -e "\e[033mNew Public IP\e[0m"
+curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2
 
-echo -e "\e[033mNew Public IP\e[0m"
-curl -s http://ip-api.com/line?fields=timezone
-echo
 curl -s ifconfig.me
-echo
+
 else
 
 echo "Be good"
 
 fi
+
 echo
-
-
-
+echo
 
