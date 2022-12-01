@@ -4,12 +4,15 @@
 # Made for doing security research on the Dark Deep Web
 # Intended to be used on Kali Linux
 # eye -q "vice lausd" | grep .onion > results+onions.txt
-# torghost -a -c ca 
+# torghost -a -c us,mx,ca 
 # libreoffice --calc results+onions.txt
 # Tested on Kali 2022.4
-# Last updated 11/29/2022
+# Last updated 11/30/2022
 # https://github.com/aryanguenthner
 # The future is now
+# https://dark.fail/
+# https://addons.mozilla.org/en-US/firefox/addon/noscript/
+# https://chrome.google.com/webstore/detail/noscript/doojmbjmlfjjnbmnoijecmcbfeoakpjm/related?hl=en
 ######################################################
 echo "
 ██████╗░░█████╗░██████╗░██╗░░██╗░██████╗██╗░░██╗███████╗███████╗████████╗░██████╗
