@@ -144,8 +144,8 @@ echo
 echo "Getting Screenshots"
 echo
 sleep 2
-chmod -R 777 /home/kali/
 ./gowitness-2.4.2-linux-amd64 file -f url-results.txt
+chmod -R 777 /home/kali/
 echo
 echo  -e "\033[33;5mReport Finished http://localhost:7171\033[0m"
 echo
