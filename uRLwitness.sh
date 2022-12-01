@@ -6,7 +6,7 @@
 # Tested on Kali 2022.4
 # credit: https://github.com/sensepost/gowitness/releases
 # https://github.com/aryanguenthner
-# Last Updated 11/29/2022
+# Last Updated 11/30/2022
 ################################################
 echo "
 ██╗░░░██╗██████╗░██╗░░░░░░██╗░░░░░░░██╗██╗████████╗███╗░░██╗███████╗░██████╗░██████╗
@@ -53,6 +53,8 @@ echo
 
 # Networking
 echo -e "\e[034mPublic IP Address\e[0m"
+curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2
+
 curl -s ifconfig.me
 echo
 echo
@@ -67,10 +69,10 @@ echo
 GOOG=/opt/google/chrome/google-chrome
 if [ -f "$GOOG" ]
 then
-  echo "Found Google Chrome"
+    echo "Found Google Chrome"
 
 else
-  echo "Downloading Google Chrome Stable Browser"
+    echo "Downloading Google Chrome Stable Browser"
 curl -s https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb --output google-chrome-stable_current_amd64.deb
 sudo dpkg -i google-chrome-stable_current_amd64.deb
 
@@ -81,10 +83,10 @@ echo
 GWIT=gowitness-2.4.2-linux-amd64
 if [ -f "$GWIT" ]
 then
-  echo "Found gowitness"
+    echo "Found gowitness"
 
 else
-  echo -e "\e[034mDownloading Missing $GWIT File\e[0m"
+    echo -e "\e[034mDownloading Missing $GWIT File\e[0m"
 curl -s https://github.com/aryanguenthner/gowitness/releases/download/gowitness/gowitness-2.4.2-linux-amd64 --output /home/kali/Desktop/testing/urlwitness/gowitness-2.4.2-linux-amd64
 
 fi
