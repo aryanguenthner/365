@@ -7,7 +7,7 @@
 # torghost -a -c us,mx,ca 
 # libreoffice --calc results+onions.txt
 # Tested on Kali 2022.4
-# Last updated 11/30/2022
+# Last updated 12/01/2022
 # https://github.com/aryanguenthner
 # The future is now
 # https://dark.fail/
@@ -192,6 +192,8 @@ then
     echo "Use Tor Browser or Firefox to view .onion sites"
     echo "Edit Firefox: In URL type: about:config"
     echo "Set network.dns.blockDotOnion to false"
+    echo "Use NoScript! Block Javascript!"
+    echo
 libreoffice --calc results+onions.txt;
 
 else
