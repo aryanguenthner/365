@@ -6,7 +6,7 @@
 # Tested on Kali 2022.4
 # credit: https://github.com/sensepost/gowitness/releases
 # https://github.com/aryanguenthner
-# Last Updated 11/30/2022
+# Last Updated 12/5/2022
 ################################################
 echo "
 ██╗░░░██╗██████╗░██╗░░░░░░██╗░░░░░░░██╗██╗████████╗███╗░░██╗███████╗░██████╗░██████╗
@@ -73,33 +73,34 @@ then
 
 else
     echo "Downloading Google Chrome Stable Browser"
-curl -s https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb --output google-chrome-stable_current_amd64.deb
+curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb --output google-chrome-stable_current_amd64.deb
 sudo dpkg -i google-chrome-stable_current_amd64.deb
 
 fi
 echo
 
 # Can I get a gowitness?
-GWIT=gowitness-2.4.2-linux-amd64
+GWIT=/home/kali/Desktop/testing/urlwitness/gowitness
 if [ -f "$GWIT" ]
 then
     echo "Found gowitness"
 
 else
-    echo -e "\e[034mDownloading Missing $GWIT File\e[0m"
-curl -s https://github.com/aryanguenthner/gowitness/releases/download/gowitness/gowitness-2.4.2-linux-amd64 --output /home/kali/Desktop/testing/urlwitness/gowitness-2.4.2-linux-amd64
+    echo -e "\e[034mDownloading Missing $GWIT\e[0m"
+wget --no-check-certificate 'https://drive.google.com/uc?export=download&id=1hXJAEQAFqFu5A4uR14dUWWdwWceLHz6D' -O /home/kali/Desktop/testing/urlwitness/gowitness
+chmod -R 777 /home/kali
 
 fi
 echo
 
 # Start uRLwitness
-cd /home/kali/Desktop/testing/urlwitness
+cd /home/kali/Desktop/testing/urlwitness/
 echo -en "\e[034mEnter the site to scrape URLs: \e[0m"
 read URL
 echo
 
 # wget magic
-wget -d --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)" -4 --https-only --secure-protocol=PFS -e --robots=off -H --compression=auto --adjust-extension --trust-server-names --max-redirect=24 --no-cache --progress=bar --show-progress --random-wait --connect-timeout=4 --header "content-type: text/html; charset=utf-8" -qO- $URL | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*' | $SORT > urls.txt
+wget -d --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)" -L -I --secure-protocol=PFS -e --robots=off --compression=auto --adjust-extension --trust-server-names --max-redirect=24 --no-cache --progress=bar --show-progress --random-wait --connect-timeout=4 --header "content-type: text/html; charset=utf-8" -qO- $URL | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*' | $SORT > urls.txt
 echo
 
 # Strippers
@@ -115,8 +116,10 @@ rm url-domains1.txt domains1.txt
 echo
 
 # Removed Duplicates
-echo -e "\e[034mRemoved Duplicates - Done\e[0m"
+echo -e "\e[034mRemoving Duplicates\e[0m"
+echo "Done"
 echo
+
 # Output Files
 echo -e "\e[034mResults\e[0m"
 echo url-results.txt
@@ -144,12 +147,10 @@ echo
 echo "Getting Screenshots"
 echo
 sleep 2
-./gowitness-2.4.2-linux-amd64 file -f url-results.txt
 chmod -R 777 /home/kali/
+./gowitness file -f url-results.txt
 echo
-echo  -e "\033[33;5mReport Finished http://localhost:7171\033[0m"
-echo
-./gowitness-2.4.2-linux-amd64 server report;
+./gowitness server report
 sudo su -c "firefox http://localhost:7171" kali
 echo
 
