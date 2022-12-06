@@ -151,6 +151,8 @@ chmod -R 777 /home/kali/
 ./gowitness file -f url-results.txt
 echo
 ./gowitness server report
+echo
+echo "View Report --> http://localhost:7171"
 sudo su -c "firefox http://localhost:7171" kali
 echo
 
