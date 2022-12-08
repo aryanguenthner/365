@@ -2,14 +2,14 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Tested on Kali 2022.4.2
+# Tested on Kali 2022.4
 # Usage: cd /opt/
 # sudo git clone https://github.com/aryanguenthner/365
 # cd 365
-# chmod -R 777 .
-# sudo chmod a+x *.sh *.py && 
+# sudo chmod a+x *.sh *.py
 # sudo ./kali-setup.sh | tee kali.log
-# Last Updated 11/23/2022, minor evil updates
+# chmod -R 777 /home/kali/
+# Last Updated 12/07/2022, minor evil updates
 ################################################
 
 # Setting Variables
@@ -35,6 +35,8 @@ echo
 echo -e "\e[033mNetwork Information\e[0m"
 echo
 echo -e "\e[033mPublic IP\e[0m"
+curl -s https://ipapi.co/timezone
+echo
 curl -s ifconfig.me
 echo
 echo
@@ -49,15 +51,13 @@ echo $SUBNET
 echo
 sleep 2
 
-# Stay Organized
+# Keep Nmap scans Organized
 mkdir -p /home/kali/Desktop/testing/nmapscans/
 chmod -R 777 /home/kali/
 echo
 
 # Kali Updates
-echo "Good Idea to Update and Upgrade first before running kali-setup.sh"
-echo
-apt-get update && apt-get -y upgrade && apt-get -y full-upgrade && updatedb && apt-get -y autoclean
+echo "It's a good idea to update and upgrade Kali first before running kali-setup.sh"
 echo
 echo "Be Patient, Installing Kali Dependencies"
 
@@ -65,6 +65,13 @@ echo "Be Patient, Installing Kali Dependencies"
 echo
 sudo apt-get install ncat shotwell obfs4proxy kbtin gconf-service gconf2-common libc++1 libgconf-2-4 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice -y
 echo
+echo "Installing psycopg"
+pip install psycopg
+echo
+
+# Install Go
+sudo apt -y install golang-go
+
 echo
 python3 -m pip install --upgrade pip
 pip3 install --upgrade setuptools
@@ -103,7 +110,7 @@ cd nmap-7.93
 make
 make install
 echo
-echo Just Installed Nmap $NMAP
+echo Just Upgraded Nmap $NMAP
 fi
 echo
 
@@ -141,16 +148,20 @@ echo
 #   'https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh' \
 #   | sudo -E bash 
 
-# Project Discovery Install go
-sudo apt -y install golang-go
+# Project Discovery Nuclei
 go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
 echo
-# Install Katana
+
+# Install Katana - Web Crawler
 go install github.com/projectdiscovery/katana/cmd/katana@latest
-# Updog works on python 3.9 not 3.10
-# echo "Installing Updog"
-# pip3 install updog
 echo
+
+# Install gospider - Web Crawler
+# https://github.com/jaeles-project/gospider
+GO111MODULE=on go install github.com/jaeles-project/gospider@latest
+
+# Install gobuster - Directory Buster
+go install github.com/OJ/gobuster/v3@latest
 
 # How to Update Python Alternatives
 ''' # kali python Config
@@ -173,9 +184,9 @@ sudo update-alternatives --set python3 /usr/bin/python3.9
 '''
 echo
 
-echo "Installing psycopg"
-pip install psycopg
-echo
+# TODO: Updog works on python 3.9 not 3.10
+# echo "Installing Updog"
+# pip3 install updog
 
 # Works with Python 3.9
 echo "Hacker TV"
@@ -345,16 +356,16 @@ cd /opt
 git clone https://github.com/swisskyrepo/PayloadsAllTheThings.git
 echo
 
-echo "OneListForAll"
-cd /opt
-git clone https://github.com/six2dez/OneListForAll.git
-cd OneListForAll
+# echo "OneListForAll"
+# cd /opt
+# git clone https://github.com/six2dez/OneListForAll.git
+# cd OneListForAll
 # 7z x onelistforall.7z.001
-wget https://raw.githubusercontent.com/NotSoSecure/password_cracking_rules/master/OneRuleToRuleThemAll.rule
-wget https://github.com/NotSoSecure/password_cracking_rules/blob/master/OneRuleToRuleThemAll.rule
-wget https://contest-2010.korelogic.com/rules.txt
-cat rules.txt >> /etc/john/john.conf
-echo
+# wget https://raw.githubusercontent.com/NotSoSecure/password_cracking_rules/master/OneRuleToRuleThemAll.rule
+# wget https://github.com/NotSoSecure/password_cracking_rules/blob/master/OneRuleToRuleThemAll.rule
+# wget -O rules.txt https://contest-2010.korelogic.com/rules.txt
+# cat rules.txt >> /etc/john/john.conf
+# echo
 
 echo "SprayingToolKit"
 cd /opt
@@ -447,7 +458,7 @@ echo
 # sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && 
 sudo apt -y install torbrowser-launcher
 cd /opt
-git clone https://github.com/aryanguenthner/TorGhost.git
+sudo git clone https://github.com/aryanguenthner/TorGhost.git
 cd TorGhost
 sudo apt -y install python3-pyinstaller python3-notify2
 sudo pip3 install . --ignore-installed stem
@@ -472,10 +483,10 @@ echo
 echo
 echo "OSINT Phone Number Info Gathering Tool"
 cd /opt
-git clone https://github.com/sundowndev/PhoneInfoga.git
+sudo git clone https://github.com/sundowndev/PhoneInfoga.git
 cd PhoneInfoga
-curl -sSL https://raw.githubusercontent.com/sundowndev/PhoneInfoga/master/support/scripts/install | bash\n
-./phoneinfoga version
+sudo curl -sSL https://raw.githubusercontent.com/sundowndev/PhoneInfoga/master/support/scripts/install | bash\n
+sudo ./phoneinfoga version
 echo
 
 echo "Hacker Hacker"
@@ -574,22 +585,19 @@ echo
 
 # Can I get a Witness?
 # Get Screenshots
-# cd /opt/gowitness
-# ./gowitness-2.4.2-linux-amd64 file -f url-results.txt
+# ./gowitness file -f url-results.txt
 # "View Report http://localhost:7171"
-# ./gowitness-2.4.2-linux-amd64 server report
-GWIT=/opt/gowitness/gowitness-2.4.2-linux-amd64
+# ./gowitness server report
+# Can I get a gowitness?
+GWIT=/home/kali/Desktop/testing/urlwitness/gowitness
 if [ -f "$GWIT" ]
 then
-
-    echo "Found gowitness-2.4.2-linux-amd64"
+    echo "Found gowitness"
 
 else
-
-    echo -e "\e[034mDownloading Missing $GWIT File\e[0m"
-cd /opt
-mkdir -p /opt/gowitness
-wget --no-check-certificate -O $PWD/gowitness-2.4.2-linux-amd64 https://github.com/aryanguenthner/gowitness/releases/download/gowitness/gowitness-2.4.2-linux-amd64
+    echo -e "\e[034mDownloading Missing $GWIT\e[0m"
+wget --no-check-certificate 'https://drive.google.com/uc?export=download&id=1hXJAEQAFqFu5A4uR14dUWWdwWceLHz6D' -O /home/kali/Desktop/testing/urlwitness/gowitness
+chmod -R 777 /home/kali
 
 fi
 echo
