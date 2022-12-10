@@ -138,7 +138,7 @@ head results+onions.txt
 echo
 
 echo "How many evil onion links did we find?"
-wc results+onions.txt
+wc results+onions.txt | awk '{print $1}'
 echo
 sleep 2
 echo
@@ -186,7 +186,7 @@ echo
 if [ $OPEN1 == y ]
 then
     echo -e "\e[033mHere is your darksheet\e[0m"
-    echo "To exit: CTRL + c"
+    echo "Exit DarkSheets: CTRL + c"
     echo "Exit Tor type: torghost -x"
     echo
     echo "Use Tor Browser or Firefox to view .onion sites"
@@ -215,7 +215,7 @@ then
 torghost -x
     echo
     echo "Exit Tor type: torghost -x"
-    echo
+    echo "Exit DarkSheets: CTRL + c"
     echo -e "\e[033mNew Public IP\e[0m"
 curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2
 
