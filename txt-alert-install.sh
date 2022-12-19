@@ -1,9 +1,9 @@
 # Setup Text and Email alerts on Kali Linux 2014.4
 # Generate Applicaiton Password
-# Last updated 01/31/2022
+# Last updated 12/19/2022
 : '
 apt update && apt -y upgrade
-apt -y install mailutils mpack sstmp
+apt -y install mailutils mpack ssmtp
 '
 # Generate ssmtp Applicaiton Password
 : '
