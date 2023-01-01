@@ -7,12 +7,13 @@
 # torghost -a -c us,mx,ca 
 # libreoffice --calc results+onions.txt
 # Tested on Kali 2022.4
-# Last updated 12/01/2022
+# Last updated 12/31/2022, minor evil update
 # https://github.com/aryanguenthner
 # The future is now
 # https://dark.fail/
 # https://addons.mozilla.org/en-US/firefox/addon/noscript/
 # https://chrome.google.com/webstore/detail/noscript/doojmbjmlfjjnbmnoijecmcbfeoakpjm/related?hl=en
+# http://guideeedvgbpkthetphncab5aqj7dp5t74y7vxsoonnvmaeamq74vuqd.onion/
 ######################################################
 echo "
 ██████╗░░█████╗░██████╗░██╗░░██╗░██████╗██╗░░██╗███████╗███████╗████████╗░██████╗
@@ -127,7 +128,9 @@ echo -en "\e[034mWhat are you looking for: \e[0m"
 read SEARCH
 echo
 
-eye -q "$SEARCH" | grep .onion > results+onions.txt
+eye -q "$SEARCH" | grep .onion > results+onions1.txt
+sed '/^invest/d' results+onions1.txt > results+onions.txt
+echo
 echo "Be Patient"
 echo
 
@@ -179,7 +182,7 @@ head results+onions.txt
 echo
 
 # Spreadsheet Results
-echo -e "\e[033mOpen darksheet with results in y/n: \e[0m"
+echo -e "\e[033mOpen a darksheet with results y/n: \e[0m"
 read OPEN1
 echo
 
