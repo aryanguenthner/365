@@ -7,7 +7,7 @@
 # torghost -a -c us,mx,ca 
 # libreoffice --calc results+onions.txt
 # Tested on Kali 2022.4
-# Last updated 12/31/2022, minor evil update
+# Last updated 01/03/2022, minor evil update
 # https://github.com/aryanguenthner
 # The future is now
 # https://dark.fail/
@@ -75,7 +75,7 @@ then
 else
 
     echo "Getting the Devil"
-pip install thedevilseye
+pip install thedevilseye==2022.1.4.0
 
 fi
 echo
