@@ -9,7 +9,7 @@
 # sudo chmod a+x *.sh *.py
 # sudo ./kali-setup.sh | tee kali.log
 # chmod -R 777 /home/kali/
-# Last Updated 12/07/2022, minor evil updates
+# Last Updated 01/03/2023, minor evil updates
 ################################################
 
 # Setting Variables
@@ -17,7 +17,6 @@ YELLOW=033m
 BLUE=034m
 KALI=`hostname -I`
 SUBNET=`ip r | awk 'NR==2' | awk '{print $1}'`
-NMAP=`nmap -V | awk 'NR==1' | cut -d " " -f 1,2,3`
 LS=`ls`
 
 # Todays Date 
@@ -31,7 +30,7 @@ echo "$LS"
 sleep 1
 echo
 
-# Networking
+# Networking, Modified for IPv4
 echo -e "\e[033mNetwork Information\e[0m"
 echo
 echo -e "\e[033mPublic IP\e[0m"
@@ -63,20 +62,78 @@ echo "Be Patient, Installing Kali Dependencies"
 
 # Kali installs
 echo
-sudo apt-get install ncat shotwell obfs4proxy kbtin gconf-service gconf2-common libc++1 libgconf-2-4 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice -y
-echo
-echo "Installing psycopg"
-pip install psycopg
+sudo apt-get install npm golang-go ncat shotwell obfs4proxy gconf-service gconf2-common libc++1 libgconf-2-4 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice -y
 echo
 
-# Install Go
-sudo apt -y install golang-go
-
-echo
+# Get Pippy wit it
 python3 -m pip install --upgrade pip
 pip3 install --upgrade setuptools
 echo
+echo "Installing psycopg"
+pip3 install psycopg
+echo
 
+# https://www.kali.org/docs/virtualization/install-virtualbox-host/
+# https://wiki.debian.org/VirtualBox
+# Bare metal Kali install or Virtual Machine install
+echo "Are you installing a Kali Virtual Machine? "
+sudo dmidecode -t system | tee kali-system-info.log
+VM="$(grep 'Product Name: Virtual Machine\|Product Name: VMware Virtual Platform' kali-system-info.log)"
+VM1="Product Name: Virtual Machine"
+VM2="Product Name: VMware Virtual Platform"
+
+if [ $VM "Product Name: Virtual Machine" -o $VM "Product Name: VMware Virtual Platform" ]
+then
+
+    echo "Virtualization Detected"
+
+else
+
+    echo "Bare Metal installling Vbox"
+
+sudo wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
+sudo wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+sudo echo "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian buster contrib" >> /etc/apt/sources.list
+sudo apt update
+sudo apt -y install linux-headers-`uname -r` build-essential virtualbox-guest-utils virtualbox-dkms dkms virtualbox virtualbox-ext-pack
+echo
+# VirtualBox Hack for USB Devices
+sudo usermod -a -G vboxusers $USER
+echo
+
+fi
+echo
+
+# Customize Kali
+echo 'hostname -I' >> /root/.zshrc
+echo 'export HISTCONTROL="ignoredups:$PATH"' >> /root/.zshrc
+echo 'export GOPATH="$HOME/work:$PATH"' >> /root/.zshrc
+echo 'export PATH="/root/go:$PATH"' >> /root/.zshrc
+echo 'export PATH=/"usr/local/go/bin:$PATH"' >> /root/.zshrc
+echo 'export PATH="/root/work:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/bin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc 
+echo 'export PATH="/usr/sbin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/lib/jvm/java-11-openjdk-amd64/:$PATH"' >> /root/.zshrc
+echo 'export PATH="/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
+echo 'export PATH=/usr/local/bin:$PATH' >> /root/.zshrc
+
+echo
+# https://github.com/balena-io/etcher
+echo "Downloading Etcher USB Media Creator"
+curl -1sLf \
+   'https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh' \
+   | sudo -E bash
+
+echo
+
+sudo apt-get update
+mkdir -p /opt/balena-etcher-electron/chrome-sandbox
+sudo apt-get install balena-etcher-electron -y
+echo
+echo "Etcher Installed"
+
+# TODO: Check this out
 # text in your terminal > ansi2html -a > report.html
 # ssmtp <--works good, just doesnt play with sendmail.
 # did not install > openjdk-13-jdk libc++1-13 libc++abi1-13 libindicator3-7 libunwind-13 python3.8-venv libappindicator3-1 
@@ -87,44 +144,6 @@ echo
 # curl https://packagecloud.io/install/repositories/slacktechnologies/slack/script.deb.sh . 
 # chmod +x script.deb.sh
 # os=debian dist=stretch ./script.deb.sh
-
-# Nmap checker
-NV=`nmap -V | awk 'NR==1' | cut -d " " -f 3`
-echo $NV 
-echo
-
-if [ "$NV" = 7.93 ]
-then
-
-    echo "Found $NV"
-
-else
-
-    echo -e "\e[034mDownloading and installing Nmap 7.93\e[0m"
-  
-sudo dpkg -r --force-depends nmap
-wget --no-check-certificate https://nmap.org/dist/nmap-7.93.tar.bz2
-bzip2 -cd nmap-7.93.tar.bz2 | tar xvf -
-cd nmap-7.93
-./configure
-make
-make install
-echo
-echo Just Upgraded Nmap $NMAP
-fi
-echo
-
-cd /usr/share/nmap/scripts
-wget --no-check-certificate https://raw.githubusercontent.com/aryanguenthner/nmap-nse-vulnerability-scripts/master/smtp-vuln-cve2020-28017-through-28026-21nails.nse
-nmap --script-updatedb
-echo
-
-cd /home/kali/
-chmod -R 777 /home/kali/
-
-# Nmap Testing
-mkdir -p /home/kali/Desktop/testing/nmapscans
-echo
 
 # Nmap bootstrap file checker
 NB=nmap-bootstrap.xsl
@@ -140,13 +159,6 @@ wget --no-check-certificate -O /home/kali/Desktop/testing/nmapscans/nmap-bootstr
 
 fi
 echo
-
-# apt update
-# apt -y install balena-etcher-electron
-# Download and Install Etcher - USB Bootable Media Creator
-# curl -1sLf \
-#   'https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh' \
-#   | sudo -E bash 
 
 # Project Discovery Nuclei
 go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
@@ -188,7 +200,7 @@ echo
 # echo "Installing Updog"
 # pip3 install updog
 
-# Works with Python 3.9
+'''Works with Python 3.9
 echo "Hacker TV"
 # Channels --> https://github.com/iptv-org/iptv
 sudo apt-get -y install python3-imdbpy libmpv1 gir1.2-xapp-1.0 debhelper python3-setproctitle dpkg-dev
@@ -196,12 +208,13 @@ cd /opt
 sudo git clone https://github.com/aryanguenthner/hypnotix.git
 cd hypnotix
 sudo apt-get install -y python3.10-venv
-wget --no-check-certificate http://ftp.us.debian.org/debian/pool/main/i/imdbpy/python3-imdbpy_6.8-2_all.deb &&
+wget --no-check-certificate http://ftp.us.debian.org/debian/pool/main/i/imdbpy/python3-imdbpy_6.8-2_all.deb
 sudo dpkg -i python3-imdbpy_6.8-2_all.deb
 sudo dpkg-buildpackage -b -uc
 sudo python3 -m venv ./venv
 sudo dpkg -i hypnotix*.deb
 echo
+'''
 
 # Signal
 # NOTE: These instructions only work for 64 bit Debian-based Kali Linux
@@ -216,20 +229,6 @@ sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
 sudo apt-get update && apt-get -y install signal-desktop
 echo
 
-echo "VPN stuff"
-cd /tmp
-wget --no-check-certificate https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub
-apt-key add openvpn-repo-pkg-key.pub
-echo
-
-echo "Getting tmpmail"
-# Hackers like tmpmail
-# tmpmail --generate hackermaill@1secmail.com
-curl -L "https://git.io/tmpmail" > tmpmail && chmod +x tmpmail
-mv tmpmail ~/bin/
-./tmpmail --generate
-echo
-
 # Hackers like SSH
 echo "Enabling SSH"
 sed -i '33s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
@@ -237,9 +236,8 @@ sudo systemctl enable ssh
 sudo service ssh restart
 echo
 
-echo "Metasploit Ready Up"
-
 # Metasploit Setup
+echo "Metasploit Ready Up"
 mkdir -p /opt/metasploit
 cd /opt/metasploit
 curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && chmod 755 msfinstall && ./msfinstall
@@ -273,7 +271,6 @@ cd knock
 #nano knockpy/config.json <- set your virustotal API_KEY
 pip install -e .
 echo
-
 echo "Subbrute"
 echo
 cd /opt
@@ -284,6 +281,7 @@ echo
 cd /opt
 git clone https://github.com/elceef/dnstwist.git
 sudo apt-get -y install python3-dnspython python3-geoip python3-whois python3-requests python3-ssdeep python3-dns
+
 echo
 ''' echo "RDPY"
 echo
@@ -291,17 +289,9 @@ cd /opt
 git clone https://github.com/citronneur/rdpy.git
 cd rdpy
 sudo python setup.py install
-echo
-echo "EyeWitness"
-echo
-cd /opt
-git clone https://github.com/FortyNorthSecurity/EyeWitness.git
-cd /opt/EyeWitness/Python/setup
-sudo yes | ./setup.sh
 '''
 echo
 echo "Cewl"
-echo
 cd /opt
 git clone https://github.com/digininja/CeWL.git
 gem install mime-types
@@ -313,8 +303,6 @@ echo "This is going to take a minute hold my root-beer"
 echo
 
 echo "AD Recon - My Fav"
-echo
-
 cd /opt
 git clone https://github.com/sense-of-security/ADRecon.git
 echo
@@ -329,16 +317,9 @@ cd /opt
 git clone https://github.com/BloodHoundAD/Bloodhound.git
 echo
 
-echo "bloodhound-python"
-echo
-# bloodhound-python -u 'bob' -p 'Passw0rd!' -ns 192.168.1.3 -d LAB.local  -c all'
-sudo pip install bloodhound
-echo
-
 echo "Daniel Miessler Security List Collection"
 cd /opt
 git clone https://github.com/danielmiessler/SecLists.git
-cd SecLists
 echo
 
 echo "Awesome Incident Response"
@@ -416,53 +397,26 @@ git clone https://github.com/dxa4481/truffleHog.git
 echo
 
 echo "Git Secrets"
-echo
 cd /opt
 git clone https://github.com/awslabs/git-secrets.git
 echo
 
 echo "Git Leaks"
-echo
 cd /opt
 git clone https://github.com/zricethezav/gitleaks.git
-echo
 
 echo "Discover Admin Loging Pages - Breacher"
-echo
 cd /opt
 git clone https://github.com/s0md3v/Breacher.git
 echo
 
-echo "Google Search commandline Extract Result URLS - degoogle"
-echo
-cd /opt
-git clone https://github.com/deepseagirl/degoogle.git
-echo
-
 echo "Installing Impacket"
-echo
 cd /opt
 sudo pip3 install jinja2==2.10.1
 git clone https://github.com/SecureAuthCorp/impacket.git
 cd /opt
 cd impacket
 pip3 install -e .
-echo
-
-echo "The devils eye"
-pip install thedevilseye
-# eye -q "hacker tools" | grep .onion > hackertoolse+onions.txt
-echo
-
-# Tor Web Browser Stuff
-# sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && 
-sudo apt -y install torbrowser-launcher
-cd /opt
-sudo git clone https://github.com/aryanguenthner/TorGhost.git
-cd TorGhost
-sudo apt -y install python3-pyinstaller python3-notify2
-sudo pip3 install . --ignore-installed stem
-sudo ./build.sh
 echo
 
 echo "GitRob"
@@ -473,14 +427,6 @@ mkdir -p /opt/gitrob
 mv gitrob /opt/gitrob/
 echo
 
-# echo "Google Play CLI" I wish this one actually worked
-# apt -y install gplaycli
-echo
-# Save these two for later
-# git clone https://github.com/jschicht/RawCopy.git
-# git clone https://github.com/khr0x40sh/MacroShop.git
-
-echo
 echo "OSINT Phone Number Info Gathering Tool"
 cd /opt
 sudo git clone https://github.com/sundowndev/PhoneInfoga.git
@@ -489,15 +435,21 @@ sudo curl -sSL https://raw.githubusercontent.com/sundowndev/PhoneInfoga/master/s
 sudo ./phoneinfoga version
 echo
 
+# Windows Exploit Suggester Next Gen
+echo
+cd /opt
+sudo git clone https://github.com/bitsadmin/wesng.git
+echo
+
 echo "Hacker Hacker"
 cd /opt
 git clone https://github.com/aryanguenthner/365.git
 cd 365
-sudo dos2unix *.sh *.py && chmod a+x *.sh *.py && chmod -R 777 /opt/365
+sudo dos2unix *.sh *.py && chmod a+x *.sh *.py
+chmod -R 777 /opt/365
 echo
 
 # MongoDB Install
-echo
 echo "Installing MongoDB 4.2 from Ubuntu Repo, Because It Works"
 echo
 cd /tmp
@@ -542,6 +494,12 @@ yes | patch /usr/share/nmap/scripts/rtsp-url-brute.nse \
 nmap --script-updatedb > /dev/null
 echo
 
+# Get nmap scripts
+cd /usr/share/nmap/scripts
+wget --no-check-certificate https://raw.githubusercontent.com/aryanguenthner/nmap-nse-vulnerability-scripts/master/smtp-vuln-cve2020-28017-through-28026-21nails.nse
+nmap --script-updatedb
+echo
+
 # http-screenshot Checker
 N=/usr/share/nmap/scripts/http-screenshot.nse
 if [ -f "$N" ]
@@ -559,8 +517,8 @@ nmap --script-updatedb > /dev/null
 fi
 
 # PhantomJS Checker
-P=`phantomjs -v`
-if [ "$P" = "1.9.8" ]
+P=/usr/local/bin/phantomjs
+if [ -f "$P" ]
 then
 
     echo "Found PhantomJS 1.9.8"
@@ -602,86 +560,31 @@ chmod -R 777 /home/kali
 fi
 echo
 
-# Windows Exploit Suggester Next Gen
+echo "The devils eye"
+pip install thedevilseye==2022.1.4.0
+# eye -q "hacker tools" | grep .onion > hackertoolse+onions.txt
 echo
+
+# Tor Web Browser Stuff
+# sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && 
+sudo apt -y install torbrowser-launcher
 cd /opt
-sudo git clone https://github.com/bitsadmin/wesng.git
+sudo git clone https://github.com/aryanguenthner/TorGhost.git
+cd TorGhost
+sudo apt -y install python3-pyinstaller python3-notify2
+sudo pip3 install . --ignore-installed stem
+sudo ./build.sh
 echo
 
-# MobSF Setup
-echo
-# nano -c /opt/Mobile-Security-Framework-MobSF/run.sh
-# MobSF working with Python 3.7/3.8
-#sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
-#sudo update-alternatives --set python3 /usr/bin/python3.8/
+
+echo "Hack The Planet"
+chmod -R 777 /home/kali/
 echo
 
-# https://www.kali.org/docs/virtualization/install-virtualbox-host/
-# https://wiki.debian.org/VirtualBox
-# Bare metal Kali install or Virtual Machine install
-echo "Are you installing a Kali Virtual Machine? "
-sudo dmidecode -t system | tee kali-system-info.log
-VM="$(grep 'Product Name: Virtual Machine\|Product Name: VMware Virtual Platform' kali-system-info.log)"
-VM1="Product Name: Virtual Machine"
-VM2="Product Name: VMware Virtual Platform"
-
-if [ $VM "Product Name: Virtual Machine" -o $VM "Product Name: VMware Virtual Platform" ]
-then
-
-    echo "Virtualization Detected"
-
-else
-
-    echo "Bare Metal installling Vbox"
-
-sudo wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
-sudo wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
-sudo echo "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian buster contrib" >> /etc/apt/sources.list
-sudo apt update
-sudo apt -y install linux-headers-`uname -r` build-essential virtualbox-guest-utils virtualbox-dkms dkms virtualbox virtualbox-ext-pack
-echo
-# VirtualBox Hack for USB Devices
-sudo usermod -a -G vboxusers $USER
-echo
-
-fi
-echo
-
-echo
-# Customize Kali
-echo 'hostname -I' >> /root/.zshrc
-echo 'export HISTCONTROL="ignoredups:$PATH"' >> /root/.zshrc
-echo 'export GOPATH="$HOME/work:$PATH"' >> /root/.zshrc
-echo 'export PATH="/root/go:$PATH"' >> /root/.zshrc
-echo 'export PATH=/"usr/local/go/bin:$PATH"' >> /root/.zshrc
-echo 'export PATH="/root/work:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/bin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc 
-echo 'export PATH="/usr/sbin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/lib/jvm/java-11-openjdk-amd64/:$PATH"' >> /root/.zshrc
-echo 'export PATH="/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
-echo 'export PATH=/usr/local/bin:$PATH' >> /root/.zshrc
-
-: ' # Mobile Security Assessment Tool MobSF
-cd /opt/
-git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF.git
-cd Mobile-Security-Framework-MobSF/
-pip3 install -r requirements.txt
-python3 -m venv ./venv
-./setup.sh
-echo
-'
-sudo pip3 install --upgrade requests
-
-# Fix permissions
-sudo chmod -R 777 /home/kali/
-echo
-echo "Hacker Hacker"
-echo
 # Insurance
 sudo apt --fix-broken install
 sudo apt autoremove -y
-apt-get install --reinstall python3-debian -y
+#apt-get install --reinstall python3-debian -y
 systemctl restart ntp
 source ~/.zshrc
 echo
@@ -692,5 +595,4 @@ updatedb
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
 reboot
 # Just in case DNS issues: nano -c /etc/resolvconf/resolv.conf.d/head
-# Taco Taco
 # Gucci
