@@ -6,7 +6,7 @@
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
 # Tested on Kali 2022.4
-# Last updated 10/16/2022
+# Last updated 01/6/2022
 # The future is now
 # Got nmap?
 ######################################################
@@ -75,16 +75,17 @@ wget -O /home/kali/Desktop/testing/nmapscans/nmap-bootstrap.xsl https://raw.gith
 fi
 
 # PhantomJS Checker
-P=`phantomjs -v`
-if [ "$P" = "1.9.8" ]
+P=/usr/local/bin/phantomjs
+if [ -f "$P" ]
 then
+
     echo "Found PhantomJS 1.9.8"
 
 else
 
     echo -e "\e[034mDownloading Missing PhantomJS\e[0m"
 
-wget -O /tmp/phantomjs-1.9.8-linux-x86_64.tar.bz2 https://github.com/aryanguenthner/365/blob/f5a069eec95557f2741c16d0dbf27653ddb85e25/phantomjs-1.9.8-linux-x86_64.tar.bz2
+wget --no-check-certificate -O /tmp/phantomjs-1.9.8-linux-x86_64.tar.bz2 https://github.com/aryanguenthner/365/blob/f5a069eec95557f2741c16d0dbf27653ddb85e25/phantomjs-1.9.8-linux-x86_64.tar.bz2
 
 echo "Extracting and Installing PhantomJS 1.9.8"
 tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2
@@ -96,6 +97,7 @@ ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
 phantomjs -v
 
 fi
+echo
 
 # http-screenshot Checker
 N=/usr/share/nmap/scripts/http-screenshot.nse
