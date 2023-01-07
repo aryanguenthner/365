@@ -76,7 +76,7 @@ fi
 
 # PhantomJS Checker
 P=/usr/local/bin/phantomjs
-if [ -f "$P" ]
+if [ -f $P ]
 then
 
     echo "Found PhantomJS 1.9.8"
@@ -85,9 +85,12 @@ else
 
     echo -e "\e[034mDownloading Missing PhantomJS\e[0m"
 
-wget --no-check-certificate -O /tmp/phantomjs-1.9.8-linux-x86_64.tar.bz2 https://github.com/aryanguenthner/365/blob/f5a069eec95557f2741c16d0dbf27653ddb85e25/phantomjs-1.9.8-linux-x86_64.tar.bz2
+wget --no-check-certificate -O /opt/phantomjs-1.9.8-linux-x86_64.tar.bz2 https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
+tar xvjf phantomjs-1.9.8-linux-x86_64.tar.bz2
+rm phantomjs-1.9.8-linux-x86_64.tar.bz2
 
 echo "Extracting and Installing PhantomJS 1.9.8"
+cd /opt
 tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2
 mv phantomjs-1.9.8-linux-x86_64 phantomjs
 mv phantomjs /opt
@@ -97,7 +100,6 @@ ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
 phantomjs -v
 
 fi
-echo
 
 # http-screenshot Checker
 N=/usr/share/nmap/scripts/http-screenshot.nse
