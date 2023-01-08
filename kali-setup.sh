@@ -9,7 +9,7 @@
 # sudo chmod a+x *.sh *.py
 # sudo ./kali-setup.sh | tee kali.log
 # chmod -R 777 /home/kali/
-# Last Updated 01/06/2023, minor evil updates
+# Last Updated 01/08/2023, minor evil updates
 ################################################
 
 # Setting Variables
@@ -73,11 +73,13 @@ echo "Installing psycopg"
 pip3 install psycopg
 echo
 
-# https://www.kali.org/docs/virtualization/install-virtualbox-host/
-# https://wiki.debian.org/VirtualBox
-# Bare metal Kali install or Virtual Machine install
+'''https://www.kali.org/docs/virtualization/install-virtualbox-host/#setup
+https://wiki.debian.org/VirtualBox#Debian_10_.22Buster.22_and_Debian_11_.22Bullseye.22
+https://www.kali.org/docs/virtualization/install-virtualbox-host/
+https://wiki.debian.org/VirtualBox
+'''
 echo "Are you installing a Kali Virtual Machine? "
-sudo dmidecode -t system | tee kali-system-info.log
+sudo dmidecode -t system | tee /home/kali/Desktop/kali-system-info.log
 VM="$(grep 'Product Name: Virtual Machine\|Product Name: VMware Virtual Platform' kali-system-info.log)"
 VM1="Product Name: Virtual Machine"
 VM2="Product Name: VMware Virtual Platform"
@@ -85,18 +87,29 @@ VM2="Product Name: VMware Virtual Platform"
 if [ $VM "Product Name: Virtual Machine" -o $VM "Product Name: VMware Virtual Platform" ]
 then
 
-    echo "Virtualization Detected"
+    echo "Virtualization Detected - Skipping"
 
 else
 
     echo "Bare Metal installling Vbox"
 
-sudo wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
-sudo wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
-sudo echo "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian buster contrib" >> /etc/apt/sources.list
+# Add gpg keys
+sudo curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc|sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/oracle_vbox_2016.gpg
+sudo curl -fsSL https://www.virtualbox.org/download/oracle_vbox.asc|sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/oracle_vbox.gpg
+
+# Add Repo
+sudo echo "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian bullseye contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list
+
+# Update
 sudo apt update
-sudo apt -y install linux-headers-`uname -r` build-essential virtualbox-guest-utils virtualbox-dkms dkms virtualbox virtualbox-ext-pack
+
+# Install dkms
+sudo apt install -y dkms
+
+# Install
+sudo apt -y install linux-headers-`uname -r` build-essential virtualbox-dkms dkms virtualbox virtualbox-ext-pack virtualbox-guest-utils
 echo
+
 # VirtualBox Hack for USB Devices
 sudo usermod -a -G vboxusers $USER
 echo
@@ -117,8 +130,8 @@ echo 'export PATH="/usr/sbin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap
 echo 'export PATH="/usr/lib/jvm/java-11-openjdk-amd64/:$PATH"' >> /root/.zshrc
 echo 'export PATH="/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
 echo 'export PATH=/usr/local/bin:$PATH' >> /root/.zshrc
-
 echo
+
 # https://github.com/balena-io/etcher
 echo "Downloading Etcher USB Media Creator"
 curl -1sLf \
@@ -140,12 +153,12 @@ echo "Etcher Installed"
 
 echo
 
-# Slack Setup on Kali needs some love
+# TODO: Slack Setup on Kali needs some love
 # curl https://packagecloud.io/install/repositories/slacktechnologies/slack/script.deb.sh . 
 # chmod +x script.deb.sh
 # os=debian dist=stretch ./script.deb.sh
 
-# Nmap bootstrap file checker
+# Nmap bootstrap file checker, creates beautiful nmap reports
 NB=nmap-bootstrap.xsl
 if [ -f $NB ]
 then
@@ -222,11 +235,13 @@ echo
 # 1. Install our official public software signing key
 wget --no-check-certificate -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
 cat signal-desktop-keyring.gpg | sudo tee -a /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
+
 # 2. Add our repository to your list of repositories
 echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
-sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
+  sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
+
 # 3. Update your package database and install signal
-sudo apt-get update && apt-get -y install signal-desktop
+sudo apt update && sudo apt install signal-desktop
 echo
 
 # Hackers like SSH
@@ -246,7 +261,7 @@ systemctl start postgresql
 msfdb init
 echo
 
-# Yeet
+# TODO: Yeet
 #echo "Kingfisher"
 #echo
 #cd /opt
@@ -337,7 +352,7 @@ cd /opt
 git clone https://github.com/swisskyrepo/PayloadsAllTheThings.git
 echo
 
-# echo "OneListForAll"
+# TODO: echo "OneListForAll"
 # cd /opt
 # git clone https://github.com/six2dez/OneListForAll.git
 # cd OneListForAll
