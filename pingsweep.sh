@@ -6,15 +6,16 @@
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
 # Tested on Kali 2022.4
-# Last updated 01/12/2023
+# Last updated 01/13/2023
 # The future is now
+# Edit this script to fit your system
 # Got nmap?
 ######################################################
 
 # Setting Variables
 YELLOW=033m
 BLUE=034m
-EXT=`curl ifconfig.me`
+EXT=`curl -s ifconfig.me`
 KALI=`hostname -I`
 SUBNET=`ip r | awk 'NR==2' | awk '{print $1}'`
 TARGETS=targets.txt
@@ -23,42 +24,29 @@ FILE1=$(date +%Y%m%d).nmapscan_$RANDOM
 BOOTSTRAP=nmap-bootstrap.xsl
 NV=`nmap -V | awk 'NR==1' | cut -d " " -f 1,2,3`
 RANDOM=$$
-LS=`ls`
+#LS=`ls`
 PWD=`pwd`
 SYNTAX="nmap -T4 -A -sCT -vvvv --stats-every=1m -Pn -p* --script http-screenshot,banner -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/"
 echo
 
 # Stay Organized
 mkdir -p /home/kali/Desktop/testing/nmapscans/
-#cp /opt/365/pingsweep.sh /home/kali/Desktop/testing/nmapscans/
-cd /home/kali/Desktop/testing/nmapscans/
-chmod -R 777 /home/kali/
 
 # Depencency Check
-# TODO - Uninstall older version of Nmap
-#sudo dpkg -r --force-depends nmap
-# Install latest version
 echo -e "\e[034mRunning Dependency-check\e[0m"
-: ' # Nmap checker
-NV=`nmap -V | awk 'NR==1' | cut -d " " -f 3`
-if [[ "$NV" = "7.93" ]] && [[ "$NV" = "7.93SVN" ]]
+
+# pingsweep checker
+pingsweep=/home/kali/Desktop/testing/nmapscans/pingsweep.sh
+if [ -f $pingsweep ]
 then
-    echo "Found $NMAP"
+    echo "Found pingsweep.sh"
 
 else
 
-    echo -e "\e[034mDownloading and installing Nmap\e[0m"
-
-apt update && apt -y install libssl-dev
-cd /opt
-git clone https://github.com/nmap/nmap.git
-cd nmap
-./configure
-make && make install
-echo $NMAP Installed
-
+    echo -e "\e[034mGetting pingsweep.sh from /opt/365e\e[0m"
+cp /opt/365/pingsweep.sh /home/kali/Desktop/testing/nmapscans/
 fi
-'
+
 echo "Found $NV"
 cd /home/kali/Desktop/testing/nmapscans/
 
@@ -104,7 +92,6 @@ fi
 
 # http-screenshot Checker
 N=/usr/share/nmap/scripts/http-screenshot.nse
-
 if [ -f $N ]
 then
     echo "Found http-screenshot.nse"
@@ -119,6 +106,7 @@ nmap --script-updatedb > /dev/null
 fi
 echo
 
+# TODO add gowitness
 : '# gowitness
 gow=somefile
 if [ -f $gow ]
@@ -128,7 +116,7 @@ then
 else
 
     echo -e "\e[034mDownloading Missing $gow File\e[0m"
-wget -O /home/kali/Desktop/testing/nmapscans/nmap-bootstrap.xsl https://raw.githubusercontent.com/aryanguenthner/gowitness > /dev/null
+wget -O /home/kali/Desktop/testing/nmapscans/gowitness https://raw.githubusercontent.com/aryanguenthner/gowitness > /dev/null
 
 fi
 '
@@ -137,16 +125,16 @@ echo -e "\e[034mToday is\e[0m"
 date
 echo
 
-# Files
-echo -e "\e[034mFiles in your current directory -->$PWD\e[0m"
-echo "$LS"
-sleep 5
+# Screenshots
+echo -e "\e[034mScreenshots Saved to --> /home/kali/Desktop/testing/nmapscans/\e[0m"
 
 # Networking
 echo
 echo -e "\e[033mGetting Network Information\e[0m"
 echo
 echo -e "\e[033mExternal IP\e[0m"
+curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2
+
 echo $EXT
 echo
 echo -e "\e[033mKali IP\e[0m"
@@ -189,7 +177,7 @@ echo db_import $(pwd)/$FILE1.xml
 echo "Nmap scan completed"
 sudo su -c "firefox $(pwd)/$FILE1.html" kali
 
-# TODO add gowitness
+
 
 # Pay me later
 chmod -R 777 /home/kali/Desktop
