@@ -6,7 +6,7 @@
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
 # Tested on Kali 2022.4
-# Last updated 01/6/2022
+# Last updated 01/12/2023
 # The future is now
 # Got nmap?
 ######################################################
@@ -25,13 +25,14 @@ NV=`nmap -V | awk 'NR==1' | cut -d " " -f 1,2,3`
 RANDOM=$$
 LS=`ls`
 PWD=`pwd`
-SYNTAX="nmap -A -sCT -vvvv --stats-every=1m -Pn -p* --script http-screenshot,banner -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/"
+SYNTAX="nmap -T4 -A -sCT -vvvv --stats-every=1m -Pn -p* --script http-screenshot,banner -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/"
 echo
 
 # Stay Organized
-chmod -R 777 /home/kali/
 mkdir -p /home/kali/Desktop/testing/nmapscans/
-cd /home/kali/Desktop/testing/nmapscans
+#cp /opt/365/pingsweep.sh /home/kali/Desktop/testing/nmapscans/
+cd /home/kali/Desktop/testing/nmapscans/
+chmod -R 777 /home/kali/
 
 # Depencency Check
 # TODO - Uninstall older version of Nmap
@@ -176,8 +177,8 @@ echo -e "\e[034mHack The Planet\e[0m"
 echo "$SYNTAX"
 echo
 
-# Nmap Scan Syntax
-nmap -A -sCT -vvvv --stats-every=1m -Pn -p* --script http-screenshot,banner --open -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/
+# Nmap Scan
+nmap -T4 -A -sCT -vvvv --stats-every=1m -Pn -p* --script http-screenshot,banner --open -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/
 echo
 echo
 xsltproc -o $FILE1.html $BOOTSTRAP $FILE1.xml
