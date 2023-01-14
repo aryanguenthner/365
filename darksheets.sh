@@ -7,7 +7,7 @@
 # torghost -a -c us,mx,ca 
 # libreoffice --calc results+onions.txt
 # Tested on Kali 2022.4
-# Last updated 01/03/2022, minor evil update
+# Last updated 01/13/2023, minor evil update
 # https://github.com/aryanguenthner
 # The future is now
 # https://dark.fail/
@@ -66,6 +66,19 @@ echo
 # Make sure everything is installed for this to work
 echo -e "\e[033mRequirements Check\e[0m"
 echo
+# darksheets checker
+dark=/home/kali/Desktop/testing/dark-web/darksheets.sh
+if [ -f $dark ]
+then
+    echo "Found darksheets.sh"
+
+else
+
+    echo -e "\e[034mGetting darksheets.sh from /opt/365e\e[0m"
+cp /opt/365/darksheets.sh /home/kali/Desktop/testing/dark-web/
+fi
+echo
+
 E=/usr/local/bin/eye
 if [ -f "$E" ]
 then
