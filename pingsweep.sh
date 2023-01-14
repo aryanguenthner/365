@@ -174,7 +174,9 @@ echo
 echo "Import results into Metasploit"
 echo msfconsole
 echo db_import $(pwd)/$FILE1.xml
+echo
 echo "Nmap scan completed"
+echo
 sudo su -c "firefox $(pwd)/$FILE1.html" kali
 
 
