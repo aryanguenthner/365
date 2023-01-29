@@ -7,11 +7,12 @@
 # torghost -a -c us,mx,ca 
 # libreoffice --calc results+onions.txt
 # Tested on Kali 2022.4
-# Last updated 01/13/2023, minor evil update
+# Last updated 01/22/2023, minor evil updates
 # https://github.com/aryanguenthner
 # The future is now
 # https://dark.fail/
 # https://addons.mozilla.org/en-US/firefox/addon/noscript/
+# https://addons.mozilla.org/en-US/firefox/addon/adblock-plus/
 # https://chrome.google.com/webstore/detail/noscript/doojmbjmlfjjnbmnoijecmcbfeoakpjm/related?hl=en
 # http://guideeedvgbpkthetphncab5aqj7dp5t74y7vxsoonnvmaeamq74vuqd.onion/
 ######################################################
@@ -32,9 +33,14 @@ LS=`ls`
 PWD=`pwd`
 echo
 
+# Update Kali Repo
+apt update
+
 # Stay Organized
-mkdir -p /home/kali/Desktop/testing/dark-web/
+sudo mkdir -p /home/kali/Desktop/testing/dark-web/
 cd /home/kali/Desktop/testing/dark-web/
+$SHELL
+echo $PWD
 
 echo "For the best results run as root: sudo ./darksheets.sh"
 echo
@@ -42,12 +48,6 @@ echo
 # Todays Date
 echo -e "\e[034mToday is\e[0m"
 date
-echo
-
-# Files
-echo -e "\e[034mFiles in your current directory -->$PWD\e[0m"
-echo "$LS"
-sleep 1
 echo
 
 # Networking
@@ -62,11 +62,12 @@ echo
 echo -e "\e[033mKali IP\e[0m"
 echo $KALI | awk '{print $1}'
 echo
+sleep 1
 
 # Make sure everything is installed for this to work
 echo -e "\e[033mRequirements Check\e[0m"
 echo
-# darksheets checker
+# pingsweep checker
 dark=/home/kali/Desktop/testing/dark-web/darksheets.sh
 if [ -f $dark ]
 then
@@ -104,6 +105,7 @@ else
     echo "Downloading TorGhost"
 # Tor Web Browser Stuff
 # Connect to Tor --> torghost -a -c us
+# Disconnect Tor --> torghost -x
 # Exit Tor -->torghost -x
 # sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && 
 # Use Tor Browswer to view the onion links
@@ -131,7 +133,7 @@ then
 else
 
     echo "Installing Libreoffice"
-apt update && apt -y install libreoffice
+apt -y install libreoffice
 
 fi
 echo
@@ -219,9 +221,6 @@ else
 fi
 echo
 
-# Fix Permissions for kali
-chmod -R 777 /home/kali
-
 # Exit the Dark Web
 echo -n 'Exit the Dark Web y/n: '
 read DWEB1
@@ -245,4 +244,3 @@ fi
 
 echo
 echo
-

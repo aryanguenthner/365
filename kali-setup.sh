@@ -9,7 +9,7 @@
 # sudo chmod a+x *.sh *.py
 # sudo ./kali-setup.sh | tee kali.log
 # chmod -R 777 /home/kali/
-# Last Updated 01/12/2023, minor evil updates
+# Last Updated 01/28/2023, minor evil updates
 ################################################
 
 # Setting Variables
@@ -17,17 +17,10 @@ YELLOW=033m
 BLUE=034m
 KALI=`hostname -I`
 SUBNET=`ip r | awk 'NR==2' | awk '{print $1}'`
-LS=`ls`
 
 # Todays Date 
 echo -e "\e[034mToday is\e[0m"
 date | tee kali-setup-date.txt
-echo
-
-# Files
-echo -e "\e[034mFiles in your current directory ->$PWD\e[0m"
-echo "$LS"
-sleep 1
 echo
 
 # Networking, Modified for IPv4
@@ -260,6 +253,11 @@ echo
 systemctl start postgresql
 msfdb init
 echo
+cd /usr/share/metasploit-framework/config
+msfdb reinit
+/usr/share/metasploit-framework/config
+cp database.yml /root/.msf4/
+service postgresql restart
 
 # TODO: Yeet
 #echo "Kingfisher"
@@ -306,7 +304,7 @@ cd rdpy
 sudo python setup.py install
 '''
 echo
-echo "Cewl"
+echo "Cewl Password Lists"
 cd /opt
 git clone https://github.com/digininja/CeWL.git
 gem install mime-types
