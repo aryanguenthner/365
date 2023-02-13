@@ -2,11 +2,11 @@
 
 #######################################################
 # Discover targets by doing a ping sweep
-# Enumerate open ports and services
+# Enumerates open ports and services
 # Hosts that responded to ICMP are output to targets.txt 
-# Learn More @ https://github.com/aryanguenthner/
+# Learn More @ https://github.com/aryanguenthner/365
 # Tested on Kali 2022.4
-# Last updated 01/13/2023
+# Last updated 02/12/2023
 # The future is now
 # Edit this script to fit your system
 # Got nmap?
@@ -26,7 +26,7 @@ NV=`nmap -V | awk 'NR==1' | cut -d " " -f 1,2,3`
 RANDOM=$$
 #LS=`ls`
 PWD=`pwd`
-SYNTAX="nmap -T4 -A -sCT -vvvv --stats-every=1m -Pn -p* --script http-screenshot,banner -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/"
+SYNTAX="nmap -T4 -A -sCT -Pn --open -p- -vvvv --stats-every=1m --script http-screenshot,banner -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/"
 echo
 
 # Stay Organized
@@ -166,7 +166,7 @@ echo "$SYNTAX"
 echo
 
 # Nmap Scan
-nmap -T4 -A -sCT -vvvv --stats-every=1m -Pn -p* --script http-screenshot,banner --open -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/
+nmap -T4 -A -sCT -Pn --open -p- -vvvv --stats-every=1m --script http-screenshot,banner -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/
 echo
 echo
 xsltproc -o $FILE1.html $BOOTSTRAP $FILE1.xml
@@ -177,8 +177,8 @@ echo db_import $(pwd)/$FILE1.xml
 echo
 echo "Nmap scan completed"
 echo
-sudo su -c "firefox $(pwd)/$FILE1.html" kali
-
+echo "$FILE1.html"
+sudo su -c "firefox $(pwd)/$FILE1.html" kali &
 
 
 # Pay me later
