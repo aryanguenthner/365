@@ -7,7 +7,7 @@
 # torghost -a -c us,mx,ca 
 # libreoffice --calc results+onions.txt
 # Tested on Kali 2023.1
-# Last updated 03/21/2023, minor evil updates
+# Last updated 03/22/2023, minor evil updates
 # https://github.com/aryanguenthner
 # The future is now
 # https://dark.fail/
@@ -226,6 +226,7 @@ torghost -x
     echo
     echo "Exit Tor type: torghost -x"
     echo "Exit DarkSheets: CTRL + c"
+    echo
     echo -e "\e[033mNew Public IP\e[0m"
 curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2
 
