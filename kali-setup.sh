@@ -9,7 +9,7 @@
 # sudo chmod a+x *.sh *.py
 # sudo ./kali-setup.sh | tee kali.log
 # chmod -R 777 /home/kali/
-# Last Updated 02/22/2023, minor evil updates
+# Last Updated 03/7/2023, minor evil updates
 ################################################
 
 # Setting Variables
@@ -20,7 +20,7 @@ SUBNET=`ip r | awk 'NR==2' | awk '{print $1}'`
 
 # Todays Date 
 echo -e "\e[034mToday is\e[0m"
-date | tee kali-setup-date.txt
+date '+%Y-%m-%d %r' | tee kali-setup-date.txt
 echo
 
 # Networking, Modified for IPv4
@@ -239,7 +239,7 @@ echo
 
 # Hackers like SSH
 echo "Enabling SSH"
-sed -i '33s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
+sed -i '40s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
 sudo systemctl enable ssh
 sudo service ssh restart
 echo
