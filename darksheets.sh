@@ -33,14 +33,9 @@ LS=`ls`
 PWD=`pwd`
 echo
 
-# Update Kali Repo
-apt update
-
 # Stay Organized
-sudo mkdir -p /home/kali/Desktop/testing/dark-web/
+mkdir -p /home/kali/Desktop/testing/dark-web/
 cd /home/kali/Desktop/testing/dark-web/
-$SHELL
-echo $PWD
 
 echo "For the best results run as root: sudo ./darksheets.sh"
 echo
