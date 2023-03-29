@@ -1,0 +1,66 @@
+# https://github.com/JPCERTCC/LogonTracer
+# https://gist.github.com/nepobef/0f378ded038b35324e0106fcff79303c
+# https://blogs.jpcert.or.jp/en/2017/11/visualise-event-logs-to-identify-compromised-accounts---logontracer-.html
+# https://www.first.org/resources/papers/conf2016/FIRST-2016-105.pdf
+# https://www.youtube.com/watch?v=aX-vTd7-moY
+https://blogs.jpcert.or.jp/en/2018/01/investigate-unauthorised-logon-attempts-using-logontracer.html
+
+# Here are the details of each node. An account (Red/Blue) that is connected to a host (Green) with a line shows that it is logged on using the host.
+
+    Red: SYSTEM privilege account
+    Blue: Standard user account
+    Green: Host/IP address
+
+
+    Event ID 4624: Login successful
+    Event ID 4625: Login failed
+    Event ID 4768: Kerberos authentication (TGT request)
+    Event ID 4769: Kerberos authentication (ST request)
+    Event ID 4776: NTLM authentication
+    Event ID 4672: Privilege assignment
+
+# Tested on Kali
+
+wget -O - https://debian.neo4j.com/neotechnology.gpg.key | sudo apt-key add -
+echo 'deb https://debian.neo4j.com stable latest' | sudo tee -a /etc/apt/sources.list.d/neo4j.list
+sudo apt-get update
+
+# Requirements
+
+apt-get install -y neo4j npm apt-transport-https python3-pip git curl build-essential libssl-dev nodejs docker docker.io docker-compose containerd 
+
+cd /opt
+git clone https://github.com/JPCERTCC/LogonTracer
+
+cd /opt/LogonTracer/
+pip3 install -r requirements.txt
+
+cd /opt/LogonTracer/static
+npm install neo4j-driver
+cd ../..
+
+nano -c /etc/neo4j/neo4j.conf
+
+sed -i '87s/#server.bolt.enabled=true/server.bolt.enabled=true/g' /etc/neo4j/neo4j.conf
+sed -i '89s/#server.bolt.listen_address=:7687/server.bolt.listen_address=0.0.0.0:7687/g' /etc/neo4j/neo4j.conf
+sed -i '93s/#server.http.enabled=true/server.http.enabled=true/g' /etc/neo4j/neo4j.conf
+sed -i '94s/#server.http.listen_address=:7474/server.http.listen_address=0.0.0.0:7474/g' /etc/neo4j/neo4j.conf
+
+./bin/neo4j console &
+/bin/neo4j restart
+neo4j
+neo4j <--change to password
+
+# Web Login
+http://localhost:8000
+neo4j
+password
+
+# Useage
+cd /opt/LogonTracer/
+IP=`hostname -I`
+python3 logontracer.py --delete
+python3 logontracer.py -r -o 8080 -u neo4j -p password -s 192.168.1.37
+python3 logontracer.py -u neo4j -p password -e security.evtx -z -8
+
+
