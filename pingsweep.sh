@@ -2,11 +2,11 @@
 
 #######################################################
 # Discover targets by doing a ping sweep
-# Enumerates open ports and services
+# Enumerate open ports and services
 # Hosts that responded to ICMP are output to targets.txt 
-# Learn More @ https://github.com/aryanguenthner/365
+# Learn More @ https://github.com/aryanguenthner/
 # Tested on Kali 2022.4
-# Last updated 02/12/2023
+# Last updated 04/13/2023
 # The future is now
 # Edit this script to fit your system
 # Got nmap?
@@ -15,18 +15,18 @@
 # Setting Variables
 YELLOW=033m
 BLUE=034m
-EXT=`curl -s ifconfig.me`
-KALI=`hostname -I`
-SUBNET=`ip r | awk 'NR==2' | awk '{print $1}'`
+EXT=$(curl -s ifconfig.me) 
+KALI=$(hostname -I)
+SUBNET=$(ip r | awk 'FNR == 2 {print $1}')
 TARGETS=targets.txt
 FILE0=$(date +%Y%m%d).nmap-pingsweep_$RANDOM
 FILE1=$(date +%Y%m%d).nmapscan_$RANDOM
 BOOTSTRAP=nmap-bootstrap.xsl
-NV=`nmap -V | awk 'NR==1' | cut -d " " -f 1,2,3`
+NV=$(nmap -V | awk 'FNR == 1 {print $1,$2,$3}')
 RANDOM=$$
 #LS=`ls`
 PWD=`pwd`
-SYNTAX="nmap -T4 -A -sCT -Pn --open -p- -vvvv --stats-every=1m --script http-screenshot,banner -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/"
+SYNTAX="nmap -A -T4 -Pn -sCT -sU -p U:53,161,T:1-65535 -vvvv --stats-every=1m --script http-screenshot,banner -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/"
 echo
 
 # Stay Organized
@@ -166,7 +166,7 @@ echo "$SYNTAX"
 echo
 
 # Nmap Scan
-nmap -T4 -A -sCT -Pn --open -p- -vvvv --stats-every=1m --script http-screenshot,banner -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/
+nmap -A -T4 -Pn -sCT -sU -p U:53,161,T:1-65535 -vvvv --stats-every=1m --script http-screenshot,banner --open -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/
 echo
 echo
 xsltproc -o $FILE1.html $BOOTSTRAP $FILE1.xml
@@ -177,12 +177,11 @@ echo db_import $(pwd)/$FILE1.xml
 echo
 echo "Nmap scan completed"
 echo
-echo "$FILE1.html"
-sudo su -c "firefox $(pwd)/$FILE1.html" kali &
+sudo su -c "firefox $(pwd)/$FILE1.html" kali
+
 
 
 # Pay me later
-chmod -R 777 /home/kali/Desktop
 updatedb
 
 : 'Great Nmap Enumeration Scripts -> ssl-cert,ssl-enum-ciphers,ssl-heartbleed,sip-enum-users,sip-brute,sip-methods,rtsp-screenshot,rtsp-url-brute,rpcinfo,vnc-screenshot,x11-access,x11-screenshot,nfs-showmount,nfs-ls,smb-vuln-ms08-067,smb-vuln-ms17-010,smb-ls,smb-enum-shares,http-robots.txt.nse,http-webdav-scan,http-screenshot,http-enum --script-args=http-enum.basepath=200,http-auth --script-args=http-auth.path=/login,http-form-brute,http-sql-injection,http-ntlm-info --script-args=http-ntlm-info.root=/root/,http-git,http-open-redirect,http-vuln-cve2017-5638 --script-args=path=/welcome.action,http-open-proxy,socks-open-proxy,smtp-open-relay,ftp-anon,ftp-bounce,ms-sql-config,ms-sql-info,ms-sql-empty-password,mysql-info,mysql-empty-password,vnc-brute,vnc-screenshot,vmware-version,http-shellshock,http-default-accounts,http-passwd --script-args=http-passwd.root=/test/,smb-vuln-ms17-010,rdp-vuln-ms12-020,vuln,grab_beacon_config,vmware-version,smtp-vuln-cve2020-28017-through-28026-21nails.nse,banner
