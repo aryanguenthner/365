@@ -6,7 +6,7 @@
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
 # Tested on Kali 2022.4
-# Last updated 04/13/2023
+# Last updated 04/15/2023
 # The future is now
 # Edit this script to fit your system
 # Got nmap?
@@ -24,19 +24,15 @@ FILE1=$(date +%Y%m%d).nmapscan_$RANDOM
 BOOTSTRAP=nmap-bootstrap.xsl
 NV=$(nmap -V | awk 'FNR == 1 {print $1,$2,$3}')
 RANDOM=$$
-#LS=`ls`
 PWD=`pwd`
-SYNTAX="nmap -A -T4 -Pn -sCT -sU -p U:53,161,T:1-65535 -vvvv --stats-every=1m --script http-screenshot,banner -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/"
+SYNTAX="nmap -A -T4 -Pn -sCT -sU -p U:53,161,T:1-65535 -vvvv --stats-every=1m --script http-screenshot,banner -iL $TARGETS --exclude $KALI -oA $FILE1"
 echo
-
-# Stay Organized
-mkdir -p /home/kali/Desktop/testing/nmapscans/
 
 # Depencency Check
 echo -e "\e[034mRunning Dependency-check\e[0m"
 
 # pingsweep checker
-pingsweep=/home/kali/Desktop/testing/nmapscans/pingsweep.sh
+pingsweep=pingsweep.sh
 if [ -f $pingsweep ]
 then
     echo "Found pingsweep.sh"
@@ -44,11 +40,10 @@ then
 else
 
     echo -e "\e[034mGetting pingsweep.sh from /opt/365e\e[0m"
-cp /opt/365/pingsweep.sh /home/kali/Desktop/testing/nmapscans/
+cp /opt/365/pingsweep.sh .
 fi
 
 echo "Found $NV"
-cd /home/kali/Desktop/testing/nmapscans/
 
 # Nmap bootstrap file checker
 NB=nmap-bootstrap.xsl
@@ -126,7 +121,7 @@ date
 echo
 
 # Screenshots
-echo -e "\e[034mScreenshots Saved to --> /home/kali/Desktop/testing/nmapscans/\e[0m"
+echo -e "\e[034mScreenshots Saved to --> $PWD/\e[0m"
 
 # Networking
 echo
@@ -148,7 +143,7 @@ echo
 echo -e "\e[033mGenerating a Target List\e[0m"
 
 # Ping Sweep
-cd /home/kali/Desktop/testing/nmapscans/
+echo
 nmap $SUBNET --stats-every=1m -sn -n --exclude $KALI -oG $FILE0 && cat $FILE0 | grep --color=always "hosts up"
 echo
 echo -e "\e[033mTarget List File -> targets.txt\e[0m"
@@ -166,20 +161,19 @@ echo "$SYNTAX"
 echo
 
 # Nmap Scan
-nmap -A -T4 -Pn -sCT -sU -p U:53,161,T:1-65535 -vvvv --stats-every=1m --script http-screenshot,banner --open -iL $TARGETS --exclude $KALI -oA /home/kali/Desktop/testing/nmapscans/$FILE1 && cd /home/kali/Desktop/testing/nmapscans/
+nmap -A -T4 -Pn -sCT -sU -p U:53,161,T:1-65535 -vvvv --stats-every=1m --script http-screenshot,banner --open -iL $TARGETS --exclude $KALI -oA $PWD/$FILE1
 echo
+echo -e "\e[034mMetasploit\e[0m"
+echo "service postgresql start"
+echo "msfdb init"
+echo "msfconsole -q"
+echo "db_import $FILE1.xml"
 echo
 xsltproc -o $FILE1.html $BOOTSTRAP $FILE1.xml
 echo
-echo "Import results into Metasploit"
-echo msfconsole
-echo db_import $(pwd)/$FILE1.xml
+echo -e "\e[034mFinished - Nmap scan complete\e[0m"
 echo
-echo "Nmap scan completed"
-echo
-sudo su -c "firefox $(pwd)/$FILE1.html" kali
-
-
+sudo su -c "firefox $FILE1.html" kali
 
 # Pay me later
 updatedb
