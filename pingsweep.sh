@@ -6,14 +6,14 @@
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
 # Tested on Kali 2022.4
-# Last updated 04/15/2023
+# Last updated 04/20/2023
 # The future is now
 # Edit this script to fit your system
 # Got nmap?
 ######################################################
 
 # Setting Variables
-YELLOW=033m
+YELLOW=034m
 BLUE=034m
 EXT=$(curl -s ifconfig.me) 
 KALI=$(hostname -I)
@@ -25,7 +25,7 @@ BOOTSTRAP=nmap-bootstrap.xsl
 NV=$(nmap -V | awk 'FNR == 1 {print $1,$2,$3}')
 RANDOM=$$
 PWD=`pwd`
-SYNTAX="nmap -A -T4 -Pn -sCT -sU -p U:53,161,T:1-65535 -vvvv --stats-every=1m --script http-screenshot,banner -iL $TARGETS --exclude $KALI -oA $FILE1"
+SYNTAX="nmap -A -T4 -Pn -sCT -sU -p U:53,161,T:1-65535 -vvvv --stats-every=1m --max-scan-delay=0 --max-retries=0 --script http-screenshot,banner --open -iL $TARGETS --exclude $KALI -oA $FILE1"
 echo
 
 # Depencency Check
@@ -125,35 +125,35 @@ echo -e "\e[034mScreenshots Saved to --> $PWD/\e[0m"
 
 # Networking
 echo
-echo -e "\e[033mGetting Network Information\e[0m"
+echo -e "\e[034mGetting Network Information\e[0m"
 echo
-echo -e "\e[033mExternal IP\e[0m"
+echo -e "\e[034mExternal IP\e[0m"
 curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2
 
 echo $EXT
 echo
-echo -e "\e[033mKali IP\e[0m"
+echo -e "\e[034mKali IP\e[0m"
 echo $KALI | awk '{print $1}'
 echo
-echo -e "\e[033mThe Target Subnet\e[0m"
+echo -e "\e[034mThe Target Subnet\e[0m"
 echo $SUBNET
 sleep 5
 echo
 
-echo -e "\e[033mGenerating a Target List\e[0m"
+echo -e "\e[034mGenerating a Target List\e[0m"
 
 # Ping Sweep
 echo
 nmap $SUBNET --stats-every=1m -sn -n --exclude $KALI -oG $FILE0 && cat $FILE0 | grep --color=always "hosts up"
 echo
-echo -e "\e[033mTarget List File -> targets.txt\e[0m"
+echo -e "\e[034mTarget List File -> targets.txt\e[0m"
 echo
 echo
-echo -e "\e[033mPing Sweep Completed\e[0m"
+echo -e "\e[034mPing Sweep Completed\e[0m"
 echo
 cat $FILE0 | grep "Up" | awk '{print $2}' 2>&1 | tee targets.txt
 echo
-echo -e "\e[033mUsing nmap to enumerate more info on your targets\e[0m"
+echo -e "\e[034mUsing nmap to enumerate more info on your targets\e[0m"
 echo
 sleep 5
 echo -e "\e[034mHack The Planet\e[0m"
@@ -161,7 +161,7 @@ echo "$SYNTAX"
 echo
 
 # Nmap Scan
-nmap -A -T4 -Pn -sCT -sU -p U:53,161,T:1-65535 -vvvv --stats-every=1m --script http-screenshot,banner --open -iL $TARGETS --exclude $KALI -oA $PWD/$FILE1
+nmap -A -T4 -Pn -sCT -sU -p U:53,161,T:1-65535 -vvvv --stats-every=1m --max-scan-delay=0 --max-retries=0 --script http-screenshot,banner --open -iL $TARGETS --exclude $KALI -oA $PWD/$FILE1
 echo
 echo -e "\e[034mMetasploit\e[0m"
 echo "service postgresql start"
