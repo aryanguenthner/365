@@ -9,7 +9,7 @@
 # sudo chmod a+x *.sh *.py
 # sudo ./kali-setup.sh | tee kali.log
 # chmod -R 777 /home/kali/
-# Last Updated 04/22/2023, minor evil updates
+# Last Updated 04/23/2023, minor evil updates
 ################################################
 
 # Setting Variables
@@ -91,7 +91,7 @@ sudo curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc|sudo gp
 sudo curl -fsSL https://www.virtualbox.org/download/oracle_vbox.asc|sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/oracle_vbox.gpg
 
 # Add Repo
-sudo echo "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian bullseye contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list
+sudo echo "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian stretch contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list
 
 # Update
 sudo apt update
@@ -113,6 +113,8 @@ echo
 # Customize Kali
 echo 'hostname -I' >> /root/.zshrc
 echo 'export HISTCONTROL="ignoredups:$PATH"' >> /root/.zshrc
+echo 'export GOPATH=$HOME/go' >> /root/.zshrc
+echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' >> /root/.zshrc
 echo 'export GOPATH="$HOME/work:$PATH"' >> /root/.zshrc
 echo 'export PATH="/root/go:$PATH"' >> /root/.zshrc
 echo 'export PATH=/"usr/local/go/bin:$PATH"' >> /root/.zshrc
@@ -167,16 +169,23 @@ fi
 echo
 
 # Project Discovery Nuclei
+cd /opt
 go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
 echo
 
+# Project Discovery httpx
+cd /opt
+go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
+echo
+
 # Install Katana - Web Crawler
+cd /opt
 go install github.com/projectdiscovery/katana/cmd/katana@latest
 echo
 
 # Install gospider - Web Crawler
 # https://github.com/jaeles-project/gospider
-GO111MODULE=on go install github.com/jaeles-project/gospider@latest
+go install github.com/jaeles-project/gospider@latest
 
 # Install gobuster - Directory Buster
 go install github.com/OJ/gobuster/v3@latest
@@ -202,26 +211,6 @@ sudo update-alternatives --set python3 /usr/bin/python3.9
 '''
 echo
 
-# TODO: Updog works on python 3.9 not 3.10
-# echo "Installing Updog"
-# pip3 install updog
-
-'''Works with Python 3.9
-echo "Hacker TV"
-# Channels --> https://github.com/iptv-org/iptv
-sudo apt-get -y install python3-imdbpy libmpv1 gir1.2-xapp-1.0 debhelper python3-setproctitle dpkg-dev
-cd /opt
-sudo git clone https://github.com/aryanguenthner/hypnotix.git
-cd hypnotix
-sudo apt-get install -y python3.10-venv
-wget --no-check-certificate http://ftp.us.debian.org/debian/pool/main/i/imdbpy/python3-imdbpy_6.8-2_all.deb
-sudo dpkg -i python3-imdbpy_6.8-2_all.deb
-sudo dpkg-buildpackage -b -uc
-sudo python3 -m venv ./venv
-sudo dpkg -i hypnotix*.deb
-echo
-'''
-
 # Signal
 # NOTE: These instructions only work for 64 bit Debian-based Kali Linux
 # Linux distributions such as Ubuntu, Mint etc.
@@ -234,7 +223,7 @@ echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] 
   sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
 
 # 3. Update your package database and install signal
-sudo apt update && sudo apt install signal-desktop
+sudo apt update && sudo apt install -y signal-desktop
 echo
 
 # Hackers like SSH
@@ -243,21 +232,6 @@ sed -i '40s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/s
 sudo systemctl enable ssh
 sudo service ssh restart
 echo
-
-# Metasploit Setup
-echo "Metasploit Ready Up"
-mkdir -p /opt/metasploit
-cd /opt/metasploit
-curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && chmod 755 msfinstall && ./msfinstall
-echo
-systemctl start postgresql
-msfdb init
-echo
-cd /usr/share/metasploit-framework/config
-msfdb reinit
-/usr/share/metasploit-framework/config
-cp database.yml /root/.msf4/
-service postgresql restart
 
 # TODO: Yeet
 #echo "Kingfisher"
@@ -296,13 +270,7 @@ git clone https://github.com/elceef/dnstwist.git
 sudo apt-get -y install python3-dnspython python3-geoip python3-whois python3-requests python3-ssdeep python3-dns
 
 echo
-''' echo "RDPY"
-echo
-cd /opt
-git clone https://github.com/citronneur/rdpy.git
-cd rdpy
-sudo python setup.py install
-'''
+
 echo
 echo "Cewl Password Lists"
 cd /opt
@@ -475,14 +443,14 @@ systemctl enable mongod.service
 echo "Hopefully MongoDB Installed"
 echo
 
-# Install Ivre.Rocks
-echo
-sudo apt -y install ivre
-echo
-
 # Ivre Dependencies
 sudo pip install tinydb
 sudo pip install py2neo
+echo
+
+# Install Ivre.Rocks
+echo
+sudo apt -y install ivre
 echo
 
 # Ivre Database init, data download & importation
@@ -592,11 +560,15 @@ sudo pip3 install . --ignore-installed stem
 sudo ./build.sh
 echo
 
+# Remove Docker Interface until you need it
+ip link delete docker0
+
 echo "Hack The Planet"
 chmod -R 777 /home/kali/
 echo
 
 # Insurance
+sudo apt-get --reinstall install python3-debian
 sudo apt --fix-broken install
 sudo apt autoremove -y
 #apt-get install --reinstall python3-debian -y
