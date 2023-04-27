@@ -9,7 +9,7 @@
 # sudo chmod a+x *.sh *.py
 # sudo ./kali-setup.sh | tee kali.log
 # chmod -R 777 /home/kali/
-# Last Updated 04/23/2023, minor evil updates
+# Last Updated 04/26/2023, minor evil updates
 ################################################
 
 # Setting Variables
@@ -54,6 +54,7 @@ echo
 echo "Be Patient, Installing Kali Dependencies"
 
 # Kali installs
+apt update && apt -y upgrade && apt -y full-upgrade
 echo
 sudo apt-get install colorized-logs xfce4-weather-plugin npm golang-go ncat shotwell obfs4proxy gconf-service gconf2-common libc++1 libgconf-2-4 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice -y
 echo
@@ -136,10 +137,11 @@ curl -1sLf \
 echo
 
 sudo apt-get update
+echo "Etcher USB-"
 mkdir -p /opt/balena-etcher-electron/chrome-sandbox
 sudo apt-get install balena-etcher-electron -y
 echo
-echo "Etcher Installed"
+
 
 # TODO: Check this out
 # text in your terminal > ansi2html -a > report.html
@@ -270,7 +272,6 @@ git clone https://github.com/elceef/dnstwist.git
 sudo apt-get -y install python3-dnspython python3-geoip python3-whois python3-requests python3-ssdeep python3-dns
 
 echo
-
 echo
 echo "Cewl Password Lists"
 cd /opt
@@ -335,7 +336,11 @@ git clone https://github.com/byt3bl33d3r/SprayingToolkit.git
 : ' Nmap works dont forget --> nmap -Pn -p 445 -script smb-brute --script-args='smbpassword=Summer2019,smbusername=Administrator' 192.168.1.23 '
 echo
 : ' Hydra works dont forget --> hydra -p Summer2019 -l Administrator smb://192.168.1.23 '
-: ' Metasploit works dont forget --> set smbpass Summer2019 / set smbuser Administrator / set rhosts 192.168.1.251 / run '
+: ' Metasploit works dont forget --> 
+set smbpass Summer2019
+set smbuser Administrator
+set rhosts 192.168.1.251
+run '
 
 echo "Awesome XSS"
 cd /opt
@@ -564,14 +569,12 @@ echo
 ip link delete docker0
 
 echo "Hack The Planet"
-chmod -R 777 /home/kali/
 echo
 
 # Insurance
-sudo apt-get --reinstall install python3-debian
+sudo apt-get --reinstall install python3-debian -y
 sudo apt --fix-broken install
 sudo apt autoremove -y
-#apt-get install --reinstall python3-debian -y
 systemctl restart ntp
 source ~/.zshrc
 echo
