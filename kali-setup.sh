@@ -9,7 +9,7 @@
 # sudo chmod a+x *.sh *.py
 # sudo ./kali-setup.sh | tee kali.log
 # chmod -R 777 /home/kali/
-# Last Updated 04/26/2023, minor evil updates
+# Last Updated 05/30/2023, minor evil updates
 ################################################
 
 # Setting Variables
@@ -56,7 +56,7 @@ echo "Be Patient, Installing Kali Dependencies"
 # Kali installs
 apt update && apt -y upgrade && apt -y full-upgrade
 echo
-sudo apt-get install colorized-logs xfce4-weather-plugin npm golang-go ncat shotwell obfs4proxy gconf-service gconf2-common libc++1 libgconf-2-4 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice -y
+sudo apt-get install assetfinder colorized-logs xfce4-weather-plugin npm golang-go ncat shotwell obfs4proxy gconf-service gconf2-common libc++1 libgconf-2-4 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice -y
 echo
 
 # Get Pippy wit it
@@ -170,6 +170,13 @@ wget --no-check-certificate -O /home/kali/Desktop/testing/nmapscans/nmap-bootstr
 fi
 echo
 
+# Did you say Cloudflare Tunnel?
+# qterminal -e python3 -m http.server 4567
+# qterminal -e cloudflared tunnel -url localhost:4567
+
+
+dpkg -i /opt/365/cloudflared-linux-amd64.deb
+
 # Project Discovery Nuclei
 cd /opt
 go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
@@ -182,7 +189,12 @@ echo
 
 # Install Katana - Web Crawler
 cd /opt
-go install github.com/projectdiscovery/katana/cmd/katana@latest
+go install -v github.com/projectdiscovery/katana/cmd/katana@latest
+echo
+
+# Install Katana - Uncover
+cd /opt
+go install -v github.com/projectdiscovery/uncover/cmd/uncover@latest
 echo
 
 # Install gospider - Web Crawler
@@ -222,7 +234,7 @@ cat signal-desktop-keyring.gpg | sudo tee -a /usr/share/keyrings/signal-desktop-
 
 # 2. Add our repository to your list of repositories
 echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
-  sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
+sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
 
 # 3. Update your package database and install signal
 sudo apt update && sudo apt install -y signal-desktop
@@ -234,6 +246,11 @@ sed -i '40s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/s
 sudo systemctl enable ssh
 sudo service ssh restart
 echo
+
+# TODO
+# Replace Nmap User agent
+# "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)"
+# Line 159 /usr/share/nmap/nselib/http.lua
 
 # TODO: Yeet
 #echo "Kingfisher"
@@ -474,9 +491,9 @@ echo
 echo
 echo "Copying IVRE Nmap Scripts to Nmap"
 echo
-cp /usr/share/ivre/nmap_scripts/*.nse /usr/share/nmap/scripts/
+cp /usr/share/ivre/patches/nmap/scripts/*.nse /usr/share/nmap/scripts/
 yes | patch /usr/share/nmap/scripts/rtsp-url-brute.nse \
-/usr/share/ivre/nmap_scripts/patches/rtsp-url-brute.patch
+/usr/share/ivre/patches/rtsp-url-brute.patch
 nmap --script-updatedb > /dev/null
 echo
 
