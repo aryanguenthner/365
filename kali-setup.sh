@@ -9,7 +9,7 @@
 # sudo chmod a+x *.sh *.py
 # sudo ./kali-setup.sh | tee kali.log
 # chmod -R 777 /home/kali/
-# Last Updated 05/30/2023, minor evil updates
+# Last Updated 06/06/2023, minor evil updates
 ################################################
 
 # Setting Variables
@@ -128,8 +128,9 @@ echo 'export PATH="/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:
 echo 'export PATH=/usr/local/bin:$PATH' >> /root/.zshrc
 echo
 
+# TODO
 # https://github.com/balena-io/etcher
-echo "Downloading Etcher USB Media Creator"
+'''echo "Downloading Etcher USB Media Creator"
 curl -1sLf \
    'https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh' \
    | sudo -E bash
@@ -141,6 +142,7 @@ echo "Etcher USB-"
 mkdir -p /opt/balena-etcher-electron/chrome-sandbox
 sudo apt-get install balena-etcher-electron -y
 echo
+'''
 
 
 # TODO: Check this out
@@ -465,6 +467,9 @@ systemctl enable mongod.service
 echo "Hopefully MongoDB Installed"
 echo
 
+# Fix annoying apt-key
+sudo apt-key export 058F8B6B | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/mongo.gpg
+
 # Ivre Dependencies
 sudo pip install tinydb
 sudo pip install py2neo
@@ -598,6 +603,11 @@ echo
 
 # Install Finish Time
 date | tee kali-setup-finish-date.txt
+
+# Stop Docker
+systemctl stop docker
+systemctl disable docker
+#
 updatedb
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
 reboot
