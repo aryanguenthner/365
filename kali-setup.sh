@@ -101,7 +101,7 @@ sudo apt update
 sudo apt install -y dkms
 
 # Install
-sudo apt -y install linux-headers-`uname -r` build-essential virtualbox-dkms dkms virtualbox virtualbox-ext-pack virtualbox-guest-utils
+sudo apt -y install linux-headers-`uname -r` build-essential virtualbox virtualbox-ext-pack virtualbox-guest-utils
 echo
 
 # VirtualBox Hack for USB Devices
