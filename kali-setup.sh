@@ -9,7 +9,7 @@
 # sudo chmod a+x *.sh *.py
 # sudo ./kali-setup.sh | tee kali.log
 # chmod -R 777 /home/kali/
-# Last Updated 06/06/2023, minor evil updates
+# Last Updated 06/08/2023, minor evil updates
 ################################################
 
 # Setting Variables
@@ -114,18 +114,18 @@ echo
 # Customize Kali
 echo 'hostname -I' >> /root/.zshrc
 echo 'export HISTCONTROL="ignoredups:$PATH"' >> /root/.zshrc
-echo 'export GOPATH=$HOME/go' >> /root/.zshrc
-echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' >> /root/.zshrc
+echo 'export GOPATH="$HOME/go"' >> /root/.zshrc
+echo 'export PATH="$PATH:$GOROOT/bin:$GOPATH/bin"' >> /root/.zshrc
 echo 'export GOPATH="$HOME/work:$PATH"' >> /root/.zshrc
 echo 'export PATH="/root/go:$PATH"' >> /root/.zshrc
-echo 'export PATH=/"usr/local/go/bin:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/local/go/bin:$PATH"' >> /root/.zshrc
 echo 'export PATH="/root/work:$PATH"' >> /root/.zshrc
 echo 'export PATH="/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
 echo 'export PATH="/usr/bin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc 
 echo 'export PATH="/usr/sbin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc
 echo 'export PATH="/usr/lib/jvm/java-11-openjdk-amd64/:$PATH"' >> /root/.zshrc
 echo 'export PATH="/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
-echo 'export PATH=/usr/local/bin:$PATH' >> /root/.zshrc
+echo 'export PATH="/usr/local/bin:$PATH"' >> /root/.zshrc
 echo
 
 # TODO
@@ -194,9 +194,14 @@ cd /opt
 go install -v github.com/projectdiscovery/katana/cmd/katana@latest
 echo
 
-# Install Katana - Uncover
+# Install Project Discovery - Uncover
 cd /opt
 go install -v github.com/projectdiscovery/uncover/cmd/uncover@latest
+echo
+
+# Install Project Discovery - Uncover
+cd /opt
+go install -v github.com/projectdiscovery/subfinder/cmd/subfinder@latest
 echo
 
 # Install gospider - Web Crawler
