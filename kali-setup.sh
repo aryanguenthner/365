@@ -9,7 +9,7 @@
 # sudo chmod a+x *.sh *.py
 # sudo ./kali-setup.sh | tee kali.log
 # chmod -R 777 /home/kali/
-# Last Updated 06/09/2023, minor evil updates
+# Last Updated 06/10/2023, minor evil updates
 ################################################
 
 # Setting Variables
@@ -116,25 +116,6 @@ echo
 fi
 echo
 
-# Customize Kali
-echo 'hostname -I' >> /root/.zshrc
-echo 'export HISTCONTROL="ignoredups:$PATH"' >> /root/.zshrc
-echo 'export GOROOT="/usr/local/go"' >> /root/.zshrc
-echo 'export GOPATH="$HOME/go"' >> /root/.zshrc
-echo 'export PATH="$GOPATH/bin:$GOROOT/bin:$PATH"' >> /root/.zshrc
-echo 'export PATH="PATH=$PATH:$GOROOT/bin/:$GOPATH/bin"' >> /root/.zshrc
-echo 'export PATH="$PATH:$(go env GOPATH)/bin"' >> /root/.zshrc
-echo 'export PATH="/root/go:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/local/go/bin:$PATH"' >> /root/.zshrc
-echo 'export PATH="/root/work:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/bin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc 
-echo 'export PATH="/usr/sbin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/lib/jvm/java-11-openjdk-amd64/:$PATH"' >> /root/.zshrc
-echo 'export PATH="/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/local/bin:$PATH"' >> /root/.zshrc
-echo
-
 # TODO
 # https://github.com/balena-io/etcher
 '''echo "Downloading Etcher USB Media Creator"
@@ -153,7 +134,7 @@ echo
 
 
 # TODO: Check this out
-# text in your terminal > ansi2html -a > report.html
+# text in your terminal > ansi2html > nmap-report.html
 # ssmtp <--works good, just doesnt play with sendmail.
 # did not install > openjdk-13-jdk libc++1-13 libc++abi1-13 libindicator3-7 libunwind-13 python3.8-venv libappindicator3-1 
 
@@ -619,6 +600,24 @@ date | tee kali-setup-finish-date.txt
 # Stop Docker
 systemctl stop docker
 systemctl disable docker
+
+# Customize Kali
+echo 'hostname -I' >> /root/.zshrc
+echo 'export HISTCONTROL="ignoredups:$PATH"' >> /root/.zshrc
+echo 'export GOROOT="/usr/local/go"' >> /root/.zshrc
+echo 'export GOPATH="$HOME/go"' >> /root/.zshrc
+echo 'export PATH="$GOPATH/bin:$GOROOT/bin:$PATH"' >> /root/.zshrc
+echo 'export PATH="PATH=$PATH:$GOROOT/bin/:$GOPATH/bin"' >> /root/.zshrc
+echo 'export PATH="$PATH:$(go env GOPATH)/bin"' >> /root/.zshrc
+echo 'export PATH="/root/go:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/local/go/bin:$PATH"' >> /root/.zshrc
+echo 'export PATH="/root/work:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/bin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc 
+echo 'export PATH="/usr/sbin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/lib/jvm/java-11-openjdk-amd64/:$PATH"' >> /root/.zshrc
+echo 'export PATH="/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/local/bin:$PATH"' >> /root/.zshrc
 #
 updatedb
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
