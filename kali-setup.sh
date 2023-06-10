@@ -9,7 +9,7 @@
 # sudo chmod a+x *.sh *.py
 # sudo ./kali-setup.sh | tee kali.log
 # chmod -R 777 /home/kali/
-# Last Updated 06/08/2023, minor evil updates
+# Last Updated 06/09/2023, minor evil updates
 ################################################
 
 # Setting Variables
@@ -56,8 +56,13 @@ echo "Be Patient, Installing Kali Dependencies"
 # Kali installs
 apt update && apt -y upgrade && apt -y full-upgrade
 echo
-sudo apt-get install hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm golang-go ncat shotwell obfs4proxy gconf-service gconf2-common libc++1 libgconf-2-4 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice -y
+sudo apt-get install hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy gconf-service gconf2-common libc++1 libgconf-2-4 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice -y
 echo
+
+# Just Go for the win
+wget https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
+tar -xvf https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
+sudo mv go /usr/local
 
 # Get Pippy wit it
 python3 -m pip install --upgrade pip
@@ -114,9 +119,11 @@ echo
 # Customize Kali
 echo 'hostname -I' >> /root/.zshrc
 echo 'export HISTCONTROL="ignoredups:$PATH"' >> /root/.zshrc
+echo 'export GOROOT="/usr/local/go"' >> /root/.zshrc
 echo 'export GOPATH="$HOME/go"' >> /root/.zshrc
-echo 'export PATH="$PATH:$GOROOT/bin:$GOPATH/bin"' >> /root/.zshrc
-echo 'export GOPATH="$HOME/work:$PATH"' >> /root/.zshrc
+echo 'export PATH="$GOPATH/bin:$GOROOT/bin:$PATH"' >> /root/.zshrc
+echo 'export PATH="PATH=$PATH:$GOROOT/bin/:$GOPATH/bin"' >> /root/.zshrc
+echo 'export PATH="$PATH:$(go env GOPATH)/bin"' >> /root/.zshrc
 echo 'export PATH="/root/go:$PATH"' >> /root/.zshrc
 echo 'export PATH="/usr/local/go/bin:$PATH"' >> /root/.zshrc
 echo 'export PATH="/root/work:$PATH"' >> /root/.zshrc
