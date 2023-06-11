@@ -17,6 +17,7 @@ YELLOW=034m
 BLUE=034m
 EXT=$(curl -s ifconfig.me) 
 KALI=$(hostname -I)
+CITY=$(curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2)
 SUBNET=$(ip r | awk 'FNR == 2 {print $1}')
 TARGETS=targets.txt
 FILE0=$(date +%Y%m%d).nmap-pingsweep_$RANDOM
@@ -25,7 +26,7 @@ BOOTSTRAP=nmap-bootstrap.xsl
 NV=$(nmap -V | awk 'FNR == 1 {print $1,$2,$3}')
 RANDOM=$$
 PWD=`pwd`
-SYNTAX="nmap -A -T4 -Pn -sCT -sU -p U:53,161,T:1-65535 -vvvv --stats-every=1m --max-scan-delay=0 --max-retries=0 --script http-screenshot,banner --open -iL $TARGETS --exclude $KALI -oA $FILE1"
+SYNTAX="nmap -A -T4 -Pn -sCT -sU -p U:53,88,161,T:1-65535 -vvvv --stats-every=1m --max-scan-delay=0 --max-retries=0 --script http-screenshot,banner --open -iL $TARGETS --exclude $KALI -oA $FILE1"
 echo
 
 # Depencency Check
@@ -127,9 +128,8 @@ echo -e "\e[034mScreenshots Saved to --> $PWD/\e[0m"
 echo
 echo -e "\e[034mGetting Network Information\e[0m"
 echo
-echo -e "\e[034mExternal IP\e[0m"
-curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2
-
+echo -e "\e[034mPublic IP\e[0m"
+echo $CITY
 echo $EXT
 echo
 echo -e "\e[034mKali IP\e[0m"
@@ -161,7 +161,7 @@ echo "$SYNTAX"
 echo
 
 # Nmap Scan
-nmap -A -T4 -Pn -sCT -sU -p U:53,161,T:1-65535 -vvvv --stats-every=1m --max-scan-delay=0 --max-retries=0 --script http-screenshot,banner --open -iL $TARGETS --exclude $KALI -oA $PWD/$FILE1
+nmap -A -T4 -Pn -sCT -sU -p U:53,88,161,T:1-65535 -vvvv --stats-every=1m --max-scan-delay=0 --max-retries=0 --script http-screenshot,banner --open -iL $TARGETS --exclude $KALI -oA $PWD/$FILE1
 echo
 echo -e "\e[034mMetasploit\e[0m"
 echo "service postgresql start"
@@ -169,14 +169,19 @@ echo "msfdb init"
 echo "msfconsole -q"
 echo "db_import $FILE1.xml"
 echo
+echo "Create HTML Nmap Report"
+echo "xsltproc -o $FILE1.html $BOOTSTRAP $FILE1.xml"
+echo
 xsltproc -o $FILE1.html $BOOTSTRAP $FILE1.xml
 echo
 echo -e "\e[034mFinished - Nmap scan complete\e[0m"
 echo
-sudo su -c "firefox $FILE1.html" kali
-
 # Pay me later
 updatedb
+
+sudo su -c "firefox $FILE1.html" kali
+
+
 
 : '
 

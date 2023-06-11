@@ -52,9 +52,7 @@ echo -e "\e[034mGetting Network Information\e[0m"
 echo
 echo -e "\e[033mPublic IP\e[0m"
 echo $CITY
-
 echo $EXT
-echo
 echo
 echo -e "\e[033mKali IP\e[0m"
 echo $KALI | awk '{print $1}'
@@ -231,7 +229,6 @@ torghost -x
     echo
     echo -e "\e[033mDarkWeb IP\e[0m"
 echo $CITY
-
 echo $EXT
 
 else
