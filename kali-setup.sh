@@ -30,7 +30,6 @@ echo -e "\e[033mNetwork Information\e[0m"
 echo
 echo -e "\e[033mPublic IP\e[0m"
 echo $CITY
-echo
 echo $EXT
 echo
 echo
@@ -65,6 +64,26 @@ echo
 wget https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
 tar -xvzf go1.20.5.linux-amd64.tar.gz
 sudo mv go /usr/local
+echo
+# Customize Kali
+echo 'hostname -I' >> /root/.zshrc
+echo 'export HISTCONTROL="ignoredups:$PATH"' >> /root/.zshrc
+echo 'export GOROOT="/usr/local/go"' >> /root/.zshrc
+echo 'export GOPATH="$HOME/go"' >> /root/.zshrc
+echo 'export PATH="$GOPATH/bin:$GOROOT/bin:$PATH"' >> /root/.zshrc
+echo 'export PATH="PATH=$PATH:$GOROOT/bin/:$GOPATH/bin"' >> /root/.zshrc
+echo 'export PATH="$PATH:$(go env GOPATH)/bin"' >> /root/.zshrc
+echo 'export PATH="/root/go:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/local/go/bin:$PATH"' >> /root/.zshrc
+echo 'export PATH="/root/work:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/bin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc 
+echo 'export PATH="/usr/sbin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/lib/jvm/java-11-openjdk-amd64/:$PATH"' >> /root/.zshrc
+echo 'export PATH="/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/local/bin:$PATH"' >> /root/.zshrc
+echo
+go version
 
 # Get Pippy wit it
 python3 -m pip install --upgrade pip
@@ -602,23 +621,6 @@ date | tee kali-setup-finish-date.txt
 systemctl stop docker
 systemctl disable docker
 
-# Customize Kali
-echo 'hostname -I' >> /root/.zshrc
-echo 'export HISTCONTROL="ignoredups:$PATH"' >> /root/.zshrc
-echo 'export GOROOT="/usr/local/go"' >> /root/.zshrc
-echo 'export GOPATH="$HOME/go"' >> /root/.zshrc
-echo 'export PATH="$GOPATH/bin:$GOROOT/bin:$PATH"' >> /root/.zshrc
-echo 'export PATH="PATH=$PATH:$GOROOT/bin/:$GOPATH/bin"' >> /root/.zshrc
-echo 'export PATH="$PATH:$(go env GOPATH)/bin"' >> /root/.zshrc
-echo 'export PATH="/root/go:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/local/go/bin:$PATH"' >> /root/.zshrc
-echo 'export PATH="/root/work:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/bin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc 
-echo 'export PATH="/usr/sbin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/lib/jvm/java-11-openjdk-amd64/:$PATH"' >> /root/.zshrc
-echo 'export PATH="/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/local/bin:$PATH"' >> /root/.zshrc
 #
 updatedb
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
