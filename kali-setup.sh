@@ -15,7 +15,9 @@
 # Setting Variables
 YELLOW=033m
 BLUE=034m
-KALI=`hostname -I`
+KALI=$(hostname -I)
+CITY=$(curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2)
+EXT=$(curl -s ifconfig.me) 
 SUBNET=`ip r | awk 'NR==2' | awk '{print $1}'`
 
 # Todays Date 
@@ -27,9 +29,9 @@ echo
 echo -e "\e[033mNetwork Information\e[0m"
 echo
 echo -e "\e[033mPublic IP\e[0m"
-curl -s https://ipapi.co/timezone
+echo $CITY
 echo
-curl -s ifconfig.me
+echo $EXT
 echo
 echo
 # Internal IP Address
@@ -54,14 +56,14 @@ echo
 echo "Be Patient, Installing Kali Dependencies"
 
 # Kali installs
-apt update && apt -y upgrade && apt -y full-upgrade
+apt update && apt -y upgrade && apt -y full-upgrade && updatedb
 echo
 sudo apt-get install hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy gconf-service gconf2-common libc++1 libgconf-2-4 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice -y
 echo
 
 # Just Go for the win
 wget https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
-tar -xvf https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
+tar -xvzf go1.20.5.linux-amd64.tar.gz
 sudo mv go /usr/local
 
 # Get Pippy wit it
@@ -187,7 +189,7 @@ cd /opt
 go install -v github.com/projectdiscovery/uncover/cmd/uncover@latest
 echo
 
-# Install Project Discovery - Uncover
+# Install Project Discovery - Subfinder
 cd /opt
 go install -v github.com/projectdiscovery/subfinder/cmd/subfinder@latest
 echo
@@ -444,7 +446,6 @@ cd /opt
 git clone https://github.com/aryanguenthner/365.git
 cd 365
 sudo dos2unix *.sh *.py && chmod a+x *.sh *.py
-chmod -R 777 /opt/365
 echo
 
 # MongoDB Install

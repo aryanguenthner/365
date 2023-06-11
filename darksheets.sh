@@ -6,7 +6,7 @@
 # eye -q "vice lausd" | grep .onion > results+onions.txt
 # torghost -a -c us,mx,ca 
 # libreoffice --calc results+onions.txt
-# Tested on Kali 2023.1
+# Tested on Kali 2023.2
 # Last updated 03/22/2023, minor evil updates
 # https://github.com/aryanguenthner
 # The future is now
@@ -28,7 +28,9 @@ echo "v1.0"
 # Setting Variables
 YELLOW=033m
 BLUE=034m
-KALI=`hostname -I`
+KALI=$(hostname -I)
+CITY=$(curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2)
+EXT=$(curl -s ifconfig.me) 
 LS=`ls`
 PWD=`pwd`
 echo
@@ -49,9 +51,9 @@ echo
 echo -e "\e[034mGetting Network Information\e[0m"
 echo
 echo -e "\e[033mPublic IP\e[0m"
-curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2
+echo $CITY
 
-curl -s ifconfig.me
+echo $EXT
 echo
 echo
 echo -e "\e[033mKali IP\e[0m"
@@ -227,10 +229,10 @@ torghost -x
     echo "Exit Tor type: torghost -x"
     echo "Exit DarkSheets: CTRL + c"
     echo
-    echo -e "\e[033mNew Public IP\e[0m"
-curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2
+    echo -e "\e[033mDarkWeb IP\e[0m"
+echo $CITY
 
-curl -s ifconfig.me
+echo $EXT
 
 else
 
