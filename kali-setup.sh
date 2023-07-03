@@ -2,14 +2,14 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Tested on Kali 2022.4
+# Tested on Kali 2023.2
 # Usage: cd /opt/
 # sudo git clone https://github.com/aryanguenthner/365
 # cd 365
 # sudo chmod a+x *.sh *.py
 # sudo ./kali-setup.sh | tee kali.log
 # chmod -R 777 /home/kali/
-# Last Updated 06/10/2023, minor evil updates
+# Last Updated 07/03/2023, minor evil updates
 ################################################
 
 # Setting Variables
@@ -57,7 +57,7 @@ echo "Be Patient, Installing Kali Dependencies"
 # Kali installs
 apt update && apt -y upgrade && apt -y full-upgrade && updatedb
 echo
-sudo apt-get install hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy gconf-service gconf2-common libc++1 libgconf-2-4 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice -y
+sudo apt-get install freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy gconf-service gconf2-common libc++1 libgconf-2-4 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice -y
 echo
 
 # Just Go for the win
@@ -140,7 +140,7 @@ echo
 
 # TODO
 # https://github.com/balena-io/etcher
-'''echo "Downloading Etcher USB Media Creator"
+: 'echo "Downloading Etcher USB Media Creator"
 curl -1sLf \
    'https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh' \
    | sudo -E bash
@@ -152,7 +152,7 @@ echo "Etcher USB-"
 mkdir -p /opt/balena-etcher-electron/chrome-sandbox
 sudo apt-get install balena-etcher-electron -y
 echo
-'''
+'
 
 
 # TODO: Check this out
@@ -299,12 +299,12 @@ echo
 cd /opt
 git clone https://github.com/TheRook/subbrute.git
 echo
-echo "dnstwister"
+'''echo "dnstwister"
 echo
 cd /opt
 git clone https://github.com/elceef/dnstwist.git
-sudo apt-get -y install python3-dnspython python3-geoip python3-whois python3-requests python3-ssdeep python3-dns
-
+sudo apt-get -y install python3-dnspython python3-geoip python3-whois python3-requests python3-ssdeep
+'''
 echo
 echo
 echo "Cewl Password Lists"
@@ -326,11 +326,6 @@ echo
 echo "enum4linux-ng"
 cd /opt
 git clone https://github.com/cddmp/enum4linux-ng.git
-echo
-
-echo "BloodHound"
-cd /opt
-git clone https://github.com/BloodHoundAD/Bloodhound.git
 echo
 
 echo "Daniel Miessler Security List Collection"
@@ -430,7 +425,7 @@ cd /opt
 git clone https://github.com/s0md3v/Breacher.git
 echo
 
-echo "Installing Impacket"
+'''echo "Installing Impacket"
 cd /opt
 sudo pip3 install jinja2==2.10.1
 git clone https://github.com/SecureAuthCorp/impacket.git
@@ -438,6 +433,7 @@ cd /opt
 cd impacket
 pip3 install -e .
 echo
+'''
 
 echo "GitRob"
 cd /tmp
@@ -447,14 +443,15 @@ mkdir -p /opt/gitrob
 mv gitrob /opt/gitrob/
 echo
 
-echo "OSINT Phone Number Info Gathering Tool"
+# TODO: Fix this
+: 'echo "OSINT Phone Number Info Gathering Tool"
 cd /opt
 sudo git clone https://github.com/sundowndev/PhoneInfoga.git
 cd PhoneInfoga
-sudo curl -sSL https://raw.githubusercontent.com/sundowndev/PhoneInfoga/master/support/scripts/install | bash\n
+sudo curl -sSL https://raw.githubusercontent.com/sundowndev/PhoneInfoga/master/support/scripts/install | bash \n
 sudo ./phoneinfoga version
 echo
-
+'
 # Windows Exploit Suggester Next Gen
 echo
 cd /opt
@@ -484,6 +481,12 @@ echo
 # Fix annoying apt-key
 sudo apt-key export 058F8B6B | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/mongo.gpg
 
+'''
+# If Needed
+sudo apt-key export 2007B954 | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/msf.gpg
+sudo apt-key export 038651BD | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/slack.gpg
+
+'''
 # Ivre Dependencies
 sudo pip install tinydb
 sudo pip install py2neo

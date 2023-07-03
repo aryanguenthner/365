@@ -5,8 +5,8 @@
 # Enumerate open ports and services
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
-# Tested on Kali 2022.4
-# Last updated 07/01/2023
+# Tested on Kali 2023.2
+# Last updated 07/03/2023
 # The future is now
 # Edit this script to fit your system
 # Got nmap?
@@ -161,7 +161,7 @@ echo "$SYNTAX"
 echo
 
 # Nmap Scan
-nmap -A -T4 -Pn -sCT -sU --open -p U:53,88,161,T:1-65535 -vvvv --stats-every=1m --max-scan-delay=0 --max-retries=0 --script http-screenshot,banner -iL $TARGETS --exclude $KALI -oA $PWD/$FILE1
+nmap -A -T4 -Pn -sCT -sU --open -vvvv -p U:53,88,161,T:1-65535 -vvvv --stats-every=1m --max-scan-delay=0 --max-retries=0 --script http-screenshot,banner -iL $TARGETS --exclude $KALI -oA $PWD/$FILE1
 echo
 echo -e "\e[034mMetasploit\e[0m"
 echo "service postgresql start"
