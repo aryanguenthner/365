@@ -55,9 +55,9 @@ echo
 echo "Be Patient, Installing Kali Dependencies"
 
 # Kali installs
-apt update && apt -y upgrade && apt -y full-upgrade && updatedb
+apt-get update && apt-get -y upgrade && apt-get -y full-upgrade && updatedb
 echo
-sudo apt-get install freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy gconf-service gconf2-common libc++1 libgconf-2-4 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice -y
+sudo apt-get -y install freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy gconf-service gconf2-common libc++1 libgconf-2-4 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
 echo
 
 # Just Go for the win
@@ -84,6 +84,7 @@ echo 'export PATH="/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:
 echo 'export PATH="/usr/local/bin:$PATH"' >> /root/.zshrc
 source ~/.zshrc
 echo
+echo
 go version
 
 # Get Pippy wit it
@@ -93,14 +94,16 @@ echo
 echo "Installing psycopg"
 pip3 install psycopg
 echo
-
-'''https://www.kali.org/docs/virtualization/install-virtualbox-host/#setup
+: 'https://www.kali.org/docs/virtualization/install-virtualbox-host/#setup
 https://wiki.debian.org/VirtualBox#Debian_10_.22Buster.22_and_Debian_11_.22Bullseye.22
 https://www.kali.org/docs/virtualization/install-virtualbox-host/
 https://wiki.debian.org/VirtualBox
-'''
+'
+echo "Getting BIOS Info"
+sudo dmidecode -s bios-version | tee /home/kali/Desktop/bios-information.txt
+
 echo "Are you installing a Kali Virtual Machine? "
-sudo dmidecode -t system && sudo dmidecode -s bios-version >> | tee /home/kali/Desktop/kali-system-info.log
+sudo dmidecode -t system | tee /opt/365/kali-system-info.log
 VM="$(grep 'Product Name: Virtual Machine\|Product Name: VMware Virtual Platform' kali-system-info.log)"
 VM1="Product Name: Virtual Machine"
 VM2="Product Name: VMware Virtual Platform"
@@ -150,11 +153,8 @@ sudo apt-get -y install balena-etcher-electron
 echo
 
 
-echo "Etcher USB-"
 # mkdir -p /opt/balena-etcher-electron/chrome-sandbox
 echo
-'
-
 
 # TODO: Check this out
 # text in your terminal > ansi2html > nmap-report.html
@@ -223,7 +223,7 @@ go install github.com/jaeles-project/gospider@latest
 go install github.com/OJ/gobuster/v3@latest
 
 # How to Update Python Alternatives
-''' # kali python Config
+: ' # kali python Config
 ls -l /usr/bin/python*
 sudo update-alternatives --list python
 sudo update-alternatives --config python
@@ -240,7 +240,7 @@ sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
 sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 2
 sudo update-alternatives --set python3 /usr/bin/python3.9
 # update-alternatives --remove-all python
-'''
+'
 echo
 
 # Signal
@@ -300,14 +300,7 @@ echo
 cd /opt
 git clone https://github.com/TheRook/subbrute.git
 echo
-'''echo "dnstwister"
-echo
-cd /opt
-git clone https://github.com/elceef/dnstwist.git
-sudo apt-get -y install python3-dnspython python3-geoip python3-whois python3-requests python3-ssdeep
-'''
-echo
-echo
+
 echo "Cewl Password Lists"
 cd /opt
 git clone https://github.com/digininja/CeWL.git
@@ -426,7 +419,7 @@ cd /opt
 git clone https://github.com/s0md3v/Breacher.git
 echo
 
-'''echo "Installing Impacket"
+: 'echo "Installing Impacket"
 cd /opt
 sudo pip3 install jinja2==2.10.1
 git clone https://github.com/SecureAuthCorp/impacket.git
@@ -434,7 +427,7 @@ cd /opt
 cd impacket
 pip3 install -e .
 echo
-'''
+'
 
 echo "GitRob"
 cd /tmp
@@ -482,12 +475,11 @@ echo
 # Fix annoying apt-key
 sudo apt-key export 058F8B6B | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/mongo.gpg
 
-'''
+:'
 # If Needed
 sudo apt-key export 2007B954 | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/msf.gpg
 sudo apt-key export 038651BD | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/slack.gpg
-
-'''
+'
 # Ivre Dependencies
 sudo pip install tinydb
 sudo pip install py2neo
