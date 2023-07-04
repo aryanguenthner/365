@@ -9,7 +9,7 @@
 # sudo chmod a+x *.sh *.py
 # sudo ./kali-setup.sh | tee kali.log
 # chmod -R 777 /home/kali/
-# Last Updated 07/03/2023, minor evil updates
+# Last Updated 07/04/2023, minor evil updates
 ################################################
 
 # Setting Variables
@@ -102,7 +102,7 @@ https://wiki.debian.org/VirtualBox
 echo "Getting BIOS Info"
 sudo dmidecode -s bios-version | tee /home/kali/Desktop/bios-information.txt
 
-echo "Are you installing a Kali Virtual Machine? "
+: 'echo "Are you installing a Kali Virtual Machine? "
 sudo dmidecode -t system | tee /opt/365/kali-system-info.log
 VM="$(grep 'Product Name: Virtual Machine\|Product Name: VMware Virtual Platform' kali-system-info.log)"
 VM1="Product Name: Virtual Machine"
@@ -118,8 +118,10 @@ else
     echo "Bare Metal installling Vbox"
 
 # Add gpg keys
-sudo curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc|sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/oracle_vbox_2016.gpg
-sudo curl -fsSL https://www.virtualbox.org/download/oracle_vbox.asc|sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/oracle_vbox.gpg
+# Adding the gpg key failed. wtf.
+sudo curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/oracle_vbox_2016.gpg
+echo
+sudo curl -fsSL https://www.virtualbox.org/download/oracle_vbox.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/oracle_vbox.gpg
 
 # Add Repo
 sudo echo "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian stretch contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list
@@ -140,6 +142,7 @@ echo
 
 fi
 echo
+'
 
 # TODO
 # https://github.com/balena-io/etcher
