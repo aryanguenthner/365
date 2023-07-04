@@ -100,7 +100,7 @@ https://www.kali.org/docs/virtualization/install-virtualbox-host/
 https://wiki.debian.org/VirtualBox
 '''
 echo "Are you installing a Kali Virtual Machine? "
-sudo dmidecode -t system | tee /home/kali/Desktop/kali-system-info.log
+sudo dmidecode -t system && sudo dmidecode -s bios-version >> | tee /home/kali/Desktop/kali-system-info.log
 VM="$(grep 'Product Name: Virtual Machine\|Product Name: VMware Virtual Platform' kali-system-info.log)"
 VM1="Product Name: Virtual Machine"
 VM2="Product Name: VMware Virtual Platform"
@@ -140,17 +140,18 @@ echo
 
 # TODO
 # https://github.com/balena-io/etcher
-: 'echo "Downloading Etcher USB Media Creator"
+echo "Downloading Etcher USB Media Creator"
 curl -1sLf \
    'https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh' \
    | sudo -E bash
-
+# Install Etcher
+sudo apt-get update
+sudo apt-get -y install balena-etcher-electron
 echo
 
-sudo apt-get update
+
 echo "Etcher USB-"
-mkdir -p /opt/balena-etcher-electron/chrome-sandbox
-sudo apt-get install balena-etcher-electron -y
+# mkdir -p /opt/balena-etcher-electron/chrome-sandbox
 echo
 '
 
