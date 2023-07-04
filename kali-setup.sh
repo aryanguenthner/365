@@ -61,7 +61,7 @@ sudo apt-get -y install libu2f-udev freefilesync hcxdumptool hcxtools assetfinde
 echo
 
 # Just Go for the win
-wget https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
+wget --no-check-certificate https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
 tar -xvzf go1.20.5.linux-amd64.tar.gz
 sudo mv go /usr/local
 echo
