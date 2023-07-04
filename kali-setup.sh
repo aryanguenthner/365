@@ -147,6 +147,7 @@ echo
 # TODO
 # https://github.com/balena-io/etcher
 echo "Downloading Etcher USB Media Creator"
+mkdir -p /opt/balena-etcher-electron/chrome-sandbox
 curl -1sLf \
    'https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh' \
    | sudo -E bash
@@ -154,9 +155,6 @@ curl -1sLf \
 sudo apt-get update
 sudo apt-get -y install balena-etcher-electron
 echo
-
-
-# mkdir -p /opt/balena-etcher-electron/chrome-sandbox
 echo
 
 # TODO: Check this out
@@ -490,7 +488,7 @@ echo
 
 # Install Ivre.Rocks
 echo
-sudo apt -y install ivre
+sudo apt-get -y install ivre
 echo
 
 # Ivre Database init, data download & importation
@@ -510,8 +508,6 @@ echo
 echo "Copying IVRE Nmap Scripts to Nmap"
 echo
 cp /usr/share/ivre/patches/nmap/scripts/*.nse /usr/share/nmap/scripts/
-yes | patch /usr/share/nmap/scripts/rtsp-url-brute.nse \
-/usr/share/ivre/patches/rtsp-url-brute.patch
 nmap --script-updatedb > /dev/null
 echo
 
@@ -600,16 +596,13 @@ sudo pip3 install . --ignore-installed stem
 sudo ./build.sh
 echo
 
-# Remove Docker Interface until you need it
-ip link delete docker0
-
 echo "Hack The Planet"
 echo
 
 # Insurance
-sudo apt-get --reinstall install python3-debian -y
-sudo apt --fix-broken install
-sudo apt autoremove -y
+# sudo apt-get --reinstall install python3-debian -y
+# sudo apt --fix-broken install
+# sudo apt autoremove -y
 systemctl restart ntp
 echo
 
@@ -617,8 +610,8 @@ echo
 date | tee kali-setup-finish-date.txt
 
 # Stop Docker
-systemctl stop docker
-systemctl disable docker
+# Remove Docker Interface until you need it
+systemctl stop docker && systemctl disable docker && ip link delete docker0
 
 #
 updatedb
