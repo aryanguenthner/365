@@ -473,11 +473,10 @@ systemctl enable mongod.service
 echo "Hopefully MongoDB Installed"
 echo
 
+: '
 # Fix annoying apt-key
-sudo apt-key export 058F8B6B | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/mongo.gpg
-
-:'
 # If Needed
+sudo apt-key export 058F8B6B | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/mongo.gpg
 sudo apt-key export 2007B954 | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/msf.gpg
 sudo apt-key export 038651BD | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/slack.gpg
 '
