@@ -20,7 +20,8 @@ CITY=$(curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2)
 EXT=$(curl -s ifconfig.me) 
 SUBNET=`ip r | awk 'NR==2' | awk '{print $1}'`
 
-# Todays Date 
+# Todays Date
+timedatectl set-timezone America/Los_Angeles
 echo -e "\e[034mToday is\e[0m"
 date '+%Y-%m-%d %r' | tee kali-setup-date.txt
 echo
@@ -57,8 +58,7 @@ echo "Enable Kali Autologin"
 sed -i '126s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
 sed -i '127s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
 echo
-
-sudo service lightdm restart
+# sudo service lightdm restart
 echo
 
 # Keep Nmap scans Organized
