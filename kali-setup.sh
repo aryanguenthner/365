@@ -9,7 +9,7 @@
 # sudo chmod a+x *.sh *.py
 # sudo ./kali-setup.sh | tee kali.log
 # chmod -R 777 /home/kali/
-# Last Updated 07/04/2023, minor evil updates
+# Last Updated 07/09/2023, minor evil updates
 ################################################
 
 # Setting Variables
@@ -33,6 +33,7 @@ echo $CITY
 echo $EXT
 echo
 echo
+
 # Internal IP Address
 echo -e "\e[033mKali IP\e[0m"
 echo $KALI | awk '{print $1}'
@@ -43,6 +44,22 @@ echo -e "\e[033mCurrent Subnet\e[0m"
 echo $SUBNET
 echo
 sleep 2
+
+# Hackers like SSH
+echo "Enabling SSH"
+sed -i '40s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
+sudo systemctl enable ssh
+sudo service ssh restart
+echo
+
+# Enable Kali Autologin
+echo "Enable Kali Autologin"
+sed -i '126s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
+sed -i '127s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
+echo
+
+sudo service lightdm restart
+echo
 
 # Keep Nmap scans Organized
 mkdir -p /home/kali/Desktop/testing/nmapscans/
@@ -257,13 +274,6 @@ sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
 
 # 3. Update your package database and install signal
 sudo apt update && sudo apt install -y signal-desktop
-echo
-
-# Hackers like SSH
-echo "Enabling SSH"
-sed -i '40s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
-sudo systemctl enable ssh
-sudo service ssh restart
 echo
 
 # TODO
