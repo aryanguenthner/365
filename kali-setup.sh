@@ -9,7 +9,7 @@
 # sudo chmod a+x *.sh *.py
 # sudo ./kali-setup.sh | tee kali.log
 # chmod -R 777 /home/kali/
-# Last Updated 07/09/2023, minor evil updates
+# Last Updated 07/10/2023, minor evil updates
 ################################################
 
 # Setting Variables
@@ -48,16 +48,16 @@ sleep 2
 
 # Hackers like SSH
 echo "Enabling SSH"
-sed -i '40s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
-sudo systemctl enable ssh
-sudo service ssh restart
+sed -i '40s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config > /dev/null
+sudo systemctl enable ssh && sudo service ssh restart
 echo
 
-# Enable Kali Autologin
+# Enabling Kali Autologin
 echo "Enable Kali Autologin"
-sed -i '126s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
-sed -i '127s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
+sed -i '120s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
+sed -i '121s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
 echo
+echo "Kali Autologin Enabled"
 # sudo service lightdm restart
 echo
 
@@ -72,16 +72,17 @@ echo
 echo "Be Patient, Installing Kali Dependencies"
 
 # Kali installs
-apt-get update && apt-get -y upgrade && apt-get -y full-upgrade && apt autoremove && updatedb
+apt-get update && apt-get -y upgrade && apt-get -y full-upgrade && apt -y autoremove && updatedb
 echo
 sudo apt-get -y install neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy gconf-service gconf2-common libc++1 libgconf-2-4 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
 echo
 
-# Just Go for the win
+# Just Go for it!
 wget --no-check-certificate https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
 tar -xvzf go1.20.5.linux-amd64.tar.gz
 sudo mv go /usr/local
 echo
+
 # Customize Kali
 echo 'hostname -I' >> /root/.zshrc
 echo 'export HISTCONTROL="ignoredups:$PATH"' >> /root/.zshrc
@@ -111,6 +112,9 @@ echo
 echo "Installing psycopg"
 pip3 install psycopg
 echo
+pip install updog
+echo
+
 : 'https://www.kali.org/docs/virtualization/install-virtualbox-host/#setup
 https://wiki.debian.org/VirtualBox#Debian_10_.22Buster.22_and_Debian_11_.22Bullseye.22
 https://www.kali.org/docs/virtualization/install-virtualbox-host/
@@ -119,7 +123,7 @@ https://wiki.debian.org/VirtualBox
 echo "Getting BIOS Info"
 sudo dmidecode -s bios-version | tee /home/kali/Desktop/bios-information.txt
 
-: 'echo "Are you installing a Kali Virtual Machine? "
+: ' echo "Are you installing a Kali Virtual Machine? "
 sudo dmidecode -t system | tee /opt/365/kali-system-info.log
 VM="$(grep 'Product Name: Virtual Machine\|Product Name: VMware Virtual Platform' kali-system-info.log)"
 VM1="Product Name: Virtual Machine"
@@ -169,10 +173,9 @@ curl -1sLf \
    'https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh' \
    | sudo -E bash
 # Install Etcher
-sudo apt-get update
-sudo apt-get -y install balena-etcher-electron
+sudo apt-get update && apt-get -y install balena-etcher-electron
 echo
-echo
+
 
 # TODO: Check this out
 # text in your terminal > ansi2html > nmap-report.html
@@ -228,11 +231,6 @@ cd /opt
 go install -v github.com/projectdiscovery/uncover/cmd/uncover@latest
 echo
 
-# Install Project Discovery - Subfinder
-cd /opt
-go install -v github.com/projectdiscovery/subfinder/cmd/subfinder@latest
-echo
-
 # Install gospider - Web Crawler
 # https://github.com/jaeles-project/gospider
 go install github.com/jaeles-project/gospider@latest
@@ -273,7 +271,7 @@ echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] 
 sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
 
 # 3. Update your package database and install signal
-sudo apt update && sudo apt install -y signal-desktop
+sudo apt-get update && sudo apt-get install -y signal-desktop
 echo
 
 # TODO
@@ -297,14 +295,15 @@ cd /opt
 git clone https://github.com/infosecn1nja/MaliciousMacroMSBuild.git
 echo
 echo "metagoofil"
-sudo apt -y install metagoofil
+sudo apt-get -y install metagoofil
 echo
-echo "Setting up Knock - Subdomain Finder"
+: 'echo "Setting up Knock - Subdomain Finder"
 cd /opt
 git clone https://github.com/guelfoweb/knock.git
 cd knock
 #nano knockpy/config.json <- set your virustotal API_KEY
 pip install -e .
+'
 echo
 echo "Subbrute"
 echo
@@ -470,18 +469,19 @@ cd 365
 sudo dos2unix *.sh *.py && chmod a+x *.sh *.py
 echo
 
-# MongoDB Install
+: '# MongoDB Install
 echo "Installing MongoDB 4.2 from Ubuntu Repo, Because It Works"
 echo
 cd /tmp
 wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add -
 echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.2.list
-apt update
-sudo apt -y install mongodb-org
+apt-get update
+sudo apt-get -y install mongodb-org
 service mongod start
 systemctl enable mongod.service
 echo "Hopefully MongoDB Installed"
 echo
+'
 
 : '
 # Fix annoying apt-key
@@ -596,11 +596,11 @@ echo
 
 # Tor Web Browser Stuff
 # sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && 
-sudo apt -y install torbrowser-launcher
+sudo apt-get -y install torbrowser-launcher
 cd /opt
 sudo git clone https://github.com/aryanguenthner/TorGhost.git
 cd TorGhost
-sudo apt -y install python3-pyinstaller python3-notify2
+sudo apt-get -y install python3-pyinstaller python3-notify2
 sudo pip3 install . --ignore-installed stem
 sudo ./build.sh
 echo
@@ -612,7 +612,7 @@ echo
 # sudo apt-get --reinstall install python3-debian -y
 # sudo apt --fix-broken install
 # sudo apt autoremove -y
-systemctl restart ntp
+# systemctl restart ntp
 echo
 
 # Install Finish Time
