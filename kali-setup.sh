@@ -9,7 +9,7 @@
 # sudo chmod a+x *.sh *.py
 # sudo ./kali-setup.sh | tee kali.log
 # chmod -R 777 /home/kali/
-# Last Updated 07/10/2023, minor evil updates
+# Last Updated 07/16/2023, minor evil updates
 ################################################
 
 # Setting Variables
@@ -74,7 +74,7 @@ echo "Be Patient, Installing Kali Dependencies"
 # Kali installs
 apt-get update && apt-get -y upgrade && apt-get -y full-upgrade && apt -y autoremove && updatedb
 echo
-sudo apt-get -y install neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy gconf-service gconf2-common libc++1 libgconf-2-4 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff docker docker.io docker-compose containerd python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
+sudo apt-get -y install wmdocker docker.io docker-compose containerd neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy gconf-service gconf2-common libc++1 libgconf-2-4 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
 echo
 
 # Just Go for it!
@@ -166,7 +166,7 @@ echo
 '
 
 # TODO
-# https://github.com/balena-io/etcher
+: ' # https://github.com/balena-io/etcher
 echo "Downloading Etcher USB Media Creator"
 mkdir -p /opt/balena-etcher-electron/chrome-sandbox
 curl -1sLf \
@@ -175,6 +175,7 @@ curl -1sLf \
 # Install Etcher
 sudo apt-get update && apt-get -y install balena-etcher-electron
 echo
+'
 
 
 # TODO: Check this out
@@ -259,7 +260,7 @@ sudo update-alternatives --set python3 /usr/bin/python3.9
 '
 echo
 
-# Signal
+: ' # Signal
 # NOTE: These instructions only work for 64 bit Debian-based Kali Linux
 # Linux distributions such as Ubuntu, Mint etc.
 # 1. Install our official public software signing key
@@ -273,6 +274,7 @@ sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
 # 3. Update your package database and install signal
 sudo apt-get update && sudo apt-get install -y signal-desktop
 echo
+'
 
 # TODO
 # Replace Nmap User agent
@@ -312,6 +314,8 @@ git clone https://github.com/TheRook/subbrute.git
 echo
 
 echo "Cewl Password Lists"
+# cewl -m 9 https://www.example.com -c -e --with-numbers -w example-cewl.txt
+
 cd /opt
 git clone https://github.com/digininja/CeWL.git
 gem install mime-types
@@ -600,7 +604,6 @@ sudo apt-get -y install torbrowser-launcher
 cd /opt
 sudo git clone https://github.com/aryanguenthner/TorGhost.git
 cd TorGhost
-sudo apt-get -y install python3-pyinstaller python3-notify2
 sudo pip3 install . --ignore-installed stem
 sudo ./build.sh
 echo
