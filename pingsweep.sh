@@ -6,7 +6,7 @@
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
 # Tested on Kali 2023.2
-# Last updated 07/03/2023
+# Last updated 08/11/2023
 # The future is now
 # Edit this script to fit your system
 # Got nmap?
@@ -26,7 +26,7 @@ BOOTSTRAP=nmap-bootstrap.xsl
 NV=$(nmap -V | awk 'FNR == 1 {print $1,$2,$3}')
 RANDOM=$$
 PWD=`pwd`
-SYNTAX="nmap -A -T4 -Pn -sCT -sU -p U:53,88,161,T:1-65535 -vvvv --stats-every=1m --max-scan-delay=0 --max-retries=0 --script http-screenshot,banner --open -iL $TARGETS --exclude $KALI -oA $FILE1"
+SYNTAX="nmap -A -T4 -Pn -n -sCT --open -vvvv -p- --stats-every=1m --max-retries=0 --max-scan-delay=0 --min-hostgroup=1024 --min-parallelism=1024 --script=http-screenshot,banner,vuln -iL $TARGETS --exclude $KALI -oA $PWD/$FILE1"
 echo
 
 # Depencency Check
@@ -55,7 +55,7 @@ then
 else
 
     echo -e "\e[034mDownloading Missing $BOOTSTRAP File\e[0m"
-wget -O /home/kali/Desktop/testing/nmapscans/nmap-bootstrap.xsl https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl > /dev/null
+wget -O $PWD/nmap-bootstrap.xsl https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl > /dev/null
 
 fi
 
@@ -112,7 +112,7 @@ then
 else
 
     echo -e "\e[034mDownloading Missing $gow File\e[0m"
-wget -O /home/kali/Desktop/testing/nmapscans/gowitness https://raw.githubusercontent.com/aryanguenthner/gowitness > /dev/null
+wget -O $PWD https://raw.githubusercontent.com/aryanguenthner/gowitness > /dev/null
 
 fi
 '
@@ -144,24 +144,24 @@ echo -e "\e[034mGenerating a Target List\e[0m"
 
 # Ping Sweep
 echo
-nmap $SUBNET --stats-every=1m -sn -n --exclude $KALI -oG $FILE0 && cat $FILE0 | grep --color=always "hosts up"
+nmap $SUBNET -vvvv --stats-every=1m -sn -n --exclude $KALI -oG $PWD/$FILE0 && cat $PWD/$FILE0 | grep --color=always "hosts up"
 echo
 echo -e "\e[034mTarget List File -> targets.txt\e[0m"
 echo
 echo
 echo -e "\e[034mPing Sweep Completed\e[0m"
 echo
-cat $FILE0 | grep "Up" | awk '{print $2}' 2>&1 | tee targets.txt
+grep "Up" $FILE0 | awk '{print $2}' 2>&1 | tee targets.txt
 echo
 echo -e "\e[034mUsing nmap to enumerate more info on your targets\e[0m"
 echo
-sleep 5
+sleep 3
 echo -e "\e[034mHack The Planet\e[0m"
 echo "$SYNTAX"
 echo
 
 # Nmap Scan
-nmap -A -T4 -Pn -sCT -sU --open -vvvv -p U:53,88,161,T:1-65535 -vvvv --stats-every=1m --max-scan-delay=0 --max-retries=0 --script http-screenshot,banner -iL $TARGETS --exclude $KALI -oA $PWD/$FILE1
+nmap -A -T4 -Pn -n -sCT --open -vvvv -p- --stats-every=1m --max-retries=0 --max-scan-delay=0 --min-hostgroup=1024 --min-parallelism=1024 --script=http-screenshot,banner,vuln -iL $TARGETS --exclude $KALI -oA $PWD/$FILE1
 echo
 echo -e "\e[034mMetasploit\e[0m"
 echo "service postgresql start"
@@ -189,9 +189,9 @@ TARGETS=targets.txt
 BOOTSTRAP=nmap-bootstrap.xsl
 RANDOM=$$
 SCAN=$(date +%Y%m%d).nmapscan_$RANDOM
+PWD=`pwd`
 
-
-nmap -iL targets.txt -T4 -A -Pn -sCT -p- --open -vvvv --stats-every=1m --max-scan-delay=0 --min-hostgroup=256 --min-parallelism=256 --max-retries=0 --script=ssl-cert,ssl-enum-ciphers,ssl-heartbleed,sip-enum-users,sip-brute,sip-methods,rtsp-screenshot,rtsp-url-brute,rpcinfo,vnc-screenshot,x11-access,x11-screenshot,nfs-showmount,nfs-ls,smb-ls,smb-enum-shares,http-robots.txt.nse,http-webdav-scan,http-screenshot,http-enum --script-args=http-enum.basepath=200,http-auth --script-args=http-auth.path=/login,http-form-brute,http-sql-injection,http-ntlm-info --script-args=http-ntlm-info.root=/root/,http-git,http-open-redirect,http-vuln-cve2017-5638 --script-args=path=/welcome.action,http-open-proxy,socks-open-proxy,smtp-open-relay,ftp-anon,ftp-bounce,ms-sql-config,ms-sql-info,ms-sql-empty-password,mysql-info,mysql-empty-password,vnc-brute,vnc-screenshot,vmware-version,http-shellshock,http-default-accounts,http-passwd --script-args=http-passwd.root=/test/,smb-vuln-ms08-067,smb-vuln-ms17-010,rdp-vuln-ms12-020,vuln,grab_beacon_config,vmware-version,smtp-vuln-cve2020-28017-through-28026-21nails.nse,banner -oA $SCAN
+nmap -iL targets.txt -T4 -A -Pn -sCT -p- --open -vvvv --stats-every=1m --max-retries=0 --max-scan-delay=0 --min-hostgroup=256 --min-parallelism=256 --script=ssl-cert,ssl-enum-ciphers,ssl-heartbleed,sip-enum-users,sip-brute,sip-methods,vuln,rtsp-screenshot,rtsp-screenshot,rpcinfo,vnc-screenshot,x11-access,x11-screenshot,nfs-showmount,nfs-ls,smb-ls,smb-enum-shares,http-robots.txt.nse,http-webdav-scan,http-screenshot,http-enum --script-args=http-enum.basepath=200,http-auth --script-args=http-auth.path=/login,http-form-brute,http-sql-injection,http-ntlm-info --script-args=http-ntlm-info.root=/root/,http-git,http-open-redirect,http-vuln-cve2017-5638 --script-args=path=/welcome.action,http-open-proxy,socks-open-proxy,smtp-open-relay,ftp-anon,ftp-bounce,ms-sql-config,ms-sql-info,ms-sql-empty-password,mysql-info,mysql-empty-password,vnc-brute,vnc-screenshot,vmware-version,http-shellshock,http-default-accounts,http-passwd --script-args=http-passwd.root=/test/,smb-vuln-ms08-067,smb-vuln-ms17-010,rdp-vuln-ms12-020,vuln,grab_beacon_config,vmware-version,smtp-vuln-cve2020-28017-through-28026-21nails,banner,mainframe-banner,mainframe-screenshot -oA $PWD/$SCAN
 
 xsltproc -o $FILE1.html $BOOTSTRAP $SCAN.xml
 '
