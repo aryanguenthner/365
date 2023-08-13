@@ -100,7 +100,6 @@ echo 'export PATH="/usr/sbin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap
 echo 'export PATH="/usr/lib/jvm/java-11-openjdk-amd64/:$PATH"' >> /root/.zshrc
 echo 'export PATH="/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
 echo 'export PATH="/usr/local/bin:$PATH"' >> /root/.zshrc
-echo 'alias rustscan='docker run -it --rm --name rustscan rustscan/rustscan:latest'' >> /root/.zshrc
 source ~/.zshrc
 echo
 echo
