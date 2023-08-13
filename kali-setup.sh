@@ -9,7 +9,7 @@
 # sudo chmod a+x *.sh *.py
 # sudo ./kali-setup.sh | tee kali.log
 # chmod -R 777 /home/kali/
-# Last Updated 07/16/2023, minor evil updates
+# Last Updated 08/12/2023, minor evil updates
 ################################################
 
 # Setting Variables
@@ -19,6 +19,7 @@ KALI=$(hostname -I)
 CITY=$(curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2)
 EXT=$(curl -s ifconfig.me) 
 SUBNET=`ip r | awk 'NR==2' | awk '{print $1}'`
+PWD=`pwd`
 
 # Todays Date
 timedatectl set-timezone America/Los_Angeles
@@ -63,7 +64,6 @@ echo
 
 # Keep Nmap scans Organized
 mkdir -p /home/kali/Desktop/testing/nmapscans/
-chmod -R 777 /home/kali/
 echo
 
 # Kali Updates
@@ -74,7 +74,7 @@ echo "Be Patient, Installing Kali Dependencies"
 # Kali installs
 apt-get update && apt-get -y upgrade && apt-get -y full-upgrade && apt -y autoremove && updatedb
 echo
-sudo apt-get -y install wmdocker docker.io docker-compose containerd neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy gconf-service gconf2-common libc++1 libgconf-2-4 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
+sudo apt-get -y install cmseek wmdocker docker.io docker-compose containerd neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy gconf-service gconf2-common libc++1 libgconf-2-4 sendmail libgl1-mesa-glx libegl1-mesa libxcb-xtest0 ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev pip python3-pip python3-bottle python3-cryptography python3-dbus python3-future python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq hplip printer-driver-hpcups cups system-config-printer gobuster tcpxtract libreoffice
 echo
 
 # Just Go for it!
@@ -100,6 +100,7 @@ echo 'export PATH="/usr/sbin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap
 echo 'export PATH="/usr/lib/jvm/java-11-openjdk-amd64/:$PATH"' >> /root/.zshrc
 echo 'export PATH="/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
 echo 'export PATH="/usr/local/bin:$PATH"' >> /root/.zshrc
+echo 'alias rustscan='docker run -it --rm --name rustscan rustscan/rustscan:latest'' >> /root/.zshrc
 source ~/.zshrc
 echo
 echo
@@ -206,8 +207,8 @@ fi
 echo
 
 # Did you say Cloudflare Tunnel?
-# qterminal -e python3 -m http.server 4567
-# qterminal -e cloudflared tunnel -url localhost:4567
+# qterminal -e python3 -m http.server 80
+# qterminal -e cloudflared tunnel -url localhost:80
 
 
 dpkg -i /opt/365/cloudflared-linux-amd64.deb
@@ -276,10 +277,10 @@ sudo apt-get update && sudo apt-get install -y signal-desktop
 echo
 '
 
-# TODO
 # Replace Nmap User agent
-# "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)"
-# Line 159 /usr/share/nmap/nselib/http.lua
+echo "Updating Nmap 7.94 User Agent"
+sed -i '159d' /usr/share/nmap/nselib/http.lua
+sed -i '159iUSER_AGENT = stdnse.get_script_args('http.useragent') or "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko)"' /usr/share/nmap/nselib/http.lua
 
 # TODO: Yeet
 #echo "Kingfisher"
@@ -370,7 +371,8 @@ echo
 echo "SprayingToolKit"
 cd /opt
 git clone https://github.com/byt3bl33d3r/SprayingToolkit.git
-: ' Nmap works dont forget --> nmap -Pn -p 445 -script smb-brute --script-args='smbpassword=Summer2019,smbusername=Administrator' 192.168.1.23 '
+: ' Nmap works dont forget --> nmap -iL smb-ips.txt --stats-every=1m -Pn -p 445 -script smb-brute --script-args='smbpassword=Summer2023,userdb=usernames.txt,smbdomain=xxx.com,smblockout=true' -oA nmap-smb-brute-2023-07-19
+'
 echo
 : ' Hydra works dont forget --> hydra -p Summer2019 -l Administrator smb://192.168.1.23 '
 : ' Metasploit works dont forget --> 
@@ -572,7 +574,6 @@ ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
 phantomjs -v
 
 fi
-echo
 
 # Can I get a Witness?
 # Get Screenshots
@@ -591,7 +592,6 @@ wget --no-check-certificate 'https://drive.google.com/uc?export=download&id=1hXJ
 chmod -R 777 /home/kali
 
 fi
-echo
 
 echo "The devils eye"
 pip install thedevilseye==2022.1.4.0
@@ -630,4 +630,4 @@ updatedb
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
 reboot
 # Just in case DNS issues: nano -c /etc/resolvconf/resolv.conf.d/head
-# Gucci
+# Gucci Mang
