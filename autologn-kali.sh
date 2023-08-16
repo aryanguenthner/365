@@ -6,6 +6,5 @@ sed -i '127s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/
 echo
 
 sudo service lightdm restart
-echo
 reboot
-
+echo

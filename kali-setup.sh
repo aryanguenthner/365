@@ -9,7 +9,7 @@
 # sudo chmod a+x *.sh *.py
 # sudo ./kali-setup.sh | tee kali.log
 # chmod -R 777 /home/kali/
-# Last Updated 08/14/2023, minor evil updates
+# Last Updated 08/15/2023, minor evil updates
 ################################################
 
 # Setting Variables
@@ -51,15 +51,6 @@ sleep 2
 echo "Enabling SSH"
 sed -i '40s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config > /dev/null
 sudo systemctl enable ssh && sudo service ssh restart
-echo
-
-# Enabling Kali Autologin
-echo "Enable Kali Autologin"
-sed -i '120s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
-sed -i '121s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
-echo
-echo "Kali Autologin Enabled"
-# sudo service lightdm restart
 echo
 
 # Keep Nmap scans Organized
@@ -627,6 +618,15 @@ systemctl stop docker && systemctl disable docker && ip link delete docker0
 #
 updatedb
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
+# Enabling Kali Autologin
+echo
+
+echo "Enable Kali Autologin"
+sed -i '120s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
+sed -i '121s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
+echo
+echo "Kali Autologin Enabled"
+sudo service lightdm restart
 reboot
 # Just in case DNS issues: nano -c /etc/resolvconf/resolv.conf.d/head
 # Gucci Mang
