@@ -35,22 +35,17 @@ LS=`ls`
 PWD=`pwd`
 echo
 
-# Stay Organized
-mkdir -p /home/kali/Desktop/testing/dark-web/
-cd /home/kali/Desktop/testing/dark-web/
-
+# Todays Date
+timedatectl set-timezone America/Los_Angeles
+echo -e "\e[034mToday is\e[0m"
+date '+%Y-%m-%d %r' | tee darksheets-install.date
+echo
 
 # Open Dark Web .onion lins with Firefox
 echo 'user_pref("network.dns.blockDotOnion", false);' > user.js
 mv user.js /home/kali/.mozilla/firefox/*default-esr/
 
 echo "For the best results run as root: sudo ./darksheets.sh"
-echo
-
-# Todays Date
-timedatectl set-timezone America/Los_Angeles
-echo -e "\e[034mToday is\e[0m"
-date '+%Y-%m-%d %r' | tee kali-setup-date.txt
 echo
 
 # Networking
@@ -118,7 +113,7 @@ cd TorGhost
 sudo apt-get -y install python3-pyinstaller python3-notify2
 echo "One moment please - Installing TorGhost"
 sudo pip3 install . --ignore-installed stem > /dev/null
-sudo ./build.sh > /dev/null
+sudo ./build.sh 2>&1 > /dev/null
 echo
 
 fi
@@ -138,6 +133,13 @@ apt -y install libreoffice
 
 fi
 echo
+
+# Stay Organized
+mkdir -p /home/kali/Desktop/testing/dark-web/
+cd /home/kali/Desktop/testing/dark-web/
+wget -O noscript-11.4.26.xpi https://addons.mozilla.org/firefox/downloads/file/4141345/noscript-11.4.26.xpi
+wget -O adblock_plus-3.17.1.xpi https://addons.mozilla.org/firefox/downloads/file/4125998/adblock_plus-3.17.1.xpi
+sudo su -c "firefox *.xpi" kali
 
 # User Input
 echo -en "\e[034mWhat are you looking for: \e[0m"
