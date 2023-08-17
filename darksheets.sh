@@ -7,7 +7,7 @@
 # torghost -a -c us,mx,ca 
 # libreoffice --calc results+onions.txt
 # Tested on Kali 2023.2
-# Last updated 03/22/2023, minor evil updates
+# Last updated 08/16/2023, minor evil updates
 # https://github.com/aryanguenthner
 # The future is now
 # https://dark.fail/
@@ -39,12 +39,18 @@ echo
 mkdir -p /home/kali/Desktop/testing/dark-web/
 cd /home/kali/Desktop/testing/dark-web/
 
+
+# Open Dark Web .onion lins with Firefox
+echo 'user_pref("network.dns.blockDotOnion", false);' > user.js
+mv user.js /home/kali/.mozilla/firefox/*default-esr/
+
 echo "For the best results run as root: sudo ./darksheets.sh"
 echo
 
 # Todays Date
+timedatectl set-timezone America/Los_Angeles
 echo -e "\e[034mToday is\e[0m"
-date
+date '+%Y-%m-%d %r' | tee kali-setup-date.txt
 echo
 
 # Networking
@@ -109,7 +115,7 @@ sudo apt-get -y install torbrowser-launcher
 cd /opt
 git clone https://github.com/aryanguenthner/TorGhost.git
 cd TorGhost
-sudo apt -y install python3-pyinstaller python3-notify2
+sudo apt-get -y install python3-pyinstaller python3-notify2
 echo "One moment please - Installing TorGhost"
 sudo pip3 install . --ignore-installed stem > /dev/null
 sudo ./build.sh > /dev/null
@@ -186,7 +192,7 @@ echo
 echo
 echo -e "\e[033mFirst 10 Results\e[0m"
 
-echo "Be Good"
+echo "Be Good Bob"
 echo
 head results+onions.txt
 echo
