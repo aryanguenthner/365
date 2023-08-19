@@ -7,7 +7,7 @@
 # torghost -a -c us,mx,ca 
 # libreoffice --calc results+onions.txt
 # Tested on Kali 2023.2
-# Last updated 08/16/2023, minor evil updates
+# Last updated 08/18/2023, minor evil updates
 # https://github.com/aryanguenthner
 # The future is now
 # https://dark.fail/
@@ -30,9 +30,9 @@ YELLOW=033m
 BLUE=034m
 KALI=$(hostname -I)
 CITY=$(curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2)
-EXT=$(curl -s ifconfig.me) 
+EXT=$(curl -s api.ipify.org)
 LS=`ls`
-PWD=`pwd`
+PWD=$(pwd)
 echo
 
 # Todays Date
@@ -63,6 +63,23 @@ sleep 1
 # Make sure everything is installed for this to work
 echo -e "\e[033mRequirements Check\e[0m"
 echo
+# Get Addons
+XPI1=adblock_plus-3.17.1.xpi
+XPI2=noscript-11.4.26.xpi
+if [[ -f "$XPI1" ]] && [[ -f "$XPI2" ]]
+then
+
+    echo "Found Addons"
+
+else
+
+    echo "Downloading and Installing Addons"
+wget -O noscript-11.4.26.xpi https://addons.mozilla.org/firefox/downloads/file/4141345/noscript-11.4.26.xpi
+wget -O adblock_plus-3.17.1.xpi https://addons.mozilla.org/firefox/downloads/file/4125998/adblock_plus-3.17.1.xpi
+sudo su -c "firefox *.xpi" kali;
+
+fi
+echo
 # Darksheet checker
 dark=/home/kali/Desktop/testing/dark-web/darksheets.sh
 if [ -f $dark ]
@@ -72,7 +89,7 @@ then
 else
 
     echo -e "\e[034mGetting darksheets.sh from /opt/365e\e[0m"
-cp /opt/365/darksheets.sh /home/kali/Desktop/testing/dark-web/
+cp /opt/365/darksheets.sh $PWD
 fi
 echo
 
@@ -134,20 +151,13 @@ apt -y install libreoffice
 fi
 echo
 
-# Stay Organized
-mkdir -p /home/kali/Desktop/testing/dark-web/
-cd /home/kali/Desktop/testing/dark-web/
-wget -O noscript-11.4.26.xpi https://addons.mozilla.org/firefox/downloads/file/4141345/noscript-11.4.26.xpi
-wget -O adblock_plus-3.17.1.xpi https://addons.mozilla.org/firefox/downloads/file/4125998/adblock_plus-3.17.1.xpi
-sudo su -c "firefox *.xpi" kali
-
 # User Input
 echo -en "\e[034mWhat are you looking for: \e[0m"
 read SEARCH
 echo
 
-eye -q "$SEARCH" | grep .onion > results+onions1.txt
-sed '/^invest/d' results+onions1.txt > results+onions.txt
+eye -q "$SEARCH" | grep .onion > onions.txt
+sed '/^invest/d' onions.txt > results+onions.txt
 echo
 echo "Be Patient"
 echo
@@ -161,7 +171,7 @@ echo
 echo "How many evil onion links did we find?"
 wc results+onions.txt | awk '{print $1}'
 echo
-sleep 2
+sleep 1
 echo
 
 echo -en "\e[033mConnect to the Dark Web y/n: \e[0m"
@@ -179,9 +189,9 @@ torghost -a -c us,ca,mx
 echo
 
     echo -e "\e[033mDark Web IP\e[0m"
-curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2
+echo $CITY
 
-curl -s ifconfig.me
+echo $EXT
 echo
 else
 
@@ -199,7 +209,7 @@ echo
 head results+onions.txt
 echo
 
-# Spreadsheet Results
+# Darksheets Results
 echo -e "\e[033mOpen a darksheet with results y/n: \e[0m"
 read OPEN1
 echo
@@ -215,7 +225,8 @@ then
     echo "Set network.dns.blockDotOnion to false"
     echo "Use NoScript! Block Javascript!"
     echo
-libreoffice --calc results+onions.txt;
+    
+libreoffice --calc > $PWD/results+onions.txt
 
 else
 
@@ -223,6 +234,11 @@ else
 
 fi
 echo
+
+# Stay Organized
+mkdir -p /home/kali/Desktop/testing/dark-web/
+cd /home/kali/Desktop/testing/dark-web/
+echo "Results Saved to -->" $PWD/results+onions.txt
 
 # Exit the Dark Web
 echo -n 'Exit the Dark Web y/n: '
