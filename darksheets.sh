@@ -41,7 +41,7 @@ echo -e "\e[034mToday is\e[0m"
 date '+%Y-%m-%d %r' | tee darksheets-install.date
 echo
 
-# Open Dark Web .onion lins with Firefox
+# Editing Firefox about:config this allows DarkWeb .onion links to be opened with Firefox
 echo 'user_pref("network.dns.blockDotOnion", false);' > user.js
 mv user.js /home/kali/.mozilla/firefox/*default-esr/
 
@@ -81,8 +81,8 @@ sudo su -c "firefox *.xpi" kali;
 fi
 echo
 # Darksheet checker
-dark=/home/kali/Desktop/testing/dark-web/darksheets.sh
-if [ -f $dark ]
+DARK=/home/kali/Desktop/testing/dark-web/darksheets.sh
+if [ -f $DARK ]
 then
     echo "Found darksheets.sh"
 
@@ -156,7 +156,7 @@ echo -en "\e[034mWhat are you looking for: \e[0m"
 read SEARCH
 echo
 
-eye -q "$SEARCH" | grep .onion > onions.txt
+eye -q "$SEARCH" | grep ".onion" > onions.txt
 sed '/^invest/d' onions.txt > results+onions.txt
 echo
 echo "Be Patient"
@@ -165,14 +165,12 @@ echo
 echo "Saved results into" results+onions.txt
 echo
 
-head results+onions.txt
-echo
-
-echo "How many evil onion links did we find?"
-wc results+onions.txt | awk '{print $1}'
-echo
-sleep 1
-echo
+# head results+onions.txt
+# echo "How many evil onion links did we find?"
+# wc results+onions.txt | awk '{print $1}'
+# echo
+# sleep 1
+# echo
 
 echo -en "\e[033mConnect to the Dark Web y/n: \e[0m"
 read DWEB0
@@ -202,7 +200,7 @@ echo
 
 # First 10 Results
 echo
-echo -e "\e[033mFirst 10 Results\e[0m"
+echo -e "\e[033mTop 10 Hits\e[0m"
 
 echo "Be Good Bob"
 echo
@@ -225,8 +223,8 @@ then
     echo "Set network.dns.blockDotOnion to false"
     echo "Use NoScript! Block Javascript!"
     echo
-    
-libreoffice --calc > $PWD/results+onions.txt
+
+libreoffice --calc $PWD/results+onions.txt
 
 else
 
