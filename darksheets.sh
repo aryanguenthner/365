@@ -7,7 +7,7 @@
 # torghost -a -c us,mx,ca 
 # libreoffice --calc results+onions.txt
 # Tested on Kali 2023.2
-# Last updated 08/18/2023, minor evil updates
+# Last updated 08/22/2023, minor evil updates
 # https://github.com/aryanguenthner
 # The future is now
 # https://dark.fail/
@@ -223,8 +223,8 @@ then
     echo "Set network.dns.blockDotOnion to false"
     echo "Use NoScript! Block Javascript!"
     echo
-
-libreoffice --calc $PWD/results+onions.txt
+    
+qterminal -e libreoffice --calc $PWD/results+onions.txt
 
 else
 
