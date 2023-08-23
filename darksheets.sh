@@ -33,6 +33,7 @@ CITY=$(curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2)
 EXT=$(curl -s api.ipify.org)
 LS=`ls`
 PWD=$(pwd)
+
 echo
 
 # Todays Date
@@ -119,9 +120,9 @@ else
 # Tor Web Browser Stuff
 # Connect to Tor --> torghost -a -c us
 # Disconnect Tor --> torghost -x
-# Exit Tor -->torghost -x
+# Exit Tor --> torghost -x
 # sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && 
-# Use Tor Browswer to view the onion links
+# Use Tor Browswer or FF to view the onion links
 sudo apt-get -y install torbrowser-launcher
 
 cd /opt
@@ -129,8 +130,8 @@ git clone https://github.com/aryanguenthner/TorGhost.git
 cd TorGhost
 sudo apt-get -y install python3-pyinstaller python3-notify2
 echo "One moment please - Installing TorGhost"
-sudo pip3 install . --ignore-installed stem > /dev/null
-sudo ./build.sh 2>&1 > /dev/null
+sudo pip3 install . --ignore-installed stem > /dev/null 2>&1
+sudo ./build.sh  > /dev/null 2>&1
 echo
 
 fi
@@ -146,7 +147,7 @@ then
 else
 
     echo "Installing Libreoffice"
-apt -y install libreoffice
+apt-get -y install libreoffice
 
 fi
 echo
@@ -162,15 +163,15 @@ echo
 echo "Be Patient"
 echo
 
-echo "Saved results into" results+onions.txt
+# First 10 Results
+echo
+echo -e "\e[033mTop 10 Hits\e[0m"
+echo
+head results+onions.txt
 echo
 
-# head results+onions.txt
-# echo "How many evil onion links did we find?"
-# wc results+onions.txt | awk '{print $1}'
-# echo
-# sleep 1
-# echo
+echo "Saved results -->" results+onions.txt
+HIT1=`awk 'FNR == 1 {print $1}' results+onions.txt`
 
 echo -en "\e[033mConnect to the Dark Web y/n: \e[0m"
 read DWEB0
@@ -180,7 +181,7 @@ echo
 if [ $DWEB0 == y ]
 then
 
-    echo "Trying to get on the Dark Web"
+    echo "Attempting to enter the Dark Web"
 echo
     echo "Exit Tor type: torghost -x"
 torghost -a -c us,ca,mx
@@ -192,20 +193,28 @@ echo $CITY
 echo $EXT
 echo
 else
-
     echo "Maybe next time"
 
 fi
 echo
 
-# First 10 Results
+# Open FF
+echo -e "\e[033mOpen Firefox to view results y/n: \e[0m"
+read OPEN2
 echo
-echo -e "\e[033mTop 10 Hits\e[0m"
 
-echo "Be Good Bob"
-echo
-head results+onions.txt
-echo
+if [ $OPEN2 == y ]
+then
+    echo "Opening Firefox with data from DarkSheets"
+
+sudo qterminal -e su -c "firefox $HIT1" kali > /dev/null 2>&1
+
+    echo "Exit with CTRL +c"
+else
+
+    echo "Maybe next time"
+
+fi
 
 # Darksheets Results
 echo -e "\e[033mOpen a darksheet with results y/n: \e[0m"
@@ -218,14 +227,12 @@ then
     echo "Exit DarkSheets: CTRL + c"
     echo "Exit Tor type: torghost -x"
     echo
-    echo "Use Tor Browser or Firefox to view .onion sites"
-    echo "Edit Firefox: In URL type: about:config"
-    echo "Set network.dns.blockDotOnion to false"
     echo "Use NoScript! Block Javascript!"
     echo
-    
-qterminal -e libreoffice --calc $PWD/results+onions.txt
 
+sudo qterminal -e libreoffice --calc $PWD/results+onions.txt > /dev/null 2>&1
+
+    echo "Close terminal enter CTRL +c"
 else
 
     echo "Maybe next time"
@@ -237,6 +244,7 @@ echo
 mkdir -p /home/kali/Desktop/testing/dark-web/
 cd /home/kali/Desktop/testing/dark-web/
 echo "Results Saved to -->" $PWD/results+onions.txt
+echo
 
 # Exit the Dark Web
 echo -n 'Exit the Dark Web y/n: '
