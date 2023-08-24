@@ -3,11 +3,11 @@
 #######################################################
 # Made for doing security research on the Dark Deep Web
 # Intended to be used on Kali Linux
-# eye -q "vice lausd" | grep .onion > results+onions.txt
+# eye -q "ransomeware" | grep .onion > results+onions.txt
 # torghost -a -c us,mx,ca 
 # libreoffice --calc results+onions.txt
-# Tested on Kali 2023.2
-# Last updated 08/22/2023, minor evil updates
+# Tested on Kali 2023.3
+# Last updated 08/23/2023, minor evil updates
 # https://github.com/aryanguenthner
 # The future is now
 # https://dark.fail/
@@ -34,7 +34,7 @@ EXT=$(curl -s api.ipify.org)
 LS=`ls`
 PWD=$(pwd)
 
-echo
+sudo apt-get update
 
 # Todays Date
 timedatectl set-timezone America/Los_Angeles
@@ -76,8 +76,11 @@ else
 
     echo "Downloading and Installing Addons"
 wget -O noscript-11.4.26.xpi https://addons.mozilla.org/firefox/downloads/file/4141345/noscript-11.4.26.xpi
+sudo su -c "firefox noscript-11.4.26.xpi" kali;
+sleep 1
+
 wget -O adblock_plus-3.17.1.xpi https://addons.mozilla.org/firefox/downloads/file/4125998/adblock_plus-3.17.1.xpi
-sudo su -c "firefox *.xpi" kali;
+sudo su -c "firefox adblock_plus-3.17.1.xpi" kali;
 
 fi
 echo
