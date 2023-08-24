@@ -9,7 +9,7 @@
 # sudo chmod a+x *.sh *.py
 # sudo ./kali-setup.sh | tee kali.log
 # chmod -R 777 /home/kali/
-# Last Updated 08/15/2023, minor evil updates
+# Last Updated 08/23/2023, minor evil updates
 ################################################
 
 # Setting Variables
@@ -17,9 +17,9 @@ YELLOW=033m
 BLUE=034m
 KALI=$(hostname -I)
 CITY=$(curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2)
-EXT=$(curl -s ifconfig.me) 
+EXT=$(curl -s api.ipify.org) 
 SUBNET=`ip r | awk 'NR==2' | awk '{print $1}'`
-PWD=`pwd`
+PWD=$(pwd)
 
 # Todays Date
 timedatectl set-timezone America/Los_Angeles
@@ -49,13 +49,16 @@ sleep 2
 
 # Hackers like SSH
 echo "Enabling SSH"
-sed -i '40s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config > /dev/null
+sed -i '40s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config > /dev/null 2>&1
 sudo systemctl enable ssh && sudo service ssh restart
 echo
 
 # Keep Nmap scans Organized
 mkdir -p /home/kali/Desktop/testing/nmapscans/
-echo
+echo "Current Nmap User-Agent"
+sed -n '160p' /usr/share/nmap/nselib/http.lua
+
+
 
 # Kali Updates
 echo "It's a good idea to update and upgrade Kali first before running kali-setup.sh"
@@ -157,17 +160,15 @@ echo
 '
 
 # TODO
-: ' # https://github.com/balena-io/etcher
-echo "Downloading Etcher USB Media Creator"
-mkdir -p /opt/balena-etcher-electron/chrome-sandbox
-curl -1sLf \
-   'https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh' \
-   | sudo -E bash
+# # https://github.com/balena-io/etcher
+#echo "Downloading Etcher USB Media Creator"
+#mkdir -p /opt/balena-etcher-electron/chrome-sandbox
+#curl -1sLf \
+#   'https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh' \
+#   | sudo -E bash
 # Install Etcher
-sudo apt-get update && apt-get -y install balena-etcher-electron
-echo
-'
-
+#sudo apt-get update && apt-get -y install balena-etcher-electron
+#echo
 
 # TODO: Check this out
 # text in your terminal > ansi2html > nmap-report.html
@@ -191,7 +192,7 @@ then
 else
 
     echo -e "\e[034mDownloading Missing $BOOTSTRAP File\e[0m"
-wget --no-check-certificate -O /home/kali/Desktop/testing/nmapscans/nmap-bootstrap.xsl https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl > /dev/null
+wget --no-check-certificate -O /home/kali/Desktop/testing/nmapscans/nmap-bootstrap.xsl https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl > /dev/null 2>&1
 
 fi
 echo
@@ -199,8 +200,6 @@ echo
 # Did you say Cloudflare Tunnel?
 # qterminal -e python3 -m http.server 80
 # qterminal -e cloudflared tunnel -url localhost:80
-
-
 dpkg -i /opt/365/cloudflared-linux-amd64.deb
 
 # Project Discovery Nuclei
@@ -267,10 +266,13 @@ sudo apt-get update && sudo apt-get install -y signal-desktop
 echo
 '
 
-# Replace Nmap User agent
-echo "Updating Nmap 7.94 User Agent"
-sed -i '159d' /usr/share/nmap/nselib/http.lua
-sed -i '159iUSER_AGENT = stdnse.get_script_args('http.useragent') or "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko)"' /usr/share/nmap/nselib/http.lua
+# Upgrade Nmap User agent
+echo "Current Nmap User Agent"
+sed -n '160p' /usr/share/nmap/nselib/http.lua
+echo "New Nmap User Agent"
+sed -i '160d' /usr/share/nmap/nselib/http.lua
+sed -i '160iUSER_AGENT = stdnse.get_script_args('http.useragent') or "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko)"' /usr/share/nmap/nselib/http.lua
+sed -n '160p' /usr/share/nmap/nselib/http.lua
 
 # TODO: Yeet
 #echo "Kingfisher"
@@ -364,8 +366,8 @@ git clone https://github.com/byt3bl33d3r/SprayingToolkit.git
 : ' Nmap works dont forget --> nmap -iL smb-ips.txt --stats-every=1m -Pn -p 445 -script smb-brute --script-args='smbpassword=Summer2023,userdb=usernames.txt,smbdomain=xxx.com,smblockout=true' -oA nmap-smb-brute-2023-07-19
 '
 echo
-: ' Hydra works dont forget --> hydra -p Summer2019 -l Administrator smb://192.168.1.23 '
-: ' Metasploit works dont forget --> 
+: ' Hydra works dont forget --> hydra -p Summer2019 -l Administrator smb://192.168.1.23
+Metasploit works dont forget --> 
 set smbpass Summer2019
 set smbuser Administrator
 set rhosts 192.168.1.251
@@ -595,7 +597,7 @@ cd /opt
 sudo git clone https://github.com/aryanguenthner/TorGhost.git
 cd TorGhost
 sudo pip3 install . --ignore-installed stem
-sudo ./build.sh
+sudo ./build.sh > /dev/null 2>&1
 echo
 
 echo "Hack The Planet"
