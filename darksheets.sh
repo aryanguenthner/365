@@ -7,7 +7,7 @@
 # torghost -a -c us,mx,ca 
 # libreoffice --calc results+onions.txt
 # Tested on Kali 2023.3
-# Last updated 08/23/2023, minor evil updates
+# Last updated 08/24/2023, minor evil updates
 # https://github.com/aryanguenthner
 # The future is now
 # https://dark.fail/
@@ -33,8 +33,10 @@ CITY=$(curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2)
 EXT=$(curl -s api.ipify.org)
 LS=`ls`
 PWD=$(pwd)
-
-sudo apt-get update
+echo
+sudo apt-get update > /dev/null 2>&1
+echo "Checking for Updates"
+echo
 
 # Todays Date
 timedatectl set-timezone America/Los_Angeles
@@ -64,23 +66,59 @@ sleep 1
 # Make sure everything is installed for this to work
 echo -e "\e[033mRequirements Check\e[0m"
 echo
-# Get Addons
-XPI1=adblock_plus-3.17.1.xpi
-XPI2=noscript-11.4.26.xpi
-if [[ -f "$XPI1" ]] && [[ -f "$XPI2" ]]
+# Get NoScript Addons
+XPI0=/home/kali/.mozilla/firefox/*default-esr/extensions/{73a6fe31-595d-460b-a920-fcc0f8843232}.xpi
+if [ -f $XPI0 ]
 then
 
-    echo "Found Addons"
+    echo "Found NoScript Addon"
 
 else
 
     echo "Downloading and Installing Addons"
+    echo
+    echo "Click Add to install the addon"
+    echo
 wget -O noscript-11.4.26.xpi https://addons.mozilla.org/firefox/downloads/file/4141345/noscript-11.4.26.xpi
 sudo su -c "firefox noscript-11.4.26.xpi" kali;
-sleep 1
 
+fi
+echo
+
+# Get Adblock Addons
+XPI1=/home/kali/.mozilla/firefox/*default-esr/extensions/{d10d0bf8-f5b5-c8b4-a8b2-2b9879e08c5d}.xpi
+if [ -f $XPI1 ]
+then
+
+    echo "Found Adblock Addon"
+
+else
+
+    echo "Downloading and Installing Addons"
+    echo
+    echo "Click Add to install the addon"
+    echo
 wget -O adblock_plus-3.17.1.xpi https://addons.mozilla.org/firefox/downloads/file/4125998/adblock_plus-3.17.1.xpi
 sudo su -c "firefox adblock_plus-3.17.1.xpi" kali;
+
+fi
+echo
+
+# Get sponsorBlocker Addons
+XPI2=/home/kali/.mozilla/firefox/*default-esr/extensions/sponsorBlocker@ajay.app.xpi
+if [ -f $XPI2 ]
+then
+
+    echo "Found sponsorBlocker Addon"
+
+else
+
+    echo "Downloading and Installing Addons"
+    echo
+    echo "Click Add to install the addon"
+    echo
+wget -O sponsorblock-5.4.15.xpi https://addons.mozilla.org/firefox/downloads/file/4151024/sponsorblock-5.4.15.xpi
+sudo su -c "firefox sponsorblock-5.4.15.xpi" kali;
 
 fi
 echo
@@ -126,7 +164,7 @@ else
 # Exit Tor --> torghost -x
 # sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && 
 # Use Tor Browswer or FF to view the onion links
-sudo apt-get -y install torbrowser-launcher
+sudo apt-get install -y torbrowser-launcher
 
 cd /opt
 git clone https://github.com/aryanguenthner/TorGhost.git
@@ -168,7 +206,7 @@ echo
 
 # First 10 Results
 echo
-echo -e "\e[033mTop 10 Hits\e[0m"
+echo -e "\e[033mTop Results\e[0m"
 echo
 head results+onions.txt
 echo
