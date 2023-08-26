@@ -7,7 +7,7 @@
 # torghost -a -c us,mx,ca 
 # libreoffice --calc results+onions.txt
 # Tested on Kali 2023.3
-# Last updated 08/24/2023, minor evil updates
+# Last updated 08/25/2023, minor evil updates
 # https://github.com/aryanguenthner
 # The future is now
 # https://dark.fail/
@@ -34,8 +34,21 @@ EXT=$(curl -s api.ipify.org)
 LS=`ls`
 PWD=$(pwd)
 echo
-sudo apt-get update > /dev/null 2>&1
-echo "Checking for Updates"
+
+# Check for Updates
+echo -e "\e[033mCheck for updates y/n: \e[0m"
+read UPS
+if [ $UPS == y ]
+then
+
+    echo "Running apt-get update"
+    sudo apt-get update > /dev/null 2>&1
+    echo
+    echo
+else
+    echo "Maybe next time"
+
+fi
 echo
 
 # Todays Date
@@ -124,7 +137,7 @@ fi
 echo
 # Darksheet checker
 DARK=/home/kali/Desktop/testing/dark-web/darksheets.sh
-if [ -f $DARK ]
+if [ -f "$DARK" ]
 then
     echo "Found darksheets.sh"
 
@@ -212,6 +225,31 @@ head results+onions.txt
 echo
 
 echo "Saved results -->" results+onions.txt
+echo
+# Darksheets Results
+echo -e "\e[033mOpen a darksheet with results y/n: \e[0m"
+read OPEN1
+echo
+
+if [ $OPEN1 == y ]
+then
+    echo -e "\e[033mdarksheet results\e[0m"
+    echo "Exit DarkSheets: CTRL + c"
+    echo
+    echo "Exit Tor type: torghost -x"
+    echo
+    echo "Use NoScript! Block Javascript!"
+    echo
+
+sudo qterminal -e libreoffice --calc $PWD/results+onions.txt > /dev/null 2>&1
+
+    echo "Close terminal enter CTRL +c"
+else
+
+    echo "Maybe next time"
+
+fi
+echo
 HIT1=`awk 'FNR == 1 {print $1}' results+onions.txt`
 
 echo -en "\e[033mConnect to the Dark Web y/n: \e[0m"
@@ -225,7 +263,7 @@ then
     echo "Attempting to enter the Dark Web"
 echo
     echo "Exit Tor type: torghost -x"
-torghost -a -c us,ca,mx
+torghost -a -c us,ca,mx,ca;
 echo
 
     echo -e "\e[033mDark Web IP\e[0m"
@@ -247,33 +285,10 @@ echo
 if [ $OPEN2 == y ]
 then
     echo "Opening Firefox with data from DarkSheets"
-
-sudo qterminal -e su -c "firefox $HIT1" kali > /dev/null 2>&1
-
+    echo
+sudo qterminal -e su -c "firefox $HIT1" kali; > /dev/null 2>&1
+    echo
     echo "Exit with CTRL +c"
-else
-
-    echo "Maybe next time"
-
-fi
-
-# Darksheets Results
-echo -e "\e[033mOpen a darksheet with results y/n: \e[0m"
-read OPEN1
-echo
-
-if [ $OPEN1 == y ]
-then
-    echo -e "\e[033mHere is your darksheet\e[0m"
-    echo "Exit DarkSheets: CTRL + c"
-    echo "Exit Tor type: torghost -x"
-    echo
-    echo "Use NoScript! Block Javascript!"
-    echo
-
-sudo qterminal -e libreoffice --calc $PWD/results+onions.txt > /dev/null 2>&1
-
-    echo "Close terminal enter CTRL +c"
 else
 
     echo "Maybe next time"
@@ -298,7 +313,7 @@ torghost -x
     echo "Exit Tor type: torghost -x"
     echo "Exit DarkSheets: CTRL + c"
     echo
-    echo -e "\e[033mDarkWeb IP\e[0m"
+    echo -e "\e[033mYour Public IP\e[0m"
 echo $CITY
 echo $EXT
 
@@ -307,6 +322,4 @@ else
 echo "Be good"
 
 fi
-
-echo
 echo
