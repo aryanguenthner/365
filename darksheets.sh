@@ -7,7 +7,7 @@
 # torghost -a -c us,mx,ca 
 # libreoffice --calc results+onions.txt
 # Tested on Kali 2023.3
-# Last updated 08/25/2023, minor evil updates
+# Last updated 08/26/2023, minor evil updates
 # https://github.com/aryanguenthner
 # The future is now
 # https://dark.fail/
@@ -23,7 +23,7 @@ echo "
 ██║░░██║██╔══██║██╔══██╗██╔═██╗░░╚═══██╗██╔══██║██╔══╝░░██╔══╝░░░░░██║░░░░╚═══██╗
 ██████╔╝██║░░██║██║░░██║██║░╚██╗██████╔╝██║░░██║███████╗███████╗░░░██║░░░██████╔╝
 ╚═════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░╚═╝░░╚═╝╚══════╝╚══════╝░░░╚═╝░░░╚═════╝░"
-echo "v1.0"
+echo "v1.1"
 
 # Setting Variables
 YELLOW=033m
@@ -40,12 +40,13 @@ echo -e "\e[033mCheck for updates y/n: \e[0m"
 read UPS
 if [ $UPS == y ]
 then
-
+    echo
     echo "Running apt-get update"
     sudo apt-get update > /dev/null 2>&1
     echo
     echo
 else
+    echo
     echo "Maybe next time"
 
 fi
@@ -208,14 +209,20 @@ echo
 
 # User Input
 echo -en "\e[034mWhat are you looking for: \e[0m"
-read SEARCH
-echo
+read -e SEARCH
+    echo "Be Patient"
+    echo
+    echo -ne '#####                     (33%)\r'
+sleep 1
+    echo -ne '#############             (66%)\r'
+    sleep 1
+    echo -ne '#######################   (100%)\r'
+    echo -ne '\n'
 
 eye -q "$SEARCH" | grep ".onion" > onions.txt
 sed '/^invest/d' onions.txt > results+onions.txt
-echo
-echo "Be Patient"
-echo
+    echo
+
 
 # First 10 Results
 echo
@@ -236,14 +243,12 @@ then
     echo -e "\e[033mdarksheet results\e[0m"
     echo "Exit DarkSheets: CTRL + c"
     echo
-    echo "Exit Tor type: torghost -x"
-    echo
     echo "Use NoScript! Block Javascript!"
     echo
-
+    echo "To continue press:    CTRL + c"
 sudo qterminal -e libreoffice --calc $PWD/results+onions.txt > /dev/null 2>&1
 
-    echo "Close terminal enter CTRL +c"
+    echo "Close terminal press: CTRL + c"
 else
 
     echo "Maybe next time"
@@ -252,43 +257,53 @@ fi
 echo
 HIT1=`awk 'FNR == 1 {print $1}' results+onions.txt`
 
+# Connect to the Dark Web
 echo -en "\e[033mConnect to the Dark Web y/n: \e[0m"
 read DWEB0
-echo
 echo
 
 if [ $DWEB0 == y ]
 then
 
     echo "Attempting to enter the Dark Web"
-echo
+    echo
+    echo "Be Patient"
+    echo
+    echo -ne '#####                     (33%)\r'
+sleep 1
+    echo -ne '#############             (66%)\r'
+    sleep 1
+    echo -ne '#######################   (100%)\r'
+    echo -ne '\n'
+    echo
+curl -x socks5h://localhost:9050 -s https://check.torproject.org/api/ip | grep "true"
+    echo
     echo "Exit Tor type: torghost -x"
-torghost -a -c us,ca,mx,ca;
-echo
+torghost -a -c us,ca,mx,ca > /dev/null 2>&1
+    echo
 
     echo -e "\e[033mDark Web IP\e[0m"
-echo $CITY
+    echo $CITY
 
-echo $EXT
-echo
+    echo $EXT
+    echo
 else
     echo "Maybe next time"
 
 fi
-echo
 
 # Open FF
 echo -e "\e[033mOpen Firefox to view results y/n: \e[0m"
 read OPEN2
-echo
+    echo
 
 if [ $OPEN2 == y ]
 then
     echo "Opening Firefox with data from DarkSheets"
     echo
-sudo qterminal -e su -c "firefox $HIT1" kali; > /dev/null 2>&1
+sudo qterminal -e su -c "firefox $HIT1" kali > /dev/null 2>&1
     echo
-    echo "Exit with CTRL +c"
+    echo "Exit with CTRL + c"
 else
 
     echo "Maybe next time"
@@ -297,29 +312,30 @@ fi
 echo
 
 # Stay Organized
-mkdir -p /home/kali/Desktop/testing/dark-web/
-cd /home/kali/Desktop/testing/dark-web/
-echo "Results Saved to -->" $PWD/results+onions.txt
-echo
+    echo "Results Saved to -->" $PWD/results+onions.txt
+    echo
 
 # Exit the Dark Web
-echo -n 'Exit the Dark Web y/n: '
+    echo -n 'Exit the Dark Web y/n: '
+    echo
 read DWEB1
 if [ $DWEB1 == y ]
 then
+    echo
     echo "Trying to Exit the Dark Web"
 torghost -x
     echo
-    echo "Exit Tor type: torghost -x"
+    echo "Exit Tor type:   torghost -x"
     echo "Exit DarkSheets: CTRL + c"
     echo
     echo -e "\e[033mYour Public IP\e[0m"
-echo $CITY
-echo $EXT
+    echo $CITY
+    echo $EXT
 
 else
 
-echo "Be good"
-
+    echo "Be good"
+    echo
+    echo "Exit Tor type: torghost -x"
 fi
 echo
