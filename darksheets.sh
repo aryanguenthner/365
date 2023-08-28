@@ -7,7 +7,7 @@
 # torghost -a -c us,mx,ca 
 # libreoffice --calc results+onions.txt
 # Tested on Kali 2023.3
-# Last updated 08/26/2023, minor evil updates
+# Last updated 08/27/2023, minor evil updates
 # https://github.com/aryanguenthner
 # The future is now
 # https://dark.fail/
@@ -31,7 +31,6 @@ BLUE=034m
 KALI=$(hostname -I)
 CITY=$(curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2)
 EXT=$(curl -s api.ipify.org)
-LS=`ls`
 PWD=$(pwd)
 echo
 
@@ -51,6 +50,24 @@ else
 
 fi
 echo
+
+# Check Tor Connectivity
+echo -e "\e[033mCheck Tor connectivity y/n: \e[0m"
+read TOR
+if [ $TOR == y ]
+then
+    echo
+    echo "Checking Tor Connection"
+    curl -x socks5h://localhost:9050 -s https://check.torproject.org/api/ip | grep "true"
+    echo
+    echo
+else
+    echo
+    echo "Maybe next time"
+
+fi
+echo
+
 
 # Todays Date
 timedatectl set-timezone America/Los_Angeles
@@ -93,8 +110,8 @@ else
     echo
     echo "Click Add to install the addon"
     echo
-wget -O noscript-11.4.26.xpi https://addons.mozilla.org/firefox/downloads/file/4141345/noscript-11.4.26.xpi
-sudo su -c "firefox noscript-11.4.26.xpi" kali;
+    wget -O noscript-11.4.26.xpi https://addons.mozilla.org/firefox/downloads/file/4141345/noscript-11.4.26.xpi
+    sudo qterminal -e sudo su -c "firefox noscript-11.4.26.xpi" kali;
 
 fi
 echo
@@ -112,8 +129,8 @@ else
     echo
     echo "Click Add to install the addon"
     echo
-wget -O adblock_plus-3.17.1.xpi https://addons.mozilla.org/firefox/downloads/file/4125998/adblock_plus-3.17.1.xpi
-sudo su -c "firefox adblock_plus-3.17.1.xpi" kali;
+    wget -O adblock_plus-3.17.1.xpi https://addons.mozilla.org/firefox/downloads/file/4125998/adblock_plus-3.17.1.xpi
+    sudo qterminal -e sudo su -c "firefox adblock_plus-3.17.1.xpi" kali;
 
 fi
 echo
@@ -131,8 +148,8 @@ else
     echo
     echo "Click Add to install the addon"
     echo
-wget -O sponsorblock-5.4.15.xpi https://addons.mozilla.org/firefox/downloads/file/4151024/sponsorblock-5.4.15.xpi
-sudo su -c "firefox sponsorblock-5.4.15.xpi" kali;
+    wget -O sponsorblock-5.4.15.xpi https://addons.mozilla.org/firefox/downloads/file/4151024/sponsorblock-5.4.15.xpi
+    sudo qterminal -e sudo su -c "firefox sponsorblock-5.4.15.xpi" kali;
 
 fi
 echo
@@ -145,7 +162,7 @@ then
 else
 
     echo -e "\e[034mGetting darksheets.sh from /opt/365e\e[0m"
-cp /opt/365/darksheets.sh $PWD
+    cp /opt/365/darksheets.sh $PWD
 fi
 echo
 
@@ -158,7 +175,7 @@ then
 else
 
     echo "Getting the Devil"
-pip install thedevilseye==2022.1.4.0
+    sudo pip install thedevilseye==2022.1.4.0
 
 fi
 echo
@@ -236,8 +253,8 @@ echo
 # Darksheets Results
 echo -e "\e[033mOpen a darksheet with results y/n: \e[0m"
 read OPEN1
-echo
-
+    echo
+# Open spreadsheet with results
 if [ $OPEN1 == y ]
 then
     echo -e "\e[033mdarksheet results\e[0m"
@@ -246,7 +263,7 @@ then
     echo "Use NoScript! Block Javascript!"
     echo
     echo "To continue press:    CTRL + c"
-sudo qterminal -e libreoffice --calc $PWD/results+onions.txt > /dev/null 2>&1
+    sudo qterminal -e libreoffice --calc $PWD/results+onions.txt > /dev/null 2>&1
 
     echo "Close terminal press: CTRL + c"
 else
@@ -259,8 +276,8 @@ HIT1=`awk 'FNR == 1 {print $1}' results+onions.txt`
 
 # Connect to the Dark Web
 echo -en "\e[033mConnect to the Dark Web y/n: \e[0m"
-read DWEB0
-echo
+read -e DWEB0
+    echo
 
 if [ $DWEB0 == y ]
 then
@@ -276,10 +293,10 @@ sleep 1
     echo -ne '#######################   (100%)\r'
     echo -ne '\n'
     echo
-curl -x socks5h://localhost:9050 -s https://check.torproject.org/api/ip | grep "true"
+    curl -x socks5h://localhost:9050 -s https://check.torproject.org/api/ip | grep "true"
     echo
-    echo "Exit Tor type: torghost -x"
-torghost -a -c us,ca,mx,ca > /dev/null 2>&1
+    echo
+    torghost -a -c us,ca,mx,ca > /dev/null 2>&1
     echo
 
     echo -e "\e[033mDark Web IP\e[0m"
@@ -289,12 +306,13 @@ torghost -a -c us,ca,mx,ca > /dev/null 2>&1
     echo
 else
     echo "Maybe next time"
+    echo
 
 fi
 
 # Open FF
 echo -e "\e[033mOpen Firefox to view results y/n: \e[0m"
-read OPEN2
+read -e OPEN2
     echo
 
 if [ $OPEN2 == y ]
@@ -303,7 +321,9 @@ then
     echo
 sudo qterminal -e su -c "firefox $HIT1" kali > /dev/null 2>&1
     echo
-    echo "Exit with CTRL + c"
+    echo "To continue: CTRL + c"
+    echo
+    echo "To exit:     CTRL + c"
 else
 
     echo "Maybe next time"
@@ -323,7 +343,7 @@ if [ $DWEB1 == y ]
 then
     echo
     echo "Trying to Exit the Dark Web"
-torghost -x
+sudo torghost -x
     echo
     echo "Exit Tor type:   torghost -x"
     echo "Exit DarkSheets: CTRL + c"
