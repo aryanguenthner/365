@@ -2,14 +2,14 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Tested on Kali 2023.2
+# Last Updated 08/28/2023, minor evil updates
+# Tested on Kali 2023.3
 # Usage: cd /opt/
 # sudo git clone https://github.com/aryanguenthner/365
 # cd 365
 # sudo chmod a+x *.sh *.py
-# sudo ./kali-setup.sh | tee kali.log
 # chmod -R 777 /home/kali/
-# Last Updated 08/23/2023, minor evil updates
+# sudo ./kali-setup.sh | tee kali.log
 ################################################
 
 # Setting Variables
@@ -57,14 +57,13 @@ echo
 mkdir -p /home/kali/Desktop/testing/nmapscans/
 echo "Current Nmap User-Agent"
 sed -n '160p' /usr/share/nmap/nselib/http.lua
-
-
+echo
 
 # Kali Updates
 echo "It's a good idea to update and upgrade Kali first before running kali-setup.sh"
 echo
 echo "Be Patient, Installing Kali Dependencies"
-
+echo
 # Kali installs
 apt-get update && apt-get -y upgrade && apt-get -y full-upgrade && apt -y autoremove && updatedb
 echo
@@ -551,19 +550,19 @@ else
 
     echo -e "\e[034mDownloading Missing PhantomJS\e[0m"
 
-wget --no-check-certificate -O /opt/phantomjs-1.9.8-linux-x86_64.tar.bz2 https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
-tar xvjf phantomjs-1.9.8-linux-x86_64.tar.bz2
-rm phantomjs-1.9.8-linux-x86_64.tar.bz2
+    wget --no-check-certificate -O /opt/phantomjs-1.9.8-linux-x86_64.tar.bz2 https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
+    tar xvjf phantomjs-1.9.8-linux-x86_64.tar.bz2
+    rm phantomjs-1.9.8-linux-x86_64.tar.bz2
 
-echo "Extracting and Installing PhantomJS 1.9.8"
-cd /opt
-tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2
-mv phantomjs-1.9.8-linux-x86_64 phantomjs
-mv phantomjs /opt
-ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
+    echo "Extracting and Installing PhantomJS 1.9.8"
+    cd /opt
+    tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2
+    mv phantomjs-1.9.8-linux-x86_64 phantomjs
+    mv phantomjs /opt
+    ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
 
     echo "Phantomjs Version"
-phantomjs -v
+    phantomjs -v
 
 fi
 
@@ -580,8 +579,8 @@ then
 
 else
     echo -e "\e[034mDownloading Missing $GWIT\e[0m"
-wget --no-check-certificate 'https://drive.google.com/uc?export=download&id=1hXJAEQAFqFu5A4uR14dUWWdwWceLHz6D' -O /home/kali/Desktop/testing/urlwitness/gowitness
-chmod -R 777 /home/kali
+    wget --no-check-certificate 'https://drive.google.com/uc?export=download&id=1hXJAEQAFqFu5A4uR14dUWWdwWceLHz6D' -O /home/kali/Desktop/testing/urlwitness/gowitness
+    chmod -R 777 /home/kali
 
 fi
 
@@ -615,7 +614,7 @@ date | tee kali-setup-finish-date.txt
 
 # Stop Docker
 # Remove Docker Interface until you need it
-systemctl stop docker && systemctl disable docker && ip link delete docker0
+sudo systemctl stop docker && systemctl disable docker && ip link delete docker0
 
 #
 updatedb
