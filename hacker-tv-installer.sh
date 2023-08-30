@@ -43,7 +43,7 @@ echo
 # Create hacker.tv launcher
 echo "Creating hacker.tv launcher"
 echo
-cd /home/kali
+cd /home/kali/Desktop
 echo sudo su -c \"hypnotix\" kali > /home/kali/hacker.tv
 chmod a+x hacker.tv
 chmod 777 hacker.tv
