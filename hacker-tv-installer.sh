@@ -36,7 +36,11 @@ sudo apt-get --fix-broken install -y
 updatedb
 echo
 
-echo "Pro Tip: Add this Provider -> https://iptv-org.github.io/iptv/index.m3u"
+echo "Pro Tip"
+echo
+echo "Add this Provider -> https://iptv-org.github.io/iptv/index.m3u"
+echo
+echo "IPTV Provider with full version: https://iptv-org.github.io/iptv/index.nsfw.m3u"
 sleep 1
 echo
 
