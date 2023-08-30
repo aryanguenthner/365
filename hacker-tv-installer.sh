@@ -29,16 +29,22 @@ chmod -R 777 /opt/packages && cd /opt/packages
 dpkg -i *.deb
 
 # Insurance
-apt-get --fix-broken install -y
+sudo apt-get --fix-broken install -y
 updatedb
 echo
 
 echo "Pro Tip: Add this Provider -> https://iptv-org.github.io/iptv/index.m3u"
 sleep 1
 echo
-echo "sudo su -c "hypnotix" $USER" > /home/$USER/hacker.tv && chmod a+x hacker.tv && chmod 777 hacker.tv
-echo "Watch TV: ./hacker.tv"
+
+# Create hacker.tv launcher
+echo "Creating hacker.tv launcher"
+echo
+echo sudo su -c \"hypnotix\" kali > hacker.tv
+chmod a+x hacker.tv
+chmod 777 hacker.tv
+echo "Watch TV enter: ./hacker.tv"
  
-sudo su -c "hypnotix" $USER
+
 echo
 
