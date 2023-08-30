@@ -28,6 +28,8 @@ tar -xf packages.tar.gz -C /opt
 chmod -R 777 /opt/packages && cd /opt/packages
 dpkg -i *.deb
 
+rm packages.tar.gz python3-imdbpy_6.6-1_all.deb hypnotix_3.6_all.deb
+
 # Insurance
 sudo apt-get --fix-broken install -y
 updatedb
@@ -40,7 +42,7 @@ echo
 # Create hacker.tv launcher
 echo "Creating hacker.tv launcher"
 echo
-echo sudo su -c \"hypnotix\" kali > hacker.tv
+echo sudo su -c \"hypnotix\" kali > /home/kali/hacker.tv
 chmod a+x hacker.tv
 chmod 777 hacker.tv
 echo "Watch TV enter: ./hacker.tv"
