@@ -17,18 +17,19 @@ echo "Installing Dependencies"
 echo
 sudo apt-get install -y dbus-x11 libmpv2 gir1.2-xapp-1.0 xapps-common debhelper python3-setproctitle dpkg-dev git
 
+cd /opt
 wget --no-check-certificate http://ftp.us.debian.org/debian/pool/main/i/imdbpy/python3-imdbpy_6.6-1_all.deb
 dpkg -i python3-imdbpy_6.6-1_all.deb
+rm python3-imdbpy_6.6-1_all.deb
 echo
 
 # Download Hypnotix
 wget --no-check-certificate https://github.com/linuxmint/hypnotix/releases/download/master.mint21/packages.tar.gz
-tar -xf packages.tar.gz -C /opt
+tar -xf packages.tar.gz
+rm packages.tar.gz
 
 chmod -R 777 /opt/packages && cd /opt/packages
 dpkg -i *.deb
-
-rm packages.tar.gz python3-imdbpy_6.6-1_all.deb hypnotix_3.6_all.deb
 
 # Insurance
 sudo apt-get --fix-broken install -y
@@ -42,6 +43,7 @@ echo
 # Create hacker.tv launcher
 echo "Creating hacker.tv launcher"
 echo
+cd /home/kali
 echo sudo su -c \"hypnotix\" kali > /home/kali/hacker.tv
 chmod a+x hacker.tv
 chmod 777 hacker.tv
