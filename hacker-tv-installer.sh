@@ -1,7 +1,7 @@
 # Hypnotix Free TV on Kali 2023.3
 # 
 # 08/30/2023
-
+echo
 echo "Please Enable 3D Acceleration in VM Settings"
 sleep 1
 echo
@@ -44,7 +44,7 @@ echo
 echo "Creating hacker.tv launcher"
 echo
 cd /home/kali/Desktop
-echo sudo su -c \"hypnotix\" kali > /home/kali/hacker.tv
+echo sudo su -c \"hypnotix\" kali > /home/kali/Desktop/hacker.tv
 chmod a+x hacker.tv
 chmod 777 hacker.tv
 echo "Watch TV enter: ./hacker.tv"
