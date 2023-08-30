@@ -4,7 +4,8 @@
 
 echo "Please Enable 3D Acceleration in VM Settings"
 sleep 1
-echo "Open VirtualBox, Settings > Display > Extended Features Enable 3D Acceleration"
+echo
+echo "Power off VM, Open VirtualBox, Settings > Display > Extended Features Enable 3D Acceleration"
 sleep 1
 echo
 
@@ -30,8 +31,10 @@ dpkg -i *.deb
 # Insurance
 apt-get --fix-broken install -y
 updatedb
+echo
 
 echo "Pro Tip: Add this Provider -> https://iptv-org.github.io/iptv/index.m3u"
+echo
 echo
 sudo su -c "hypnotix" $USER
 echo
