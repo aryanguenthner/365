@@ -28,6 +28,9 @@ wget --no-check-certificate https://github.com/linuxmint/hypnotix/releases/downl
 tar -xf packages.tar.gz
 rm packages.tar.gz
 
+# Get icon
+wget -O /home/kali/Pictures/tv.png https://raw.githubusercontent.com/aryanguenthner/365/e7a68a70eda392ba6b4b1cbb99e405e3ad677c4d/tv.png
+
 chmod -R 777 /opt/packages && cd /opt/packages
 dpkg -i *.deb
 
@@ -35,7 +38,6 @@ dpkg -i *.deb
 sudo apt-get --fix-broken install -y
 updatedb
 echo
-
 echo "Pro Tip"
 echo
 echo "Add this Provider -> https://iptv-org.github.io/iptv/index.m3u"
@@ -46,13 +48,21 @@ echo
 
 # Create hacker.tv launcher
 echo "Creating hacker.tv launcher"
-echo
-cd /home/kali/Desktop
-echo sudo su -c \"hypnotix\" kali > /home/kali/Desktop/hacker.tv
-chmod a+x hacker.tv
-chmod 777 hacker.tv
+cat <<EOF > /home/kali/Desktop/App.Desktop
+[Desktop Entry]
+Type=Application
+Name=hacker.tv
+Terminal=true
+Exec=sudo su -c "hypnotix" kali
+Icon=/home/kali/Pictures/tv.png
+Comment=Watch TV
+Path=/home/kali/Desktop/App.Desktop
+StartupNotify=false
+EOF
+chmod -R 777 /home/kali/Desktop/App.Desktop
 echo "Watch TV enter: ./hacker.tv"
- 
-
+sleep 1
 echo
-
+echo
+echo
+echo
