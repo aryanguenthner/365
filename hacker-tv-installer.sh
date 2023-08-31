@@ -52,15 +52,15 @@ cat <<EOF > /home/kali/Desktop/App.Desktop
 [Desktop Entry]
 Type=Application
 Name=hacker.tv
-Terminal=true
-Exec=sudo su -c "hypnotix" kali
+Terminal=false
+Exec=sudo su -c "hypnotix" kali > /dev/null 2>&1
 Icon=/home/kali/Pictures/tv.png
 Comment=Watch TV
 Path=/home/kali/Desktop/App.Desktop
 StartupNotify=false
 EOF
 chmod -R 777 /home/kali/Desktop/App.Desktop
-echo "Watch TV enter: ./hacker.tv"
+echo "Watch TV enter: ./App.Desktop"
 sleep 1
 echo
 echo
