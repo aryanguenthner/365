@@ -18,18 +18,18 @@ echo
 sudo apt-get install -y dbus-x11 libmpv2 gir1.2-xapp-1.0 xapps-common debhelper python3-setproctitle dpkg-dev git
 
 cd /opt
-wget --no-check-certificate http://ftp.us.debian.org/debian/pool/main/i/imdbpy/python3-imdbpy_6.6-1_all.deb
-dpkg -i python3-imdbpy_6.6-1_all.deb
+wget --no-check-certificate http://ftp.us.debian.org/debian/pool/main/i/imdbpy/python3-imdbpy_6.6-1_all.deb > /dev/null 2>&1
+dpkg -i python3-imdbpy_6.6-1_all.deb > /dev/null 2>&1
 rm python3-imdbpy_6.6-1_all.deb
 echo
 
 # Download Hypnotix
-wget --no-check-certificate https://github.com/linuxmint/hypnotix/releases/download/master.mint21/packages.tar.gz
-tar -xf packages.tar.gz
+wget --no-check-certificate https://github.com/linuxmint/hypnotix/releases/download/master.mint21/packages.tar.gz > /dev/null 2>&1
+tar -xf packages.tar.gz > /dev/null 2>&1
 rm packages.tar.gz
 
 # Get icon
-wget -O /home/kali/Pictures/tv.png https://raw.githubusercontent.com/aryanguenthner/365/e7a68a70eda392ba6b4b1cbb99e405e3ad677c4d/tv.png
+wget -O /home/kali/Pictures/tv.png https://raw.githubusercontent.com/aryanguenthner/365/e7a68a70eda392ba6b4b1cbb99e405e3ad677c4d/tv.png > /dev/null 2>&1
 
 chmod -R 777 /opt/packages && cd /opt/packages
 dpkg -i *.deb
@@ -61,13 +61,14 @@ StartupNotify=false
 EOF
 chmod -R 777 /home/kali/Desktop/App.Desktop
 echo "Confirm Enable 3D Acceleration in VM Settings"
+echo
 echo "Power off VM, Open VirtualBox, Settings > Display > Extended Features Enable 3D Acceleration"
+echo
 echo "If you already did this step, Ignore this message"
 sleep 1
 cd /home/kali/Desktop
+echo
 echo "Watch TV enter: ./App.Desktop"
 sleep 1
 echo
-echo
-echo
-echo
+
