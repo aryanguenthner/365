@@ -29,7 +29,18 @@ tar -xf packages.tar.gz > /dev/null 2>&1
 rm packages.tar.gz
 
 # Get icon
+ICON=/home/kali/Pictures/tv.png
+if [ -f "$ICON" ]
+then
+
+    echo "Found TV icon"
+
+else
+
+    echo "Downloading TV icon"
 wget -O /home/kali/Pictures/tv.png https://raw.githubusercontent.com/aryanguenthner/365/e7a68a70eda392ba6b4b1cbb99e405e3ad677c4d/tv.png > /dev/null 2>&1
+
+fi
 
 chmod -R 777 /opt/packages && cd /opt/packages
 dpkg -i *.deb
@@ -59,6 +70,7 @@ Comment=Watch TV
 Path=/home/kali/Desktop/App.Desktop
 StartupNotify=false
 EOF
+
 chmod -R 777 /home/kali/Desktop/App.Desktop
 echo "Confirm Enable 3D Acceleration in VM Settings"
 echo
@@ -66,9 +78,14 @@ echo "Power off VM, Open VirtualBox, Settings > Display > Extended Features Enab
 echo
 echo "If you already did this step, Ignore this message"
 sleep 1
+
 cd /home/kali/Desktop
+exec bash
 echo
 echo "Watch TV enter: ./App.Desktop"
 sleep 1
+echo
+
+./App.Desktop > /dev/null 2>&1
 echo
 
