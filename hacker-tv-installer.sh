@@ -1,6 +1,6 @@
 # Hypnotix Free TV on Kali 2023.3
 # 
-# 08/30/2023
+# 08/31/2023
 echo
 echo "Please Enable 3D Acceleration in VM Settings"
 sleep 1
@@ -60,6 +60,11 @@ Path=/home/kali/Desktop/App.Desktop
 StartupNotify=false
 EOF
 chmod -R 777 /home/kali/Desktop/App.Desktop
+echo "Confirm Enable 3D Acceleration in VM Settings"
+echo "Power off VM, Open VirtualBox, Settings > Display > Extended Features Enable 3D Acceleration"
+echo "If you already did this step, Ignore this message"
+sleep 1
+cd /home/kali/Desktop
 echo "Watch TV enter: ./App.Desktop"
 sleep 1
 echo
