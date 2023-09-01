@@ -59,33 +59,34 @@ echo
 
 # Create hacker.tv launcher
 echo "Creating hacker.tv launcher"
-cat <<EOF > /home/kali/Desktop/App.Desktop
+cat <<EOF > /home/kali/Desktop/tv.Desktop
 [Desktop Entry]
 Type=Application
 Name=hacker.tv
-Terminal=false
+#Terminal=false
 Exec=sudo su -c "hypnotix" kali > /dev/null 2>&1
 Icon=/home/kali/Pictures/tv.png
 Comment=Watch TV
-Path=/home/kali/Desktop/App.Desktop
+Path=/home/kali/Desktop/tv.Desktop
 StartupNotify=false
 EOF
 
-chmod -R 777 /home/kali/Desktop/App.Desktop
+chmod a+x /home/kali/Desktop/tv.Desktop
+chmod -R 777 /home/kali/Desktop/tv.Desktop
 echo "Confirm Enable 3D Acceleration in VM Settings"
 echo
 echo "Power off VM, Open VirtualBox, Settings > Display > Extended Features Enable 3D Acceleration"
 echo
 echo "If you already did this step, Ignore this message"
 sleep 1
-
-cd /home/kali/Desktop
-exec bash
 echo
-echo "Watch TV enter: ./App.Desktop"
+echo "Watch TV enter: ./tv.Desktop"
 sleep 1
 echo
 
-./App.Desktop > /dev/null 2>&1
+./tv.Desktop > /dev/null 2>&1
 echo
+
+cd /home/kali/Desktop
+exec bash
 
