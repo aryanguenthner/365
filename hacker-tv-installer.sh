@@ -3,6 +3,7 @@
 # 09/01/2023
 echo
 sudo apt-get update
+echo
 echo "Hacker TV"
 echo
 
@@ -53,7 +54,7 @@ Type=Application
 Name=hacker.tv
 Terminal=false
 Exec=sudo su -c "hypnotix" kali > /dev/null 2>&1
-Comment=Watch TV
+Comment="Watch TV"
 Path=/home/kali/Desktop/hacker.tv
 StartupNotify=false
 MimeType=text/plain
