@@ -2,12 +2,6 @@
 # 
 # 09/01/2023
 echo
-echo "Please Enable 3D Acceleration in VM Settings"
-sleep 1
-echo
-echo "Power off VM, Open VirtualBox, Settings > Display > Extended Features Enable 3D Acceleration"
-sleep 1
-echo
 sudo apt-get update
 echo "Hacker TV"
 echo
@@ -53,8 +47,7 @@ then
 else
 
 # Create hacker.tv launcher
-echo "Creating hacker.tv launcher"
-
+echo "Creating hacker.tv --> /home/kali/Desktop/hacker.tv"
 cat <<EOF > /home/kali/Desktop/hacker.tv
 Type=Application
 Name=hacker.tv
