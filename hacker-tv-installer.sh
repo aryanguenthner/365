@@ -1,6 +1,6 @@
 # Hypnotix Free TV on Kali 2023.3
 # 
-# 08/31/2023
+# 09/01/2023
 echo
 echo "Please Enable 3D Acceleration in VM Settings"
 sleep 1
@@ -72,11 +72,22 @@ chmod -R 777 /home/kali/Desktop/hacker.tv
 fi
 echo
 
-echo "Confirm Enable 3D Acceleration in VM Settings"
-echo "Power off VM, Open VirtualBox, Settings > Display > Extended Features Enable 3D Acceleration"
-echo "If you already did this step, Ignore this message"
-sleep 1
+# 3D Acceleration Checker
+D3=$(glxinfo | grep "direct rendering: Yes")
+if [ "$D3" == "direct rendering: Yes" ]
+then
+
 echo
+echo "3D Ready"
+echo
+
+else
+
+echo "3D not Enabled"
+echo "Power off VM, Open VirtualBox, Settings > Display > Extended Features Enable 3D Acceleration"
+
+fi
+
 echo "Tip"
 echo "Add this Provider -> https://iptv-org.github.io/iptv/index.m3u"
 echo
