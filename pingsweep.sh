@@ -5,8 +5,8 @@
 # Enumerate open ports and services
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
-# Tested on Kali 2023.3
-# Last updated 08/27/2023
+# Tested on Kali 2023.2
+# Last updated 09/06/2023
 # The future is now
 # Edit this script to fit your system
 # Got nmap?
@@ -26,7 +26,7 @@ BOOTSTRAP=nmap-bootstrap.xsl
 NV=$(nmap -V | awk 'FNR == 1 {print $1,$2,$3}')
 RANDOM=$$
 PWD=$(pwd)
-SYNTAX="nmap -A -T4 -Pn -n -sCT --open -vvvv -p- --stats-every=1m --max-retries=0 --max-scan-delay=0 --min-hostgroup=1024 --min-parallelism=1024 --script=http-screenshot,http-title,banner,vuln -iL $TARGETS --exclude $KALI -oA $PWD/$FILE1"
+SYNTAX="nmap -A -T4 -Pn -n -sCT --open -vvvv -p- --stats-every=1m --max-retries=0 --max-scan-delay=0 --min-hostgroup=1024 --min-parallelism=1024 --script=http-screenshot,banner,vuln -iL $TARGETS --exclude $KALI -oA $PWD/$FILE1"
 echo
 
 # Depencency Check
@@ -41,7 +41,7 @@ then
 else
 
     echo -e "\e[034mGetting pingsweep.sh from /opt/365e\e[0m"
-    cp /opt/365/pingsweep.sh $PWD
+cp /opt/365/pingsweep.sh $PWD
 fi
 
 echo "Found $NV"
@@ -55,7 +55,7 @@ then
 else
 
     echo -e "\e[034mDownloading Missing $BOOTSTRAP File\e[0m"
-    wget -O $PWD/nmap-bootstrap.xsl https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl > /dev/null 2>&1
+wget -O /home/kali/Desktop/testing/nmapscans/nmap-bootstrap.xsl https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl > /dev/null 2>&1
 
 fi
 
@@ -70,19 +70,19 @@ else
 
     echo -e "\e[034mDownloading Missing PhantomJS\e[0m"
 
-    wget --no-check-certificate -O /opt/phantomjs-1.9.8-linux-x86_64.tar.bz2 https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
-    tar xvjf phantomjs-1.9.8-linux-x86_64.tar.bz2 > /dev/null 2>&1
-    rm phantomjs-1.9.8-linux-x86_64.tar.bz2
+wget --no-check-certificate -O /opt/phantomjs-1.9.8-linux-x86_64.tar.bz2 https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
+tar xvjf phantomjs-1.9.8-linux-x86_64.tar.bz2 > /dev/null 2>&1
+rm phantomjs-1.9.8-linux-x86_64.tar.bz2
 
-    echo "Extracting and Installing PhantomJS 1.9.8"
-    cd /opt
-    tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2
-    mv phantomjs-1.9.8-linux-x86_64 phantomjs
-    mv phantomjs /opt
-    ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
+echo "Extracting and Installing PhantomJS 1.9.8"
+cd /opt
+tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2
+mv phantomjs-1.9.8-linux-x86_64 phantomjs
+mv phantomjs /opt
+ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
 
     echo "Phantomjs Version"
-    phantomjs -v
+phantomjs -v
 
 fi
 
@@ -95,9 +95,9 @@ then
 else
 
     echo -e "\e[034mDownloading missing file http-screenshot.nse\e[0m"
-    cd /usr/share/nmap/scripts
-    wget https://raw.githubusercontent.com/aryanguenthner/365/master/http-screenshot.nse
-    nmap --script-updatedb > /dev/null 2>&1
+cd /usr/share/nmap/scripts
+wget https://raw.githubusercontent.com/aryanguenthner/365/master/http-screenshot.nse
+nmap --script-updatedb > /dev/null 2>&1
 
 fi
 echo
@@ -127,22 +127,21 @@ sleep 5
 echo
 
 echo -e "\e[034mGenerating a Target List\e[0m"
-echo
+
 # Ping Sweep
-echo "Staring Nmap pingsweep"
 echo
-nmap $SUBNET -vvvv --stats-every=1m -sn -n --exclude $KALI -oG $PWD/$FILE0 && cat $PWD/$FILE0 | grep --color=always "hosts up"
+nmap $SUBNET -vvvv --stats-every=1m -sn -n --exclude $KALI -oG $FILE0 && cat $FILE0 | grep --color=always "hosts up"
 echo
 echo -e "\e[034mTarget List File -> targets.txt\e[0m"
 echo
 echo
 echo -e "\e[034mPing Sweep Completed\e[0m"
 echo
-grep "Up" $FILE0 | awk '{print $2}' 2>&1 | tee targets.txt
+cat $FILE0 | grep "Up" | awk '{print $2}' 2>&1 | tee targets.txt
 echo
 echo -e "\e[034mUsing nmap to enumerate more info on your targets\e[0m"
 echo
-sleep 3
+sleep 5
 echo -e "\e[034mHack The Planet\e[0m"
 echo "$SYNTAX"
 echo
@@ -155,15 +154,13 @@ then
 
 else
 
-    echo -e "\e[034mDownloading Missing $GOW File\e[0m"
+    echo -e "\e[034mDownloading Missing $gow File\e[0m"
 wget -O $PWD https://raw.githubusercontent.com/aryanguenthner/gowitness > /dev/null
 
 fi
 '
 # Nmap Scan
-echo "Starting Nmap Scan"
-echo
-nmap -iL $TARGETS --exclude $KALI -A -T4 -Pn -n -sCT --open -vvvv -p- --stats-every=1m --max-retries=0 --max-scan-delay=0 --min-hostgroup=1024 --min-parallelism=1024 --script=http-screenshot,http-title,banner,vuln  -oA $PWD/$FILE1
+nmap -iL $TARGETS --exclude $KALI -A -T4 -Pn -n -sCT --open -vvvv -p- --stats-every=1m --max-retries=0 --max-scan-delay=0 --min-hostgroup=1024 --min-parallelism=1024 --script=http-screenshot,banner,vuln  -oA $PWD/$FILE1
 echo
 echo -e "\e[034mMetasploit\e[0m"
 echo "service postgresql start"
@@ -181,7 +178,6 @@ echo
 # Pay me later
 updatedb
 
-echo "Opening Nmap Report"
 sudo su -c "firefox $FILE1.html" kali
 
 
@@ -194,7 +190,8 @@ RANDOM=$$
 SCAN=$(date +%Y%m%d).nmapscan_$RANDOM
 PWD=$(pwd)
 
-nmap -iL targets.txt -T4 -A -Pn -sCT -p- --open -vvvv --stats-every=1m --max-retries=0 --max-scan-delay=0 --min-hostgroup=256 --min-parallelism=256 --script=ssl-cert,ssl-enum-ciphers,ssl-heartbleed,sip-enum-users,sip-brute,sip-methods,vuln,rtsp-screenshot,rtsp-screenshot,rpcinfo,vnc-screenshot,x11-access,x11-screenshot,nfs-showmount,nfs-ls,smb-ls,smb-enum-shares,http-robots.txt.nse,http-webdav-scan,http-screenshot,http-title,http-enum --script-args=http-enum.basepath=200,http-auth --script-args=http-auth.path=/login,http-form-brute,http-sql-injection,http-ntlm-info --script-args=http-ntlm-info.root=/root/,http-git,http-open-redirect,http-vuln-cve2017-5638 --script-args=path=/welcome.action,http-open-proxy,socks-open-proxy,smtp-open-relay,ftp-anon,ftp-bounce,ms-sql-config,ms-sql-info,ms-sql-empty-password,mysql-info,mysql-empty-password,vnc-brute,vnc-screenshot,vmware-version,http-shellshock,http-default-accounts,http-passwd --script-args=http-passwd.root=/test/,smb-vuln-ms08-067,smb-vuln-ms17-010,rdp-vuln-ms12-020,vuln,grab_beacon_config,vmware-version,smtp-vuln-cve2020-28017-through-28026-21nails,banner,mainframe-banner,mainframe-screenshot -oA $PWD/$SCAN
+
+nmap -iL targets.txt -T4 -A -Pn -sCT -p- --open -vvvv --stats-every=1m --min-rtt-timeout=30 --max-rtt-timeout=100 --max-retries=0 --max-scan-delay=0 --min-hostgroup=1024 --min-parallelism=1024 --script=ssl-cert,ssl-enum-ciphers,ssl-heartbleed,sip-enum-users,sip-brute,sip-methods,vuln,rtsp-screenshot,rtsp-screenshot,rpcinfo,vnc-screenshot,x11-access,x11-screenshot,nfs-showmount,nfs-ls,smb-ls,smb-enum-shares,http-robots.txt.nse,http-webdav-scan,http-screenshot,http-form-brute,http-sql-injection,http-git,http-open-redirect,http-open-proxy,socks-open-proxy,smtp-open-relay,ftp-anon,ftp-bounce,ms-sql-config,ms-sql-info,ms-sql-empty-password,mysql-info,mysql-empty-password,vnc-brute,vnc-screenshot,vmware-version,http-shellshock,http-default-accounts,smb-vuln-ms08-067,smb-vuln-ms17-010,rdp-vuln-ms12-020,vuln,grab_beacon_config,vmware-version,smtp-vuln-cve2020-28017-through-28026-21nails,banner,mainframe-banner,mainframe-screenshot -oA $SCAN
 
 xsltproc -o $FILE1.html $BOOTSTRAP $SCAN.xml
 '
