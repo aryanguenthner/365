@@ -2,12 +2,10 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 08/28/2023, minor evil updates
+# Last Updated 09/11/2023, minor evil updates
 # Tested on Kali 2023.3
-# Usage: cd /opt/
-# sudo git clone https://github.com/aryanguenthner/365
-# cd 365
-# sudo chmod a+x *.sh *.py
+# Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
+# cd 365 && sudo chmod a+x *.sh *.py
 # chmod -R 777 /home/kali/
 # sudo ./kali-setup.sh | tee kali.log
 ################################################
@@ -316,6 +314,10 @@ gem install rubyzip
 gem install spider
 echo
 echo "This is going to take a minute hold my root-beer"
+echo
+echo "BridgeKeeper - Employee OSINT"
+cd /opt
+git clone https://github.com/aryanguenthner/BridgeKeeper.git
 echo
 
 echo "AD Recon - My Fav"
