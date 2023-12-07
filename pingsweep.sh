@@ -5,8 +5,8 @@
 # Enumerate open ports and services
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
-# Tested on Kali 2023.2
-# Last updated 09/06/2023
+# Tested on Kali 2023.4
+# Last updated 12/07/2023
 # The future is now
 # Edit this script to fit your system
 # Got nmap?
@@ -26,7 +26,8 @@ BOOTSTRAP=nmap-bootstrap.xsl
 NV=$(nmap -V | awk 'FNR == 1 {print $1,$2,$3}')
 RANDOM=$$
 PWD=$(pwd)
-SYNTAX="nmap -A -T4 -Pn -n -sCT --open -vvvv -p- --stats-every=1m --max-retries=0 --max-scan-delay=0 --min-hostgroup=1024 --min-parallelism=1024 --script=http-screenshot,banner,vuln -iL $TARGETS --exclude $KALI -oA $PWD/$FILE1"
+MOBILE=TODO enable mobile alerts to be sent when scan is completed
+SYNTAX="nmap -A -T4 -Pn -n -sCT --open -vvvv -p- --stats-every=1m --max-retries=0 --max-scan-delay=0 --min-hostgroup=1024 --min-parallelism=1024 --script=http-screenshot,banner -iL $TARGETS --exclude $KALI -oA $PWD/$FILE1"
 echo
 
 # Depencency Check
@@ -160,7 +161,7 @@ wget -O $PWD https://raw.githubusercontent.com/aryanguenthner/gowitness > /dev/n
 fi
 '
 # Nmap Scan
-nmap -iL $TARGETS --exclude $KALI -A -T4 -Pn -n -sCT --open -vvvv -p- --stats-every=1m --max-retries=0 --max-scan-delay=0 --min-hostgroup=1024 --min-parallelism=1024 --script=http-screenshot,banner,vuln  -oA $PWD/$FILE1
+nmap -iL $TARGETS --exclude $KALI -A -T4 -Pn -n -sCT --open -vvvv -p- --stats-every=1m --max-retries=0 --max-scan-delay=0 --min-hostgroup=1024 --min-parallelism=1024 --script=http-screenshot,banner -oA $PWD/$FILE1
 echo
 echo -e "\e[034mMetasploit\e[0m"
 echo "service postgresql start"
@@ -180,8 +181,6 @@ updatedb
 
 sudo su -c "firefox $FILE1.html" kali
 
-
-
 : '
 
 TARGETS=targets.txt
@@ -191,7 +190,7 @@ SCAN=$(date +%Y%m%d).nmapscan_$RANDOM
 PWD=$(pwd)
 
 
-nmap -iL targets.txt -T4 -A -Pn -sCT -p- --open -vvvv --stats-every=1m --min-rtt-timeout=30 --max-rtt-timeout=100 --max-retries=0 --max-scan-delay=0 --min-hostgroup=1024 --min-parallelism=1024 --script=ssl-cert,ssl-enum-ciphers,ssl-heartbleed,sip-enum-users,sip-brute,sip-methods,vuln,rtsp-screenshot,rtsp-screenshot,rpcinfo,vnc-screenshot,x11-access,x11-screenshot,nfs-showmount,nfs-ls,smb-ls,smb-enum-shares,http-robots.txt.nse,http-webdav-scan,http-screenshot,http-form-brute,http-sql-injection,http-git,http-open-redirect,http-open-proxy,socks-open-proxy,smtp-open-relay,ftp-anon,ftp-bounce,ms-sql-config,ms-sql-info,ms-sql-empty-password,mysql-info,mysql-empty-password,vnc-brute,vnc-screenshot,vmware-version,http-shellshock,http-default-accounts,smb-vuln-ms08-067,smb-vuln-ms17-010,rdp-vuln-ms12-020,vuln,grab_beacon_config,vmware-version,smtp-vuln-cve2020-28017-through-28026-21nails,banner,mainframe-banner,mainframe-screenshot -oA $SCAN
+nmap -iL targets.txt -T4 -A -Pn -sCT -p- --open -vvvv --stats-every=1m --min-rtt-timeout=30 --max-rtt-timeout=90 --max-retries=0 --max-scan-delay=0 --min-hostgroup=1024 --min-parallelism=1024 --script=ssl-cert,ssl-enum-ciphers,ssl-heartbleed,sip-enum-users,sip-brute,sip-methods,rtsp-screenshot,rtsp-screenshot,rpcinfo,vnc-screenshot,x11-access,x11-screenshot,nfs-showmount,nfs-ls,smb-security-mode,smb-enum-shares,smb-ls,http-robots.txt.nse,http-webdav-scan,http-screenshot,http-form-brute,http-sql-injection,http-open-redirect,http-open-proxy,socks-open-proxy,smtp-open-relay,ftp-anon,ftp-bounce,ms-sql-config,ms-sql-info,ms-sql-empty-password,mysql-info,mysql-empty-password,vnc-brute,vnc-screenshot,vmware-version,http-shellshock,http-default-accounts,smb-vuln-ms08-067,smb-vuln-ms17-010,rdp-vuln-ms12-020,vuln,grab_beacon_config,vmware-version,smtp-vuln-cve2020-28017-through-28026-21nails,banner,mainframe-banner,mainframe-screenshot,ssh-auth-methods,http-vuln-cve2017-5638 -oA $SCAN
 
 xsltproc -o $FILE1.html $BOOTSTRAP $SCAN.xml
 '
