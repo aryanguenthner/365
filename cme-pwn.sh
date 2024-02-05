@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Tested on Kali 2023.4
-# Updated 01/15/2024
+# Updated 02/15/2024
 # Hack The Planet
 
 # Setting Variables
@@ -14,7 +14,9 @@ DATE0=$(date +%Y%m%d).cme_$RANDOM
 echo
 # How to hack the planet
 
-echo "Usage ./cme-full-scan.sh 10.9.9.0/24"
+echo "Usage ./cme-full-scan.sh evil.com"
+echo "      ./cme-full-scan.sh 192.168.0.1 192.168.0.2"
+echo "      ./cme-full-scan.sh evil.com 192.168.0.1/24"
 echo "      ./cme-full-scan.sh subnets.txt"
 echo "      ./cme-full-scan.sh ips.txt"
 echo
@@ -77,42 +79,99 @@ echo "RDP"
 crackmapexec rdp $FILE1 | tee crackmap-rdp-$FNAME.$DATE0.txt;
 echo
 echo "Exporting RDP targets to rdp-ips.txt"
+echo "Be Patient"
+    echo
+    echo -ne '#####                     (33%)\r'
+sleep 1
+    echo -ne '#############             (66%)\r'
+    sleep 1
+    echo -ne '#######################   (100%)\r'
+    echo -ne '\n'
 awk '{print $2}' crackmap-rdp-$FNAME.$DATE0.txt > rdp-ips.txt
 echo
 echo "WINRM"
 crackmapexec winrm $FILE1 | tee crackmap-winrm-$FNAME.$DATE0.txt;
 echo
 echo "Exporting WinRM targets to winrm-ips.txt"
+echo "Be Patient"
+    echo
+    echo -ne '#####                     (33%)\r'
+sleep 1
+    echo -ne '#############             (66%)\r'
+    sleep 1
+    echo -ne '#######################   (100%)\r'
+    echo -ne '\n'
 awk '{print $2}' crackmap-winrm-$FNAME.$DATE0.txt > winrm-ips.txt
 echo
 echo "LDAP"
 crackmapexec ldap $FILE1 | tee crackmap-ldap-$FNAME.$DATE0.txt;
 echo
 echo "Exporting LDAP targets to winrm-ips.txt"
+echo "Be Patient"
+    echo
+    echo -ne '#####                     (33%)\r'
+sleep 1
+    echo -ne '#############             (66%)\r'
+    sleep 1
+    echo -ne '#######################   (100%)\r'
+    echo -ne '\n'
 awk '{print $2}' crackmap-ldap-$FNAME.$DATE0.txt > ldap-ips.txt
 echo
 echo "MSSQL"
 crackmapexec mssql $FILE1 | tee crackmap-mssql-$FNAME.$DATE0.txt;
 echo
 echo "Exporting MSSQL targets to mssql-ips.txt"
+echo "Be Patient"
+    echo
+    echo -ne '#####                     (33%)\r'
+sleep 1
+    echo -ne '#############             (66%)\r'
+    sleep 1
+    echo -ne '#######################   (100%)\r'
+    echo -ne '\n'
 awk '{print $2}' crackmap-mssql-$FNAME.$DATE0.txt > mssql-ips.txt
 echo
 echo "SMB"
 crackmapexec smb $FILE1 | tee crackmap-smb-$FNAME.$DATE0.txt;
 echo
 echo "Exporting SMB targets to smb-ips.txt"
+echo "Be Patient"
+    echo
+    echo -ne '#####                     (33%)\r'
+sleep 1
+    echo -ne '#############             (66%)\r'
+    sleep 1
+    echo -ne '#######################   (100%)\r'
+    echo -ne '\n'
 awk '{print $2}' crackmap-smb-$FNAME.$DATE0.txt > smb-ips.txt
+cat crackmap-smb-$FNAME.$DATE0.txt | grep -ai 'signing:False\|SMBv1:True' | awk '{print $2}' | sort -u SMB-Vulerabilities.txt
 echo
 echo "FTP"
 crackmapexec ftp $FILE1 | tee crackmap-ftp-$FNAME.$DATE0.txt;
 echo
 echo "Exporting FTP targets to ftp-ips.txt"
+echo "Be Patient"
+    echo
+    echo -ne '#####                     (33%)\r'
+sleep 1
+    echo -ne '#############             (66%)\r'
+    sleep 1
+    echo -ne '#######################   (100%)\r'
+    echo -ne '\n'
 awk '{print $2}' crackmap-ftp-$FNAME.$DATE0.txt > ftp-ips.txt
 echo
 echo "SSH"
 crackmapexec ssh $FILE1 | tee crackmap-ssh-$FNAME.$DATE0.txt;
 echo
 echo "Exporting SSH targets to ssh-ips.txt"
+echo "Be Patient"
+    echo
+    echo -ne '#####                     (33%)\r'
+sleep 1
+    echo -ne '#############             (66%)\r'
+    sleep 1
+    echo -ne '#######################   (100%)\r'
+    echo -ne '\n'
 awk '{print $2}' crackmap-ssh-$FNAME.$DATE0.txt > ssh-ips.txt
 echo
 echo
