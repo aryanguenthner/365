@@ -5,8 +5,8 @@
 # Enumerate open ports and services
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
-# Tested on Kali 2023.4
-# Last updated 01/01/2024
+# Tested on Kali 2024.2
+# Last minor updated 06/09/2024
 # The future is now
 # Edit this script to fit your system
 # Got nmap?
@@ -26,8 +26,8 @@ BOOTSTRAP=nmap-bootstrap.xsl
 NV=$(nmap -V | awk 'FNR == 1 {print $1,$2,$3}')
 RANDOM=$$
 PWD=$(pwd)
-MOBILE=TODO enable mobile alerts to be sent when scan is completed
-SYNTAX="nmap -T4 -A -Pn -n -sC -p- -vvvv --stats-every=1m --max-retries=0 --max-scan-delay=0 --min-hostgroup=10000 --min-parallelism=10000 --script=http-screenshot -iL $TARGETS --exclude $KALI -oA $PWD/$FILE1"
+# MOBILE=TODO enable mobile alerts to be sent when scan is completed
+SYNTAX="nmap -T4 -A -Pn -n -sC -p- -vvvv --script http-screenshot --stats-every=1m --max-retries=0 --max-scan-delay=0 --min-hostgroup=10000 --min-parallelism=10000 -iL $TARGETS --exclude $KALI -oA $PWD/$FILE1"
 echo
 
 # Depencency Check
