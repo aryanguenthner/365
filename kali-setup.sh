@@ -2,10 +2,10 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 02/25/2024, minor evil updates
+# Last Updated 08/10/2024, minor evil updates
 # Tested on Kali 2024.2
 # Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
-# cd 365 && sudo chmod a+x *.sh *.py
+# cd 365 && sudo chmod a+x *.sh
 # chmod -R 777 /home/kali/
 # sudo ./kali-setup.sh | tee kali.log
 ################################################
@@ -53,9 +53,16 @@ echo
 
 # Keep Nmap scans Organized
 mkdir -p /home/kali/Desktop/testing/nmapscans/
-echo "Current Nmap User-Agent"
+
+# Upgrade Nmap User agent
+echo "Current Nmap User Agent"
 sed -n '160p' /usr/share/nmap/nselib/http.lua
 echo
+echo "New Nmap User Agent"
+echo
+sed -i '160d' /usr/share/nmap/nselib/http.lua
+sed -i '160iUSER_AGENT = stdnse.get_script_args('http.useragent') or "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko)"' /usr/share/nmap/nselib/http.lua
+sed -n '160p' /usr/share/nmap/nselib/http.lua
 
 # Kali Updates
 echo "It's a good idea to update and upgrade Kali first before running kali-setup.sh"
@@ -65,7 +72,7 @@ echo
 # Kali installs
 apt-get update && apt-get -y full-upgrade && apt -y autoremove && updatedb
 echo
-sudo apt-get install -y libfuse2 libkrb5-dev pipx metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq cups system-config-printer gobuster tcpxtract libreoffice
+sudo apt-get install -y freefilesync libfuse2 libkrb5-dev pipx metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq cups system-config-printer gobuster tcpxtract libreoffice
 echo
 
 echo "Downloading and installing Shodan Nrich"
@@ -74,16 +81,17 @@ wget https://gitlab.com/api/v4/projects/33695681/packages/generic/nrich/latest/n
 sudo dpkg -i nrich_latest_x86_64.deb
 
 echo "Installing NetExec"
+# TODO: Add NetExec Examples, add automation script
 # Enhanced CME
 pipx ensurepath
 pipx install git+https://github.com/Pennyw0rth/NetExec
 echo
 
-# create the docker plugins directory if it doesn't exist yet
+# Create the docker plugins directory if it doesn't exist yet
 mkdir -p ~/.docker/cli-plugins
-# download the CLI into the plugins directory
+# Download the CLI into the plugins directory
 curl -sSL https://github.com/docker/compose/releases/download/v2.0.1/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
-# make the CLI executable
+# Make the CLI executable
 chmod +x ~/.docker/cli-plugins/docker-compose
 
 # Just Go for it!
@@ -179,7 +187,7 @@ echo
 # # https://github.com/balena-io/etcher
 #echo "Downloading Etcher USB Media Creator"
 #mkdir -p /opt/balena-etcher-electron/chrome-sandbox
-#curl -1sLf \
+#curl -lsLf \
 #   'https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh' \
 #   | sudo -E bash
 # Install Etcher
@@ -238,9 +246,11 @@ echo
 
 # Install gospider - Web Crawler
 # https://github.com/jaeles-project/gospider
+cd /opt
 go install github.com/jaeles-project/gospider@latest
 
 # Install gobuster - Directory Buster
+cd /opt
 go install github.com/OJ/gobuster/v3@latest
 
 # How to Update Python Alternatives
@@ -279,17 +289,6 @@ sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
 sudo apt-get update && sudo apt-get install -y signal-desktop
 echo
 '
-
-# Upgrade Nmap User agent
-echo "Current Nmap User Agent"
-sed -n '160p' /usr/share/nmap/nselib/http.lua
-echo
-echo "New Nmap User Agent"
-echo
-sed -i '160d' /usr/share/nmap/nselib/http.lua
-sed -i '160iUSER_AGENT = stdnse.get_script_args('http.useragent') or "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko)"' /usr/share/nmap/nselib/http.lua
-sed -n '160p' /usr/share/nmap/nselib/http.lua
-
 # TODO: Yeet
 #echo "Kingfisher"
 #echo
@@ -472,12 +471,7 @@ cd /opt
 sudo git clone https://github.com/bitsadmin/wesng.git
 echo
 
-echo "Hacker Hacker"
-cd /opt
-git clone https://github.com/aryanguenthner/365.git
-cd 365
-sudo dos2unix *.sh *.py && chmod a+x *.sh *.py
-echo
+
 
 : '# MongoDB Install
 echo "Installing MongoDB 4.2 from Ubuntu Repo, Because It Works"
@@ -528,12 +522,6 @@ echo "Copying IVRE Nmap Scripts to Nmap"
 echo
 cp /usr/share/ivre/patches/nmap/scripts/*.nse /usr/share/nmap/scripts/
 nmap --script-updatedb > /dev/null
-echo
-
-# Get nmap scripts
-cd /usr/share/nmap/scripts
-wget --no-check-certificate https://raw.githubusercontent.com/aryanguenthner/nmap-nse-vulnerability-scripts/master/smtp-vuln-cve2020-28017-through-28026-21nails.nse
-nmap --script-updatedb
 echo
 
 # http-screenshot Checker
