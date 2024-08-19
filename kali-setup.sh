@@ -433,7 +433,7 @@ echo "Git Leaks"
 cd /opt
 git clone https://github.com/zricethezav/gitleaks.git
 
-echo "Discover Admin Loging Pages - Breacher"
+echo "Discover Admin Login Pages - Breacher"
 cd /opt
 git clone https://github.com/s0md3v/Breacher.git
 echo
@@ -447,15 +447,6 @@ cd impacket
 pip3 install -e .
 echo
 '
-
-echo "GitRob"
-cd /tmp
-sudo wget --no-check-certificate https://github.com/michenriksen/gitrob/releases/download/v2.0.0-beta/gitrob_linux_amd64_2.0.0-beta.zip
-unzip gitrob_linux_amd64_2.0.0-beta.zip
-mkdir -p /opt/gitrob
-mv gitrob /opt/gitrob/
-echo
-
 # TODO: Fix this
 : 'echo "OSINT Phone Number Info Gathering Tool"
 cd /opt
@@ -470,8 +461,6 @@ echo
 cd /opt
 sudo git clone https://github.com/bitsadmin/wesng.git
 echo
-
-
 
 : '# MongoDB Install
 echo "Installing MongoDB 4.2 from Ubuntu Repo, Because It Works"
@@ -623,12 +612,12 @@ updatedb
 # Enabling Kali Autologin
 echo
 
-echo "Enable Kali Autologin"
-sed -i '120s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
-sed -i '121s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
-echo
-echo "Kali Autologin Enabled"
-sudo service lightdm restart
+#echo "Enable Kali Autologin"
+#sed -i '120s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
+#sed -i '121s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
+#echo
+#echo "Kali Autologin Enabled"
+#sudo service lightdm restart
 reboot
 # Just in case DNS issues: nano -c /etc/resolvconf/resolv.conf.d/head
 # Gucci Mang
