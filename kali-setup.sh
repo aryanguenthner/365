@@ -483,15 +483,15 @@ sudo apt-key export 058F8B6B | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/mon
 sudo apt-key export 2007B954 | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/msf.gpg
 sudo apt-key export 038651BD | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/slack.gpg
 '
-# Ivre Dependencies
-sudo pip install tinydb
-sudo pip install py2neo
-echo
+## Ivre Dependencies
+#sudo pip install tinydb
+#sudo pip install py2neo
+#echo
 
 # Install Ivre.Rocks
-echo
-sudo apt-get -y install ivre
-echo
+#echo
+#sudo apt-get -y install ivre
+#echo
 
 #Ivre Database init, data download & importation
 #echo
@@ -506,12 +506,12 @@ echo
 #echo
 
 # Ivre Nmap Magic
+#echo
+#echo "Copying IVRE Nmap Scripts to Nmap"
 echo
-echo "Copying IVRE Nmap Scripts to Nmap"
-echo
-cp /usr/share/ivre/patches/nmap/scripts/*.nse /usr/share/nmap/scripts/
-nmap --script-updatedb > /dev/null
-echo
+#cp /usr/share/ivre/patches/nmap/scripts/*.nse /usr/share/nmap/scripts/
+#nmap --script-updatedb > /dev/null
+#echo
 
 # http-screenshot Checker
 N=/usr/share/nmap/scripts/http-screenshot.nse
