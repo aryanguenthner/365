@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 08/18/2024, minor evil updates
+# Last Updated 08/21/2024, minor evil updates
 # Tested on Kali 2024.2 Gnome/XFCE
 # Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
 # cd 365 && sudo chmod a+x *.sh
@@ -493,17 +493,17 @@ echo
 sudo apt-get -y install ivre
 echo
 
-# Ivre Database init, data download & importation
-echo
-echo -e '\r'
-yes | ivre ipinfo --init
-yes | ivre scancli --init
-yes | ivre view --init
-yes | ivre flowcli --init
-yes | sudo ivre runscansagentdb --init
+#Ivre Database init, data download & importation
+#echo
+#echo -e '\r'
+#yes | ivre ipinfo --init
+#yes | ivre scancli --init
+#yes | ivre view --init
+#yes | ivre flowcli --init
+#yes | sudo ivre runscansagentdb --init
 # 40 Min download --> sudo ivre ipdata --download
-echo -e '\r'
-echo
+#echo -e '\r'
+#echo
 
 # Ivre Nmap Magic
 echo
@@ -522,9 +522,8 @@ then
 
 else
 
-    echo "Downloading missing file http-screenshot.nse"
-cd /usr/share/nmap/scripts
-wget https://raw.githubusercontent.com/ivre/ivre/master/patches/nmap/scripts/http-screenshot.nse > /dev/null
+    echo "Copying missing file http-screenshot.nse"
+cp /opt/365/http-screenshot.nse /usr/share/nmap/scripts
 nmap --script-updatedb > /dev/null
 
 fi
@@ -538,11 +537,9 @@ then
 
 else
 
-    echo -e "\e[034mDownloading Missing PhantomJS\e[0m"
+    echo -e "\e[034mCopying Missing PhantomJS\e[0m"
 
-    wget --no-check-certificate -O /opt/phantomjs-1.9.8-linux-x86_64.tar.bz2 https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
-    tar xvjf phantomjs-1.9.8-linux-x86_64.tar.bz2
-    rm phantomjs-1.9.8-linux-x86_64.tar.bz2
+    cp /opt/365/phantomjs-1.9.8-linux-x86_64.tar.bz2
 
     echo "Extracting and Installing PhantomJS 1.9.8"
     cd /opt
