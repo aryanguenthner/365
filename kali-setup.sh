@@ -578,24 +578,20 @@ updatedb
 echo
 
 # Customize Kali Paths
-echo 'hostname -I' >> /root/.zshrc
-echo 'export PATH="$HISTCONTROL="ignoredups:$PATH"' >> /root/.zshrc
-echo 'export PATH="$GOROOT="/usr/local/go"' >> /root/.zshrc
-echo 'export PATH="$GOPATH="$HOME/go"' >> /root/.zshrc
-echo 'export PATH="$GOPATH/bin:$GOROOT/bin:$PATH"' >> /root/.zshrc
-echo 'export PATH="$PATH:$GOROOT/bin/:$GOPATH/bin"' >> /root/.zshrc
-echo 'export PATH="$PATH:$(go env GOPATH)/bin"' >> /root/.zshrc
-echo 'export PATH="/root/go:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/local/go/bin:$PATH"' >> /root/.zshrc
-echo 'export PATH="/root/work:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/bin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc 
-echo 'export PATH="/usr/sbin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/lib/jvm/java-11-openjdk-amd64/:$PATH"' >> /root/.zshrc
-echo 'export PATH="/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/local/bin:$PATH"' >> /root/.zshrc
-echo 'export PATH="$PATH:/root/.local/bin"'
-source ~/.zshrc
+# Set HISTCONTROL separately
+export HISTCONTROL="ignoredups"
+
+# Update PATH variable with various directories
+export PATH="$PATH:/usr/local/go/bin"
+export PATH="$PATH:$HOME/go/bin"
+export PATH="$PATH:/root/go"
+export PATH="$PATH:/root/work"
+export PATH="$PATH:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games"
+export PATH="$PATH:/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin"
+export PATH="$PATH:/root/.local/bin"
+
+# Abide by the Source
+source ~/.zshrcsource ~/.zshrc
 echo
 echo
 
