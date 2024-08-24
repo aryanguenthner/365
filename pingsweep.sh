@@ -6,7 +6,7 @@
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
 # Tested on Kali 2024.2
-# Last minor updated 06/09/2024
+# Last minor updated 08/23/2024
 # The future is now
 # Edit this script to fit your system
 # Got nmap?
@@ -27,7 +27,7 @@ NV=$(nmap -V | awk 'FNR == 1 {print $1,$2,$3}')
 RANDOM=$$
 PWD=$(pwd)
 # MOBILE=TODO enable mobile alerts to be sent when scan is completed
-SYNTAX="nmap -T4 -A -Pn -n -sC -p- -vvvv --script http-screenshot --stats-every=1m --max-retries=0 --max-scan-delay=0 --min-hostgroup=10000 --min-parallelism=10000 -iL $TARGETS --exclude $KALI -oA $PWD/$FILE1"
+SYNTAX="nmap --script http-screenshot --exclude $KALI -T4 -sV -Pn -sC -p- --open -vvvv --stats-every=1m --max-retries=0 --min-hostgroup=100 --min-parallelism=100 -iL $TARGETS -oA $PWD/$FILE1"
 echo
 
 # Depencency Check
@@ -55,35 +55,8 @@ then
 
 else
 
-    echo -e "\e[034mDownloading Missing $BOOTSTRAP File\e[0m"
-wget -O /home/kali/Desktop/testing/nmapscans/nmap-bootstrap.xsl https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl > /dev/null 2>&1
-
-fi
-
-# PhantomJS Checker
-P=/usr/local/bin/phantomjs
-if [ -f $P ]
-then
-
-    echo "Found PhantomJS 1.9.8"
-
-else
-
-    echo -e "\e[034mDownloading Missing PhantomJS\e[0m"
-
-wget --no-check-certificate -O /opt/phantomjs-1.9.8-linux-x86_64.tar.bz2 https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
-tar xvjf phantomjs-1.9.8-linux-x86_64.tar.bz2 > /dev/null 2>&1
-rm phantomjs-1.9.8-linux-x86_64.tar.bz2
-
-echo "Extracting and Installing PhantomJS 1.9.8"
-cd /opt
-tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2
-mv phantomjs-1.9.8-linux-x86_64 phantomjs
-mv phantomjs /opt
-ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
-
-    echo "Phantomjs Version"
-phantomjs -v
+    echo -e "\e[034mCopying Missing $BOOTSTRAP File\e[0m"
+    cp /opt/nmap-bootstrap.xsl /home/kali/Desktop/testing/nmapscans/
 
 fi
 
@@ -94,11 +67,10 @@ then
     echo "Found http-screenshot.nse"
 
 else
-
-    echo -e "\e[034mDownloading missing file http-screenshot.nse\e[0m"
-cd /usr/share/nmap/scripts
-wget https://raw.githubusercontent.com/aryanguenthner/365/master/http-screenshot.nse
-nmap --script-updatedb > /dev/null 2>&1
+    
+    echo "Copying missing file http-screenshot.nse"
+    cp -r /opt/365/http-screenshot.nse /usr/share/nmap/scripts
+    nmap --script-updatedb > /dev/null 2>&1
 
 fi
 echo
@@ -129,7 +101,7 @@ echo
 
 echo -e "\e[034mGenerating a Target List\e[0m"
 
-# Ping Sweep
+# First Lets do a Ping Sweep
 echo
 nmap $SUBNET -vvvv --stats-every=1m -sn -n --exclude $KALI -oG $FILE0 && cat $FILE0 | grep --color=always "hosts up"
 echo
@@ -146,22 +118,9 @@ sleep 5
 echo -e "\e[034mHack The Planet\e[0m"
 echo "$SYNTAX"
 echo
-# TODO add gowitness
-: '# gowitness
-GOW=/opt/365/
-if [ -f $GOW ]
-then
-    echo "Found gowitness"
 
-else
-
-    echo -e "\e[034mDownloading Missing $gow File\e[0m"
-wget -O $PWD https://raw.githubusercontent.com/aryanguenthner/gowitness > /dev/null
-
-fi
-'
-# Nmap Scan
-nmap -iL $TARGETS --exclude $KALI -T4 -A -Pn -n -sC -p- --open -vvvv --stats-every=1m --max-retries=0 --max-scan-delay=0 --min-hostgroup=10000 --min-parallelism=10000 --script=http-screenshot -oA $PWD/$FILE1
+# Finally Lets Run the Nmap Scan
+nmap --script http-screenshot --exclude $KALI -T4 -sV -Pn -sC -p- --open -vvvv --stats-every=1m --max-retries=0 --min-hostgroup=100 --min-parallelism=100 -iL $TARGETS -oA $PWD/$FILE1
 echo
 echo -e "\e[034mMetasploit\e[0m"
 echo "service postgresql start"
