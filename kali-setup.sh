@@ -2,8 +2,8 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 08/23/2024, minor evil updates
-# Tested on Kali 2024.2 Gnome/XFCE
+# Last Updated 08/24/2024, minor evil updates
+# Tested on Kali 2024.3 Gnome/XFCE
 # Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
 # cd 365 && sudo chmod a+x *.sh
 # chmod -R 777 /home/kali/
@@ -71,7 +71,7 @@ echo "Downloading and installing Shodan Nrich"
 wget https://gitlab.com/api/v4/projects/33695681/packages/generic/nrich/latest/nrich_latest_x86_64.deb
 sudo dpkg -i nrich_latest_x86_64.deb
 
-# Create the docker plugins directory if it doesn't exist yet
+# Create the docker plugins directory
 mkdir -p ~/.docker/cli-plugins
 # Download the CLI into the plugins directory
 curl -sSL https://github.com/docker/compose/releases/download/v2.0.1/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
@@ -101,10 +101,7 @@ echo
 pip install updog
 echo
 
-: 'https://www.kali.org/docs/virtualization/install-virtualbox-host/#setup
-https://wiki.debian.org/VirtualBox#Debian_10_.22Buster.22_and_Debian_11_.22Bullseye.22
-https://www.kali.org/docs/virtualization/install-virtualbox-host/
-https://wiki.debian.org/VirtualBox
+: '
 '
 : ' echo "Are you installing a Kali Virtual Machine? "
 sudo dmidecode -t system | tee /opt/365/kali-system-info.log
@@ -121,23 +118,17 @@ else
 
     echo "Bare Metal installing Vbox"
 
-# Add gpg keys
-# Adding the gpg key failed. wtf.
-sudo curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/oracle_vbox_2016.gpg
-echo
-sudo curl -fsSL https://www.virtualbox.org/download/oracle_vbox.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/oracle_vbox.gpg
-
-# Add Repo
-sudo echo "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian stretch contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list
-
-# Update
-sudo apt update
+# Add VBox Repo
+sudo echo "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian bookworm contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A2F683C52980AECF
+sudo apt-key export 2980AECF | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/virtualbox.gpg
+sudo apt-get update
 
 # Install dkms
-sudo apt install -y dkms
+sudo apt-get install -y dkms
 
 # Install
-sudo apt -y install linux-headers-`uname -r` build-essential virtualbox virtualbox-ext-pack virtualbox-guest-utils
+sudo apt-get -y install linux-headers-`uname -r` build-essential virtualbox-ext-pack virtualbox-guest-utils
 echo
 
 # VirtualBox Hack for USB Devices
@@ -452,6 +443,8 @@ echo
 : '
 # Fix annoying apt-key
 # If Needed
+sudo apt-key del <KEY_ID>
+      <B9F8 D658 297A F3EF C18D  5CDF A2F6 83C5 2980 AECF>
 sudo apt-key export 058F8B6B | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/mongo.gpg
 sudo apt-key export 2007B954 | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/msf.gpg
 sudo apt-key export 038651BD | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/slack.gpg
