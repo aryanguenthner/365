@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 08/21/2024, minor evil updates
+# Last Updated 08/23/2024, minor evil updates
 # Tested on Kali 2024.2 Gnome/XFCE
 # Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
 # cd 365 && sudo chmod a+x *.sh
@@ -24,6 +24,9 @@ timedatectl set-timezone America/Los_Angeles
 echo -e "\e[034mToday is\e[0m"
 date '+%Y-%m-%d %r' | tee kali-setup-date.txt
 echo
+
+echo "Getting BIOS Info"
+sudo dmidecode -s bios-version | tee /home/kali/Desktop/bios-information.txt
 
 # Networking, Modified for IPv4
 echo -e "\e[033mNetwork Information\e[0m"
@@ -51,19 +54,6 @@ sed -i '40s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/s
 sudo systemctl enable ssh && sudo service ssh restart
 echo
 
-# Keep Nmap scans Organized
-mkdir -p /home/kali/Desktop/testing/nmapscans/
-
-# Upgrade Nmap User agent
-echo "Current Nmap User Agent"
-sed -n '160p' /usr/share/nmap/nselib/http.lua
-echo
-echo "New Nmap User Agent"
-echo
-sed -i '160d' /usr/share/nmap/nselib/http.lua
-sed -i '160iUSER_AGENT = stdnse.get_script_args('http.useragent') or "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko)"' /usr/share/nmap/nselib/http.lua
-sed -n '160p' /usr/share/nmap/nselib/http.lua
-
 # Kali Updates
 echo "It's a good idea to update and upgrade Kali first before running kali-setup.sh"
 echo
@@ -80,13 +70,6 @@ echo "Downloading and installing Shodan Nrich"
 wget https://gitlab.com/api/v4/projects/33695681/packages/generic/nrich/latest/nrich_latest_x86_64.deb
 sudo dpkg -i nrich_latest_x86_64.deb
 
-echo "Installing NetExec"
-# TODO: Add NetExec Examples, add automation script
-# Enhanced CME
-pipx ensurepath
-pipx install git+https://github.com/Pennyw0rth/NetExec
-echo
-
 # Create the docker plugins directory if it doesn't exist yet
 mkdir -p ~/.docker/cli-plugins
 # Download the CLI into the plugins directory
@@ -98,15 +81,22 @@ chmod +x ~/.docker/cli-plugins/docker-compose
 wget --no-check-certificate https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
 tar -xvzf go1.20.5.linux-amd64.tar.gz
 sudo mv go /usr/local
+
+echo
+echo "Installing NetExec"
+# TODO: Add NetExec Examples, add automation script
+# Enhanced CME
+pipx install git+https://github.com/Pennyw0rth/NetExec
+#pipx ensurepath
 echo
 
 # Customize Kali
 echo 'hostname -I' >> /root/.zshrc
-echo 'export HISTCONTROL="ignoredups:$PATH"' >> /root/.zshrc
-echo 'export GOROOT="/usr/local/go"' >> /root/.zshrc
-echo 'export GOPATH="$HOME/go"' >> /root/.zshrc
+echo 'export PATH="$HISTCONTROL="ignoredups:$PATH"' >> /root/.zshrc
+echo 'export PATH="$GOROOT="/usr/local/go"' >> /root/.zshrc
+echo 'export PATH="$GOPATH="$HOME/go"' >> /root/.zshrc
 echo 'export PATH="$GOPATH/bin:$GOROOT/bin:$PATH"' >> /root/.zshrc
-echo 'export PATH="PATH=$PATH:$GOROOT/bin/:$GOPATH/bin"' >> /root/.zshrc
+echo 'export PATH="$PATH:$GOROOT/bin/:$GOPATH/bin"' >> /root/.zshrc
 echo 'export PATH="$PATH:$(go env GOPATH)/bin"' >> /root/.zshrc
 echo 'export PATH="/root/go:$PATH"' >> /root/.zshrc
 echo 'export PATH="/usr/local/go/bin:$PATH"' >> /root/.zshrc
@@ -117,6 +107,7 @@ echo 'export PATH="/usr/sbin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap
 echo 'export PATH="/usr/lib/jvm/java-11-openjdk-amd64/:$PATH"' >> /root/.zshrc
 echo 'export PATH="/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
 echo 'export PATH="/usr/local/bin:$PATH"' >> /root/.zshrc
+echo 'export PATH="$PATH:/root/.local/bin"'
 source ~/.zshrc
 echo
 echo
@@ -137,9 +128,6 @@ https://wiki.debian.org/VirtualBox#Debian_10_.22Buster.22_and_Debian_11_.22Bulls
 https://www.kali.org/docs/virtualization/install-virtualbox-host/
 https://wiki.debian.org/VirtualBox
 '
-echo "Getting BIOS Info"
-sudo dmidecode -s bios-version | tee /home/kali/Desktop/bios-information.txt
-
 : ' echo "Are you installing a Kali Virtual Machine? "
 sudo dmidecode -t system | tee /opt/365/kali-system-info.log
 VM="$(grep 'Product Name: Virtual Machine\|Product Name: VMware Virtual Platform' kali-system-info.log)"
@@ -153,7 +141,7 @@ then
 
 else
 
-    echo "Bare Metal installling Vbox"
+    echo "Bare Metal installing Vbox"
 
 # Add gpg keys
 # Adding the gpg key failed. wtf.
@@ -201,8 +189,18 @@ echo
 
 echo
 
-# TODO: Slack Setup on Kali needs some love
-# https://slack.com/downloads/instructions/linux?ddl=1&build=deb
+# Keep Nmap scans Organized
+mkdir -p /home/kali/Desktop/testing/nmapscans/
+
+# Upgrade Nmap User agent
+echo "Current Nmap User Agent"
+sed -n '160p' /usr/share/nmap/nselib/http.lua
+echo
+echo "New Nmap User Agent"
+echo
+sed -i '160d' /usr/share/nmap/nselib/http.lua
+sed -i '160iUSER_AGENT = stdnse.get_script_args('http.useragent') or "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko)"' /usr/share/nmap/nselib/http.lua
+sed -n '160p' /usr/share/nmap/nselib/http.lua
 
 # Nmap bootstrap file checker, creates beautiful nmap reports
 NB=nmap-bootstrap.xsl
@@ -213,7 +211,7 @@ then
 
 else
 
-    echo -e "\e[034mDownloading Missing $BOOTSTRAP File\e[0m"
+    echo -e "\e[034mFetching Missing $BOOTSTRAP File\e[0m"
 wget --no-check-certificate -O /home/kali/Desktop/testing/nmapscans/nmap-bootstrap.xsl https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl > /dev/null 2>&1
 
 fi
@@ -490,7 +488,7 @@ sudo apt-key export 038651BD | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/sla
 
 # Install Ivre.Rocks
 #echo
-#sudo apt-get -y install ivre
+sudo apt-get -y install ivre
 #echo
 
 #Ivre Database init, data download & importation
@@ -507,9 +505,10 @@ sudo apt-key export 038651BD | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/sla
 
 # Ivre Nmap Magic
 #echo
-#echo "Copying IVRE Nmap Scripts to Nmap"
+echo "Copying IVRE Nmap Scripts to Nmap"
 echo
-#cp /usr/share/ivre/patches/nmap/scripts/*.nse /usr/share/nmap/scripts/
+cp /usr/share/ivre/patches/nmap/scripts/*.nse /usr/share/nmap/scripts/ /usr/local/bin/../share/nmap/scripts
+
 #nmap --script-updatedb > /dev/null
 #echo
 
@@ -522,9 +521,9 @@ then
 
 else
 
-    echo "Copying missing file http-screenshot.nse"
-cp /opt/365/http-screenshot.nse /usr/share/nmap/scripts
-nmap --script-updatedb > /dev/null
+    echo -e "\e[034mDownloading missing file http-screenshot.nse\e[0m"
+    wget --no-check-certificate -O /usr/share/nmap/scripts https://raw.githubusercontent.com/aryanguenthner/365/master/http-screenshot.nse
+    nmap --script-updatedb > /dev/null 2>&1
 
 fi
 
@@ -537,9 +536,10 @@ then
 
 else
 
-    echo -e "\e[034mCopying Missing PhantomJS\e[0m"
-
-    cp /opt/365/phantomjs-1.9.8-linux-x86_64.tar.bz2
+    echo -e "\e[034mDownloading Missing PhantomJS\e[0m"
+    wget --no-check-certificate -O /opt/phantomjs-1.9.8-linux-x86_64.tar.bz2 https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
+    tar xvjf phantomjs-1.9.8-linux-x86_64.tar.bz2 > /dev/null 2>&1
+    rm phantomjs-1.9.8-linux-x86_64.tar.bz2
 
     echo "Extracting and Installing PhantomJS 1.9.8"
     cd /opt
