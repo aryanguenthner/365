@@ -59,7 +59,8 @@ echo "It's a good idea to update and upgrade Kali first before running kali-setu
 echo
 echo "Be Patient, Installing Kali Dependencies"
 echo
-# Kali installs
+
+# Prepare Kali installs
 apt-get update && apt-get -y full-upgrade && apt -y autoremove && updatedb
 echo
 sudo apt-get install -y libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2 libkrb5-dev pipx metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq cups system-config-printer gobuster tcpxtract libreoffice
@@ -81,8 +82,8 @@ chmod +x ~/.docker/cli-plugins/docker-compose
 wget --no-check-certificate https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
 tar -xvzf go1.20.5.linux-amd64.tar.gz
 sudo mv go /usr/local
+go version
 
-echo
 echo "Installing NetExec"
 # TODO: Add NetExec Examples, add automation script
 # Enhanced CME
@@ -90,33 +91,10 @@ pipx install git+https://github.com/Pennyw0rth/NetExec
 #pipx ensurepath
 echo
 
-# Customize Kali
-echo 'hostname -I' >> /root/.zshrc
-echo 'export PATH="$HISTCONTROL="ignoredups:$PATH"' >> /root/.zshrc
-echo 'export PATH="$GOROOT="/usr/local/go"' >> /root/.zshrc
-echo 'export PATH="$GOPATH="$HOME/go"' >> /root/.zshrc
-echo 'export PATH="$GOPATH/bin:$GOROOT/bin:$PATH"' >> /root/.zshrc
-echo 'export PATH="$PATH:$GOROOT/bin/:$GOPATH/bin"' >> /root/.zshrc
-echo 'export PATH="$PATH:$(go env GOPATH)/bin"' >> /root/.zshrc
-echo 'export PATH="/root/go:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/local/go/bin:$PATH"' >> /root/.zshrc
-echo 'export PATH="/root/work:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/bin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc 
-echo 'export PATH="/usr/sbin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/lib/jvm/java-11-openjdk-amd64/:$PATH"' >> /root/.zshrc
-echo 'export PATH="/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
-echo 'export PATH="/usr/local/bin:$PATH"' >> /root/.zshrc
-echo 'export PATH="$PATH:/root/.local/bin"'
-source ~/.zshrc
-echo
-echo
-go version
-
 # Get Pippy wit it
 python3 -m pip install --upgrade pip
 pip3 install --upgrade setuptools
-echo
+
 echo "Installing psycopg"
 pip3 install psycopg
 echo
@@ -188,7 +166,6 @@ echo
 # did not install > openjdk-13-jdk libc++1-13 libc++abi1-13 libindicator3-7 libunwind-13 python3.8-venv libappindicator3-1 
 
 echo
-
 # Keep Nmap scans Organized
 mkdir -p /home/kali/Desktop/testing/nmapscans/
 
@@ -203,7 +180,7 @@ sed -i '160iUSER_AGENT = stdnse.get_script_args('http.useragent') or "Mozilla/5.
 sed -n '160p' /usr/share/nmap/nselib/http.lua
 
 # Nmap bootstrap file checker, creates beautiful nmap reports
-NB=nmap-bootstrap.xsl
+NB=/opt/365/nmap-bootstrap.xsl
 if [ -f $NB ]
 then
 
@@ -607,6 +584,28 @@ sudo systemctl stop docker && systemctl disable docker && ip link delete docker0
 updatedb
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
 # Enabling Kali Autologin
+echo
+
+# Customize Kali Paths
+echo 'hostname -I' >> /root/.zshrc
+echo 'export PATH="$HISTCONTROL="ignoredups:$PATH"' >> /root/.zshrc
+echo 'export PATH="$GOROOT="/usr/local/go"' >> /root/.zshrc
+echo 'export PATH="$GOPATH="$HOME/go"' >> /root/.zshrc
+echo 'export PATH="$GOPATH/bin:$GOROOT/bin:$PATH"' >> /root/.zshrc
+echo 'export PATH="$PATH:$GOROOT/bin/:$GOPATH/bin"' >> /root/.zshrc
+echo 'export PATH="$PATH:$(go env GOPATH)/bin"' >> /root/.zshrc
+echo 'export PATH="/root/go:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/local/go/bin:$PATH"' >> /root/.zshrc
+echo 'export PATH="/root/work:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/bin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc 
+echo 'export PATH="/usr/sbin:/usr/bin:=/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin/:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/lib/jvm/java-11-openjdk-amd64/:$PATH"' >> /root/.zshrc
+echo 'export PATH="/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:$PATH"' >> /root/.zshrc
+echo 'export PATH="/usr/local/bin:$PATH"' >> /root/.zshrc
+echo 'export PATH="$PATH:/root/.local/bin"'
+source ~/.zshrc
+echo
 echo
 
 #echo "Enable Kali Autologin"
