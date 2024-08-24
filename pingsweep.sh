@@ -56,7 +56,7 @@ then
 else
 
     echo -e "\e[034mCopying Missing $BOOTSTRAP File\e[0m"
-    cp /opt/nmap-bootstrap.xsl /home/kali/Desktop/testing/nmapscans/
+    cp /opt/365/nmap-bootstrap.xsl /home/kali/Desktop/testing/nmapscans/
 
 fi
 
