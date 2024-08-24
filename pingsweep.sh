@@ -9,7 +9,7 @@
 # Last minor updated 08/23/2024
 # The future is now
 # Edit this script to fit your system
-# Got nmap?
+# Got Nmap?
 ######################################################
 
 # Setting Variables
@@ -128,17 +128,17 @@ echo "msfdb init"
 echo "msfconsole -q"
 echo "db_import $FILE1.xml"
 echo
-echo "Create HTML Nmap Report"
+echo -e "\e[034mCreate HTML Nmap Report\e[0m"
 echo "xsltproc -o $FILE1.html $BOOTSTRAP $FILE1.xml"
 echo
 xsltproc -o $FILE1.html $BOOTSTRAP $FILE1.xml
 echo
 echo -e "\e[034mFinished - Nmap scan complete\e[0m"
 echo
+
 # Pay me later
 updatedb
-
-echo "xsltproc -o $FILE1.html $BOOTSTRAP $SCAN.xml"
+chmod -R 777 .
 
 sudo su -c "firefox $FILE1.html" kali
 
