@@ -173,10 +173,8 @@ mkdir -p /home/kali/Desktop/testing/nmapscans/
 echo "Current Nmap User Agent"
 sed -n '160p' /usr/share/nmap/nselib/http.lua
 echo
-echo "New Nmap User Agent"
-echo
-sed -i '160d' /usr/share/nmap/nselib/http.lua
-sed -i '160iUSER_AGENT = stdnse.get_script_args('http.useragent') or "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko)"' /usr/share/nmap/nselib/http.lua
+echo "Upgraded Nmap User Agent"
+sed -i '160c\local USER_AGENT = stdnse.get_script_args('\''http.useragent'\'') or "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit\/601.3.9 (KHTML, like Gecko)"' /usr/share/nmap/nselib/http.lua
 sed -n '160p' /usr/share/nmap/nselib/http.lua
 
 # Nmap bootstrap file checker, creates beautiful nmap reports
