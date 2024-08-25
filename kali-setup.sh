@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 08/24/2024, minor evil updates
+# Last Updated 08/25/2024, minor evil updates
 # Tested on Kali 2024.3 Gnome/XFCE
 # Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
 # cd 365 && sudo chmod a+x *.sh
@@ -237,21 +237,20 @@ sudo update-alternatives --set python3 /usr/bin/python3.9
 '
 echo
 
-: ' # Signal
-# NOTE: These instructions only work for 64 bit Debian-based Kali Linux
+# NOTE: These instructions only work for 64-bit Debian-based
 # Linux distributions such as Ubuntu, Mint etc.
-# 1. Install our official public software signing key
-wget --no-check-certificate -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
-cat signal-desktop-keyring.gpg | sudo tee -a /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
 
-# 2. Add our repository to your list of repositories
+# 1. Install our official public software signing key:
+wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
+cat signal-desktop-keyring.gpg | sudo tee /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
+
+# 2. Add our repository to your list of repositories:
 echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
-sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
+  sudo tee /etc/apt/sources.list.d/signal-xenial.list
 
-# 3. Update your package database and install signal
-sudo apt-get update && sudo apt-get install -y signal-desktop
-echo
-'
+# 3. Update your package database and install Signal:
+sudo apt update && sudo apt install signal-desktop
+
 # TODO: Yeet
 #echo "Kingfisher"
 #echo
@@ -455,7 +454,7 @@ sudo apt-key export 038651BD | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/sla
 
 # Install Ivre.Rocks
 #echo
-sudo apt-get -y install ivre
+#sudo apt-get -y install ivre
 #echo
 
 #Ivre Database init, data download & importation
@@ -591,7 +590,7 @@ export PATH="$PATH:/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin"
 export PATH="$PATH:/root/.local/bin"
 
 # Abide by the Source
-source ~/.zshrcsource ~/.zshrc
+source ~/.zshrc
 echo
 echo
 
@@ -601,6 +600,7 @@ echo
 #echo
 #echo "Kali Autologin Enabled"
 #sudo service lightdm restart
+chmod -R 777 /home/kali/
 reboot
 # Just in case DNS issues: nano -c /etc/resolvconf/resolv.conf.d/head
 # Gucci Mang
