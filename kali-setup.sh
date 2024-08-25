@@ -19,7 +19,7 @@ EXT=$(curl -s api.ipify.org)
 SUBNET=`ip r | awk 'NR==2' | awk '{print $1}'`
 PWD=$(pwd)
 
-# Todays Date
+# Today's Date
 timedatectl set-timezone America/Los_Angeles
 echo -e "\e[034mToday is\e[0m"
 date '+%Y-%m-%d %r' | tee kali-setup-date.txt
@@ -139,7 +139,6 @@ echo
 fi
 echo
 '
-
 # TODO
 # # https://github.com/balena-io/etcher
 #echo "Downloading Etcher USB Media Creator"
@@ -471,7 +470,7 @@ sudo apt-get -y install ivre
 #echo -e '\r'
 #echo
 
-# Ivre Nmap Magic
+: '# Ivre Nmap Magic
 #echo
 echo "Copying IVRE Nmap Scripts to Nmap"
 echo
@@ -494,6 +493,7 @@ else
     nmap --script-updatedb > /dev/null 2>&1
 
 fi
+'
 
 # PhantomJS Checker
 P=/usr/local/bin/phantomjs
