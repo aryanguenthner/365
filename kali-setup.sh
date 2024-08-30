@@ -599,6 +599,9 @@ updatedb
 # Enabling Kali Autologin
 echo
 
+# IP Address
+echo 'hostname -I' >> /root/.zshrc
+
 # Customize Kali Paths
 # Set HISTCONTROL separately
 export HISTCONTROL="ignoredups"
