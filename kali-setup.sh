@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 08/30/2024, minor evil updates
+# Last Updated 08/31/2024, minor evil updates
 # Tested on Kali 2024.3 Gnome/XFCE
 # Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
 # cd 365 && sudo chmod a+x *.sh
@@ -63,7 +63,7 @@ echo
 # Prepare Kali installs
 apt-get update && apt-get -y full-upgrade && apt -y autoremove && updatedb
 echo
-sudo apt-get install -y osrframework libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2 libkrb5-dev pipx metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc wkhtmltopdf xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq cups system-config-printer gobuster libreoffice
+sudo apt-get install -y osrframework libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2 libkrb5-dev pipx metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq cups system-config-printer gobuster libreoffice
 echo
 
 # Variables
@@ -88,6 +88,20 @@ rm "$DEB_FILE"
 
 echo "Google Chrome installation complete!"
 echo
+
+# Variables
+WKHTMLTOX_DEB_URL="https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bookworm_amd64.deb"
+WKHTMLTOX_DEB_FILE=wkhtmltox_0.12.6.1-3.bookworm_amd64.deb
+
+# Download the wkhtmltox Debian package
+echo "Downloading wkhtmltox..."
+wget -O "$WKHTMLTOX_DEB_FILE" "$WKHTMLTOX_DEB_URL"
+
+chmod -R 777 $WKHTMLTOX_DEB_FILE
+
+# Install the wkhtmltox downloaded package
+echo "Installing wkhtmltox..."
+sudo dpkg -i "$WKHTMLTOX_DEB_FILE"
 
 echo "Downloading and installing Shodan Nrich"
 # Get your Shodan API Key
