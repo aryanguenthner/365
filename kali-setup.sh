@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 08/31/2024, minor evil updates
+# Last Updated 09/02/2024, minor evil updates
 # Tested on Kali 2024.3 Gnome/XFCE
 # Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
 # cd 365 && sudo chmod a+x *.sh
@@ -48,6 +48,26 @@ echo $SUBNET
 echo
 sleep 2
 
+# IP Address
+echo 'hostname -I' >> /root/.zshrc
+
+# Customize Kali Paths
+# Set HISTCONTROL
+echo 'export HISTCONTROL="ignoredups"' >> /root/.zshrc
+
+# Update PATH variable with various directories
+echo 'export PATH="$PATH:/usr/local/go/bin"' >> /root/.zshrc
+echo 'export PATH="$PATH:$HOME/go/bin"' >> /root/.zshrc
+echo 'export PATH="$PATH:/root/go"' >> /root/.zshrc
+echo 'export PATH="$PATH:/root/work"' >> /root/.zshrc
+echo 'export PATH="$PATH:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games"' >> /root/.zshrc
+echo 'export PATH="$PATH:/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin"' >> /root/.zshrc
+echo 'export PATH="$PATH:/root/.local/bin"' >> /root/.zshrc
+
+# Abide by the Source
+source ~/.zshrc
+echo
+
 # Hackers like SSH
 echo "Enabling SSH"
 sed -i '40s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config > /dev/null 2>&1
@@ -89,6 +109,14 @@ rm "$DEB_FILE"
 echo "Google Chrome installation complete!"
 echo
 
+# Just Go for it!
+wget --no-check-certificate https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
+tar -xvzf go1.23.0.linux-amd64.tar.gz
+sudo mv go /usr/local
+echo
+# Get go Version
+go version
+
 # Variables
 WKHTMLTOX_DEB_URL="https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bookworm_amd64.deb"
 WKHTMLTOX_DEB_FILE=wkhtmltox_0.12.6.1-3.bookworm_amd64.deb
@@ -114,12 +142,6 @@ mkdir -p ~/.docker/cli-plugins
 curl -sSL https://github.com/docker/compose/releases/download/v2.0.1/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
 # Make the CLI executable
 chmod +x ~/.docker/cli-plugins/docker-compose
-
-# Just Go for it!
-wget --no-check-certificate https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
-tar -xvzf go1.20.5.linux-amd64.tar.gz
-sudo mv go /usr/local
-go version
 
 echo "Installing NetExec"
 # TODO: Add NetExec Examples, add automation script
@@ -611,27 +633,6 @@ sudo systemctl stop docker && systemctl disable docker && ip link delete docker0
 updatedb
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
 # Enabling Kali Autologin
-echo
-
-# IP Address
-echo 'hostname -I' >> /root/.zshrc
-
-# Customize Kali Paths
-# Set HISTCONTROL separately
-export HISTCONTROL="ignoredups"
-
-# Update PATH variable with various directories
-export PATH="$PATH:/usr/local/go/bin"
-export PATH="$PATH:$HOME/go/bin"
-export PATH="$PATH:/root/go"
-export PATH="$PATH:/root/work"
-export PATH="$PATH:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games"
-export PATH="$PATH:/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin"
-export PATH="$PATH:/root/.local/bin"
-
-# Abide by the Source
-source ~/.zshrc
-echo
 echo
 
 #echo "Enable Kali Autologin"
