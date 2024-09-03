@@ -35,7 +35,6 @@ echo -e "\e[033mPublic IP\e[0m"
 echo $CITY
 echo $EXT
 echo
-echo
 
 # Internal IP Address
 echo -e "\e[033mKali IP\e[0m"
@@ -47,26 +46,6 @@ echo -e "\e[033mCurrent Subnet\e[0m"
 echo $SUBNET
 echo
 sleep 2
-
-# IP Address
-echo 'hostname -I' >> /root/.zshrc
-
-# Customize Kali Paths
-# Set HISTCONTROL
-echo 'export HISTCONTROL="ignoredups"' >> /root/.zshrc
-
-# Update PATH variable with various directories
-echo 'export PATH="$PATH:/usr/local/go/bin"' >> /root/.zshrc
-echo 'export PATH="$PATH:$HOME/go/bin"' >> /root/.zshrc
-echo 'export PATH="$PATH:/root/go"' >> /root/.zshrc
-echo 'export PATH="$PATH:/root/work"' >> /root/.zshrc
-echo 'export PATH="$PATH:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games"' >> /root/.zshrc
-echo 'export PATH="$PATH:/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin"' >> /root/.zshrc
-echo 'export PATH="$PATH:/root/.local/bin"' >> /root/.zshrc
-
-# Abide by the Source
-source ~/.zshrc
-echo
 
 # Hackers like SSH
 echo "Enabling SSH"
@@ -115,7 +94,7 @@ tar -xvzf go1.23.0.linux-amd64.tar.gz
 sudo mv go /usr/local
 echo
 # Get go Version
-go version
+# go version
 
 # Variables
 WKHTMLTOX_DEB_URL="https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bookworm_amd64.deb"
@@ -628,6 +607,27 @@ date | tee kali-setup-finish-date.txt
 # Stop Docker
 # Remove Docker Interface until you need it
 sudo systemctl stop docker && systemctl disable docker && ip link delete docker0
+echo
+
+# IP Address
+echo 'hostname -I' >> /root/.zshrc
+
+# Customize Kali Paths
+# Set HISTCONTROL
+echo 'export HISTCONTROL="ignoredups"' >> /root/.zshrc
+
+# Update PATH variable with various directories
+echo 'export PATH="$PATH:/usr/local/go/bin"' >> /root/.zshrc
+echo 'export PATH="$PATH:$HOME/go/bin"' >> /root/.zshrc
+echo 'export PATH="$PATH:/root/go"' >> /root/.zshrc
+echo 'export PATH="$PATH:/root/work"' >> /root/.zshrc
+echo 'export PATH="$PATH:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games"' >> /root/.zshrc
+echo 'export PATH="$PATH:/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin"' >> /root/.zshrc
+echo 'export PATH="$PATH:/root/.local/bin"' >> /root/.zshrc
+
+# Abide by the Source
+source ~/.zshrc
+echo
 
 #
 updatedb
