@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 09/02/2024, minor evil updates
+# Last Updated 09/03/2024, minor evil updates
 # Tested on Kali 2024.3 Gnome/XFCE
 # Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
 # cd 365 && sudo chmod a+x *.sh
@@ -62,7 +62,7 @@ echo
 # Prepare Kali installs
 apt-get update && apt-get -y full-upgrade && apt -y autoremove && updatedb
 echo
-sudo apt-get install -y yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2 libkrb5-dev pipx metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq cups system-config-printer gobuster libreoffice
+sudo apt-get install -y wkhtmltopdf yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2 libkrb5-dev pipx metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq cups system-config-printer gobuster libreoffice
 echo
 
 # Variables
@@ -177,6 +177,18 @@ echo
 fi
 echo
 '
+
+# TODO: echo "OneListForAll"
+# cd /opt
+# git clone https://github.com/six2dez/OneListForAll.git
+# cd OneListForAll
+# 7z x onelistforall.7z.001
+# wget https://raw.githubusercontent.com/NotSoSecure/password_cracking_rules/master/OneRuleToRuleThemAll.rule
+# wget https://github.com/NotSoSecure/password_cracking_rules/blob/master/OneRuleToRuleThemAll.rule
+# wget -O rules.txt https://contest-2010.korelogic.com/rules.txt
+# cat rules.txt >> /etc/john/john.conf
+# echo
+
 # TODO
 # # https://github.com/balena-io/etcher
 #echo "Downloading Etcher USB Media Creator"
@@ -275,19 +287,58 @@ sudo update-alternatives --set python3 /usr/bin/python3.9
 '
 echo
 
-# NOTE: These instructions only work for 64-bit Debian-based
-# Linux distributions such as Ubuntu, Mint etc.
+# Download and Install Zoom
+# Define Zoom download URL and filename
+ZOOM_URL="https://zoom.us/client/latest/zoom_amd64.deb"
+ZOOM_DEB="zoom_amd64.deb"
 
-# 1. Install our official public software signing key:
+# Download Zoom .deb package
+echo "Downloading Zoom for Linux..."
+wget -O $ZOOM_DEB $ZOOM_URL
+
+# Install Zoom
+echo "Installing Zoom..."
+sudo apt install -y ./$ZOOM_DEB
+
+# Remove the downloaded .deb file
+echo "Cleaning up..."
+rm $ZOOM_DEB
+echo "Zoom installation complete."
+
+# Download and Install Discord
+# Define Discord download URL and filename
+DISCORD_URL="https://discord.com/api/download?platform=linux&format=deb"
+DISCORD_DEB="discord.deb"
+
+# Download Discord .deb package
+echo "Downloading Discord for Linux..."
+wget -O $DISCORD_DEB $DISCORD_URL
+
+# Install Discord
+echo "Installing Discord..."
+sudo apt install -y ./$DISCORD_DEB
+
+# Remove the downloaded .deb file
+echo "Cleaning up..."
+rm $DISCORD_DEB
+echo "Discord installation complete."
+
+# Signal Install
+# Step 1: Install the official public software signing key
+echo "Installing the Signal Desktop public software signing key..."
 wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
-cat signal-desktop-keyring.gpg | sudo tee /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
+sudo mv signal-desktop-keyring.gpg /usr/share/keyrings/
 
-# 2. Add our repository to your list of repositories:
-echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
-  sudo tee /etc/apt/sources.list.d/signal-xenial.list
+# Step 2: Add the Signal repository to the list of repositories
+echo "Adding Signal Desktop repository..."
+echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' | sudo tee /etc/apt/sources.list.d/signal-xenial.list
 
-# 3. Update your package database and install Signal:
-sudo apt update && sudo apt install signal-desktop
+# Step 3: Update the package database and install Signal
+echo "Updating package database and installing Signal Desktop..."
+sudo apt update && sudo apt install -y signal-desktop
+
+echo "Signal Desktop installation complete."
+echo
 
 # TODO: Yeet
 #echo "Kingfisher"
@@ -359,17 +410,6 @@ echo "Payloads All The Things"
 cd /opt
 git clone https://github.com/swisskyrepo/PayloadsAllTheThings.git
 echo
-
-# TODO: echo "OneListForAll"
-# cd /opt
-# git clone https://github.com/six2dez/OneListForAll.git
-# cd OneListForAll
-# 7z x onelistforall.7z.001
-# wget https://raw.githubusercontent.com/NotSoSecure/password_cracking_rules/master/OneRuleToRuleThemAll.rule
-# wget https://github.com/NotSoSecure/password_cracking_rules/blob/master/OneRuleToRuleThemAll.rule
-# wget -O rules.txt https://contest-2010.korelogic.com/rules.txt
-# cat rules.txt >> /etc/john/john.conf
-# echo
 
 echo "SprayingToolKit"
 cd /opt
@@ -447,20 +487,27 @@ cd impacket
 pip3 install -e .
 echo
 '
-# TODO: Fix this
-: 'echo "OSINT Phone Number Info Gathering Tool"
-cd /opt
+# Clone the PhoneInfoga repository
+echo "Cloning the PhoneInfoga repository..."
 sudo git clone https://github.com/sundowndev/PhoneInfoga.git
-cd PhoneInfoga
-sudo curl -sSL https://raw.githubusercontent.com/sundowndev/PhoneInfoga/master/support/scripts/install | bash \n
-sudo ./phoneinfoga version
-echo
-'
+
+# Change directory to the PhoneInfoga folder
+echo "Changing directory to PhoneInfoga..."
+cd PhoneInfoga || { echo "Failed to change directory to PhoneInfoga. Exiting."; exit 1; }
+
+# Run the install script
+echo "Running the PhoneInfoga install script..."
+sudo curl -sSL https://raw.githubusercontent.com/sundowndev/PhoneInfoga/master/support/scripts/install | sudo bash
+
+# Run PhoneInfoga
+echo "Running PhoneInfoga..."
+sudo ./phoneinfoga
 # Windows Exploit Suggester Next Gen
 echo
 cd /opt
 sudo git clone https://github.com/bitsadmin/wesng.git
 echo
+
 
 : '# MongoDB Install
 echo "Installing MongoDB 4.2 from Ubuntu Repo, Because It Works"
@@ -601,9 +648,6 @@ echo
 # systemctl restart ntp
 echo
 
-# Install Finish Time
-date | tee kali-setup-finish-date.txt
-
 # Stop Docker
 # Remove Docker Interface until you need it
 sudo systemctl stop docker && systemctl disable docker && ip link delete docker0
@@ -639,6 +683,9 @@ echo
 #sed -i '120s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
 #sed -i '121s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
 #echo
+# Install Finish Time
+date | tee kali-setup-finish-date.txt
+
 #echo "Kali Autologin Enabled"
 #sudo service lightdm restart
 chmod -R 777 /home/kali/
