@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 09/03/2024, minor evil updates
+# Last Updated 09/8/2024, minor evil updates
 # Tested on Kali 2024.3 Gnome/XFCE
 # Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
 # cd 365 && sudo chmod a+x *.sh
@@ -683,12 +683,31 @@ echo
 #sed -i '120s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
 #sed -i '121s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
 #echo
-# Install Finish Time
-date | tee kali-setup-finish-date.txt
 
 #echo "Kali Autologin Enabled"
 #sudo service lightdm restart
 chmod -R 777 /home/kali/
+
+# Enable TCP BBR (Bottleneck Bandwidth and RTT)
+# BBR is a congestion control algorithm developed by Google that can increase throughput on TCP connections.
+sudo sysctl net.ipv4.tcp_congestion_control=bbr
+sudo sysctl net.core.default_qdisc=fq
+
+# Add the following to /etc/sysctl.conf to make it persistent:
+echo "Making TCP BBR and FQ persistent across reboots..."
+echo "Making TCP BBR and FQ persistent across reboots" >> /etc/sysctl.conf
+echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
+echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
+      
+# Then, apply the changes:
+sudo sysctl -p
+
+# Set Kali to Presentation Mode
+xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/presentation-mode -T
+
+# Kali Setup Finish Time
+date | tee kali-setup-finish-date.txt
+
 reboot
 # Just in case DNS issues: nano -c /etc/resolvconf/resolv.conf.d/head
 # Gucci Mang
