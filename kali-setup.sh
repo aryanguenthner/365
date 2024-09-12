@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 09/8/2024, minor evil updates
+# Last Updated 09/11/2024, minor evil updates, pay me later
 # Tested on Kali 2024.3 Gnome/XFCE
 # Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
 # cd 365 && sudo chmod a+x *.sh
@@ -702,8 +702,19 @@ echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
 # Then, apply the changes:
 sudo sysctl -p
 
+# Disable screen lock
+xfconf-query -c xfce4-session -p /general/LockCommand -r
+
 # Set Kali to Presentation Mode
 xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/presentation-mode -T
+
+# Set the screen blank timeout to '0' (no blanking)
+xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/blank-on-ac -s 0
+xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/blank-on-battery -s 0
+
+# Disable automatic suspend
+xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/brightness-on-ac -s 100
+xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/brightness-on-battery -s 100
 
 # Kali Setup Finish Time
 date | tee kali-setup-finish-date.txt
