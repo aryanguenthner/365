@@ -6,8 +6,8 @@
 # eye -q "ransomeware" | grep .onion > results+onions.txt
 # torghost -a -c us,mx,ca 
 # libreoffice --calc results+onions.txt
-# Tested on Kali 2023.3
-# Last updated 08/27/2023, minor evil updates
+# Tested on Kali 2024.3
+# Last updated 09/12/2024, minor evil updates, pay me later
 # https://github.com/aryanguenthner
 # The future is now
 # https://dark.fail/
@@ -161,8 +161,8 @@ then
 
 else
 
-    echo -e "\e[034mGetting darksheets.sh from /opt/365e\e[0m"
-    cp /opt/365/darksheets.sh $PWD
+    echo -e "\e[034mGetting darksheets.sh from /opt/365\e[0m"
+    yes | cp -rf /opt/365/darksheets.sh $PWD
 fi
 echo
 
