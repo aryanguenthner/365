@@ -68,7 +68,6 @@ else
 fi
 echo
 
-
 # Todays Date
 timedatectl set-timezone America/Los_Angeles
 echo -e "\e[034mToday is\e[0m"
@@ -151,18 +150,6 @@ else
     wget -O sponsorblock-5.4.15.xpi https://addons.mozilla.org/firefox/downloads/file/4151024/sponsorblock-5.4.15.xpi
     sudo qterminal -e sudo su -c "firefox sponsorblock-5.4.15.xpi" kali;
 
-fi
-echo
-# Darksheet checker
-DARK=/home/kali/Desktop/testing/dark-web/darksheets.sh
-if [ -f "$DARK" ]
-then
-    echo "Found darksheets.sh"
-
-else
-
-    echo -e "\e[034mGetting darksheets.sh from /opt/365\e[0m"
-    yes | cp -rf /opt/365/darksheets.sh $PWD
 fi
 echo
 
