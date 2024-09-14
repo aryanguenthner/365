@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 09/12/2024, minor evil updates, pay me later
+# Last Updated 09/13/2024, minor evil updates, pay me later
 # Tested on Kali 2024.3 Gnome/XFCE
 # Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
 # cd 365 && sudo chmod a+x *.sh
@@ -88,14 +88,6 @@ rm "$DEB_FILE"
 echo "Google Chrome installation complete!"
 echo
 
-# Just Go for it!
-wget --no-check-certificate https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
-tar -xvzf go1.23.0.linux-amd64.tar.gz
-sudo mv go /usr/local
-echo
-# Get go Version
-# go version
-
 # Variables
 WKHTMLTOX_DEB_URL="https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bookworm_amd64.deb"
 WKHTMLTOX_DEB_FILE=wkhtmltox_0.12.6.1-3.bookworm_amd64.deb
@@ -103,7 +95,6 @@ WKHTMLTOX_DEB_FILE=wkhtmltox_0.12.6.1-3.bookworm_amd64.deb
 # Download the wkhtmltox Debian package
 echo "Downloading wkhtmltox..."
 wget -O "$WKHTMLTOX_DEB_FILE" "$WKHTMLTOX_DEB_URL"
-
 chmod -R 777 $WKHTMLTOX_DEB_FILE
 
 # Install the wkhtmltox downloaded package
@@ -236,6 +227,20 @@ echo
 # qterminal -e python3 -m http.server 80
 # qterminal -e cloudflared tunnel -url localhost:80
 dpkg -i /opt/365/cloudflared-linux-amd64.deb
+
+# Go Env Paths
+echo 'export PATH="$PATH:/usr/local/go/bin"' >> /root/.zshrc
+echo 'export PATH="$PATH:$HOME/go/bin"' >> /root/.zshrc
+echo 'export PATH="$PATH:/root/go"' >> /root/.zshrc
+
+# Just Go for it!
+wget --no-check-certificate https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
+tar -xvzf go1.23.0.linux-amd64.tar.gz
+sudo mv go /usr/local
+echo
+# Get go Version
+source ~/.zshrc
+go version
 
 # Project Discovery Nuclei
 cd /opt
@@ -661,9 +666,6 @@ echo 'hostname -I' >> /root/.zshrc
 echo 'export HISTCONTROL="ignoredups"' >> /root/.zshrc
 
 # Update PATH variable with various directories
-echo 'export PATH="$PATH:/usr/local/go/bin"' >> /root/.zshrc
-echo 'export PATH="$PATH:$HOME/go/bin"' >> /root/.zshrc
-echo 'export PATH="$PATH:/root/go"' >> /root/.zshrc
 echo 'export PATH="$PATH:/root/work"' >> /root/.zshrc
 echo 'export PATH="$PATH:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games"' >> /root/.zshrc
 echo 'export PATH="$PATH:/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin"' >> /root/.zshrc
