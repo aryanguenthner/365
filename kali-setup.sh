@@ -32,8 +32,8 @@ sudo dmidecode -s bios-version | tee /home/kali/Desktop/bios-information.txt
 echo -e "\e[033mNetwork Information\e[0m"
 echo
 echo -e "\e[033mPublic IP\e[0m"
-echo $CITY
-echo $EXT
+echo "$CITY"
+echo "$EXT"
 echo
 
 # Internal IP Address
@@ -191,45 +191,10 @@ echo
 pip install updog
 echo
 
+## VirtualBox Hack for USB Devices
+#sudo usermod -a -G vboxusers $USER
+
 : '
-'
-: ' echo "Are you installing a Kali Virtual Machine? "
-sudo dmidecode -t system | tee /opt/365/kali-system-info.log
-VM="$(grep 'Product Name: Virtual Machine\|Product Name: VMware Virtual Platform' kali-system-info.log)"
-VM1="Product Name: Virtual Machine"
-VM2="Product Name: VMware Virtual Platform"
-
-if [ $VM "Product Name: Virtual Machine" -o $VM "Product Name: VMware Virtual Platform" ]
-then
-
-    echo "Virtualization Detected - Skipping"
-
-else
-
-    echo "Bare Metal installing Vbox"
-
-# Add VBox Repo
-sudo echo "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian bookworm contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A2F683C52980AECF
-sudo apt-key export 2980AECF | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/virtualbox.gpg
-sudo apt-get update
-
-# Install dkms
-sudo apt-get install -y dkms
-
-# Install
-sudo apt-get -y install linux-headers-`uname -r` build-essential virtualbox-ext-pack virtualbox-guest-utils
-echo
-
-# VirtualBox Hack for USB Devices
-sudo usermod -a -G vboxusers $USER
-
-echo
-
-fi
-echo
-'
-
 # TODO: echo "OneListForAll"
 # cd /opt
 # git clone https://github.com/six2dez/OneListForAll.git
@@ -240,7 +205,8 @@ echo
 # wget -O rules.txt https://contest-2010.korelogic.com/rules.txt
 # cat rules.txt >> /etc/john/john.conf
 # echo
-
+'
+: '
 # TODO
 # # https://github.com/balena-io/etcher
 #echo "Downloading Etcher USB Media Creator"
@@ -256,7 +222,7 @@ echo
 # text in your terminal > ansi2html > nmap-report.html
 # ssmtp <--works good, just doesnt play with sendmail.
 # did not install > openjdk-13-jdk libc++1-13 libc++abi1-13 libindicator3-7 libunwind-13 python3.8-venv libappindicator3-1 
-
+'
 echo
 # Keep Nmap scans Organized
 mkdir -p /home/kali/Desktop/testing/nmapscans/
@@ -496,12 +462,12 @@ echo
 
 # Fix annoying apt-key
 # If Needed
-sudo apt-key del <KEY_ID>
+# sudo apt-key del <KEY_ID>
       <B9F8 D658 297A F3EF C18D  5CDF A2F6 83C5 2980 AECF>
-sudo apt-key export 058F8B6B | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/mongo.gpg
-sudo apt-key export 2007B954 | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/msf.gpg
-sudo apt-key export 038651BD | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/slack.gpg
-'
+# sudo apt-key export 058F8B6B | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/mongo.gpg
+# sudo apt-key export 2007B954 | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/msf.gpg
+# sudo apt-key export 038651BD | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/slack.gpg
+
 ## Ivre Dependencies
 #sudo pip install tinydb
 #sudo pip install py2neo
@@ -523,31 +489,6 @@ sudo apt-key export 038651BD | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/sla
 # 40 Min download --> sudo ivre ipdata --download
 #echo -e '\r'
 #echo
-
-: '# Ivre Nmap Magic
-#echo
-echo "Copying IVRE Nmap Scripts to Nmap"
-echo
-cp /usr/share/ivre/patches/nmap/scripts/*.nse /usr/share/nmap/scripts/ /usr/local/bin/../share/nmap/scripts
-
-#nmap --script-updatedb > /dev/null
-#echo
-
-# http-screenshot Checker
-N=/usr/share/nmap/scripts/http-screenshot.nse
-if [ -f "$N" ]
-then
-
-    echo "Found http-screenshot.nse"
-
-else
-
-    echo -e "\e[034mDownloading missing file http-screenshot.nse\e[0m"
-    wget --no-check-certificate -O /usr/share/nmap/scripts https://raw.githubusercontent.com/aryanguenthner/365/master/http-screenshot.nse
-    nmap --script-updatedb > /dev/null 2>&1
-
-fi
-echo
 
 # Can I get a Witness?
 # Get Screenshots
