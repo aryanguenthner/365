@@ -52,23 +52,7 @@ echo
 echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
 echo "net.ipv6.conf.default.disable_ipv6 = 1"  >> /etc/sysctl.conf
 echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
-
-# Add the following to /etc/sysctl.conf to make it persistent:
-echo "Making TCP BBR and FQ persistent across reboots..."
-echo "# Making TCP BBR and FQ persistent across reboots" >> /etc/sysctl.conf
-echo "net.core.default_qdisc = fq" >> /etc/sysctl.conf
-echo "net.ipv4.tcp_congestion_control = bbr" >> /etc/sysctl.conf
-
-# Enable TCP BBR (Bottleneck Bandwidth and RTT)
-# BBR is a congestion control algorithm developed by Google that can increase throughput on TCP connections.
-sudo sysctl net.core.default_qdisc = fq
-sudo sysctl net.ipv4.tcp_congestion_control = bbr
-
 echo
-# Restart sysctl
-sudo sysctl -p
-# Verify BBR
-sysctl net.ipv4.tcp_congestion_control
 
 # Hackers like SSH
 echo "Enabling SSH"
