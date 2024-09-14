@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 09/13/2024, minor evil updates, pay me later
+# Last Updated 09/14/2024, minor evil updates, pay me later
 # Tested on Kali 2024.3 Gnome/XFCE
 # Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
 # cd 365 && sudo chmod a+x *.sh
@@ -46,34 +46,29 @@ echo -e "\e[033mCurrent Subnet\e[0m"
 echo $SUBNET
 echo
 sleep 2
+echo
 
-# Enable TCP BBR (Bottleneck Bandwidth and RTT)
-# BBR is a congestion control algorithm developed by Google that can increase throughput on TCP connections.
-sudo sysctl net.ipv4.tcp_congestion_control=bbr
-sudo sysctl net.core.default_qdisc=fq
+# Disable IPV6
+echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
+echo "net.ipv6.conf.default.disable_ipv6 = 1"  >> /etc/sysctl.conf
+echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
 
 # Add the following to /etc/sysctl.conf to make it persistent:
 echo "Making TCP BBR and FQ persistent across reboots..."
-echo "Making TCP BBR and FQ persistent across reboots" >> /etc/sysctl.conf
-echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
-echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
-      
-# Then, apply the changes:
+echo "# Making TCP BBR and FQ persistent across reboots" >> /etc/sysctl.conf
+echo "net.core.default_qdisc = fq" >> /etc/sysctl.conf
+echo "net.ipv4.tcp_congestion_control = bbr" >> /etc/sysctl.conf
+
+# Enable TCP BBR (Bottleneck Bandwidth and RTT)
+# BBR is a congestion control algorithm developed by Google that can increase throughput on TCP connections.
+sudo sysctl net.core.default_qdisc = fq
+sudo sysctl net.ipv4.tcp_congestion_control = bbr
+
+echo
+# Restart sysctl
 sudo sysctl -p
-
-# Disable screen lock
-xfconf-query -c xfce4-session -p /general/LockCommand -r
-
-# Set Kali to Presentation Mode
-xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/presentation-mode -s true
-
-# Set the screen blank timeout to '0' (no blanking)
-xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/blank-on-ac -s 0
-xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/blank-on-battery -s 0
-
-# Disable automatic suspend
-xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/brightness-on-ac -s 100
-xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/brightness-on-battery -s 100
+# Verify BBR
+sysctl net.ipv4.tcp_congestion_control
 
 # Hackers like SSH
 echo "Enabling SSH"
@@ -98,7 +93,7 @@ CHROME_DEB_URL="https://dl.google.com/linux/direct/google-chrome-stable_current_
 DEB_FILE="google-chrome-stable_current_amd64.deb"
 
 # Download the latest Google Chrome Debian package
-echo "Downloading Google Chrome..."
+echo "Downloading and Installing Google Chrome..."
 wget -O "$DEB_FILE" "$CHROME_DEB_URL"
 
 # Install the downloaded package
@@ -515,22 +510,6 @@ cd /opt
 sudo git clone https://github.com/bitsadmin/wesng.git
 echo
 
-
-: '# MongoDB Install
-echo "Installing MongoDB 4.2 from Ubuntu Repo, Because It Works"
-echo
-cd /tmp
-wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add -
-echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.2.list
-apt-get update
-sudo apt-get -y install mongodb-org
-service mongod start
-systemctl enable mongod.service
-echo "Hopefully MongoDB Installed"
-echo
-'
-
-: '
 # Fix annoying apt-key
 # If Needed
 sudo apt-key del <KEY_ID>
@@ -584,33 +563,7 @@ else
     nmap --script-updatedb > /dev/null 2>&1
 
 fi
-'
-
-# PhantomJS Checker
-P=/usr/local/bin/phantomjs
-if [ -f $P ]
-then
-
-    echo "Found PhantomJS 1.9.8"
-
-else
-
-    echo -e "\e[034mDownloading Missing PhantomJS\e[0m"
-    wget --no-check-certificate -O /opt/phantomjs-1.9.8-linux-x86_64.tar.bz2 https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
-    tar xvjf phantomjs-1.9.8-linux-x86_64.tar.bz2 > /dev/null 2>&1
-    rm phantomjs-1.9.8-linux-x86_64.tar.bz2
-
-    echo "Extracting and Installing PhantomJS 1.9.8"
-    cd /opt
-    tar xvf phantomjs-1.9.8-linux-x86_64.tar.bz2
-    mv phantomjs-1.9.8-linux-x86_64 phantomjs
-    mv phantomjs /opt
-    ln -s /opt/phantomjs/bin/phantomjs /usr/local/bin/phantomjs
-
-    echo "Phantomjs Version"
-    phantomjs -v
-
-fi
+echo
 
 # Can I get a Witness?
 # Get Screenshots
@@ -637,7 +590,8 @@ echo
 
 # Tor Web Browser Stuff
 # sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && 
-sudo apt-get -y install torbrowser-launcher
+sudo apt-get -y install python3-distutils torbrowser-launcher
+
 cd /opt
 sudo git clone https://github.com/aryanguenthner/TorGhost.git
 cd TorGhost
