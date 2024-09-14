@@ -47,6 +47,34 @@ echo $SUBNET
 echo
 sleep 2
 
+# Enable TCP BBR (Bottleneck Bandwidth and RTT)
+# BBR is a congestion control algorithm developed by Google that can increase throughput on TCP connections.
+sudo sysctl net.ipv4.tcp_congestion_control=bbr
+sudo sysctl net.core.default_qdisc=fq
+
+# Add the following to /etc/sysctl.conf to make it persistent:
+echo "Making TCP BBR and FQ persistent across reboots..."
+echo "Making TCP BBR and FQ persistent across reboots" >> /etc/sysctl.conf
+echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
+echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
+      
+# Then, apply the changes:
+sudo sysctl -p
+
+# Disable screen lock
+xfconf-query -c xfce4-session -p /general/LockCommand -r
+
+# Set Kali to Presentation Mode
+xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/presentation-mode -T
+
+# Set the screen blank timeout to '0' (no blanking)
+xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/blank-on-ac -s 0
+xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/blank-on-battery -s 0
+
+# Disable automatic suspend
+xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/brightness-on-ac -s 100
+xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/brightness-on-battery -s 100
+
 # Hackers like SSH
 echo "Enabling SSH"
 sed -i '40s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config > /dev/null 2>&1
@@ -86,6 +114,60 @@ echo "Cleaning up..."
 rm "$DEB_FILE"
 
 echo "Google Chrome installation complete!"
+echo
+
+# Signal Install
+# Step 1: Install the official public software signing key
+echo "Installing the Signal Desktop public software signing key..."
+wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
+sudo mv signal-desktop-keyring.gpg /usr/share/keyrings/
+
+# Step 2: Add the Signal repository to the list of repositories
+echo "Adding Signal Desktop repository..."
+echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' | sudo tee /etc/apt/sources.list.d/signal-xenial.list
+
+# Step 3: Update the package database and install Signal
+echo "Updating package database and installing Signal Desktop..."
+sudo apt update && sudo apt install -y signal-desktop
+
+echo "Signal Desktop installation complete."
+echo
+
+# Download and Install Zoom
+# Define Zoom download URL and filename
+ZOOM_URL="https://zoom.us/client/latest/zoom_amd64.deb"
+ZOOM_DEB="zoom_amd64.deb"
+
+# Download Zoom .deb package
+echo "Downloading Zoom for Linux..."
+wget -O $ZOOM_DEB $ZOOM_URL
+
+# Install Zoom
+echo "Installing Zoom..."
+sudo apt install -y ./$ZOOM_DEB
+
+# Remove the downloaded .deb file
+echo "Cleaning up..."
+rm $ZOOM_DEB
+echo "Zoom installation complete."
+
+# Download and Install Discord
+# Define Discord download URL and filename
+DISCORD_URL="https://discord.com/api/download?platform=linux&format=deb"
+DISCORD_DEB="discord.deb"
+
+# Download Discord .deb package
+echo "Downloading Discord for Linux..."
+wget -O $DISCORD_DEB $DISCORD_URL
+
+# Install Discord
+echo "Installing Discord..."
+sudo apt install -y ./$DISCORD_DEB
+
+# Remove the downloaded .deb file
+echo "Cleaning up..."
+rm $DISCORD_DEB
+echo "Discord installation complete."
 echo
 
 # Variables
@@ -270,86 +352,6 @@ go install github.com/jaeles-project/gospider@latest
 # Install gobuster - Directory Buster
 cd /opt
 go install github.com/OJ/gobuster/v3@latest
-
-# How to Update Python Alternatives
-: ' # kali python Config
-ls -l /usr/bin/python*
-sudo update-alternatives --list python
-sudo update-alternatives --config python
-sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
-sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.9 3
-sudo update-alternatives --set python /usr/bin/python3.9
-# update-alternatives --remove-all python
-
-#kali python3 Config
-ls -l /usr/bin/python*
-sudo update-alternatives --list python3
-sudo update-alternatives --config python3
-sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
-sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 2
-sudo update-alternatives --set python3 /usr/bin/python3.9
-# update-alternatives --remove-all python
-'
-echo
-
-# Download and Install Zoom
-# Define Zoom download URL and filename
-ZOOM_URL="https://zoom.us/client/latest/zoom_amd64.deb"
-ZOOM_DEB="zoom_amd64.deb"
-
-# Download Zoom .deb package
-echo "Downloading Zoom for Linux..."
-wget -O $ZOOM_DEB $ZOOM_URL
-
-# Install Zoom
-echo "Installing Zoom..."
-sudo apt install -y ./$ZOOM_DEB
-
-# Remove the downloaded .deb file
-echo "Cleaning up..."
-rm $ZOOM_DEB
-echo "Zoom installation complete."
-
-# Download and Install Discord
-# Define Discord download URL and filename
-DISCORD_URL="https://discord.com/api/download?platform=linux&format=deb"
-DISCORD_DEB="discord.deb"
-
-# Download Discord .deb package
-echo "Downloading Discord for Linux..."
-wget -O $DISCORD_DEB $DISCORD_URL
-
-# Install Discord
-echo "Installing Discord..."
-sudo apt install -y ./$DISCORD_DEB
-
-# Remove the downloaded .deb file
-echo "Cleaning up..."
-rm $DISCORD_DEB
-echo "Discord installation complete."
-
-# Signal Install
-# Step 1: Install the official public software signing key
-echo "Installing the Signal Desktop public software signing key..."
-wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
-sudo mv signal-desktop-keyring.gpg /usr/share/keyrings/
-
-# Step 2: Add the Signal repository to the list of repositories
-echo "Adding Signal Desktop repository..."
-echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' | sudo tee /etc/apt/sources.list.d/signal-xenial.list
-
-# Step 3: Update the package database and install Signal
-echo "Updating package database and installing Signal Desktop..."
-sudo apt update && sudo apt install -y signal-desktop
-
-echo "Signal Desktop installation complete."
-echo
-
-# TODO: Yeet
-#echo "Kingfisher"
-#echo
-#cd /opt
-# git clone https://github.com/onevcat/Kingfisher.git
 echo
 
 echo "PWN AD"
@@ -370,7 +372,7 @@ git clone https://github.com/TheRook/subbrute.git
 echo
 
 echo "Cewl Password Lists"
-# cewl -m 9 https://www.example.com -c -e --with-numbers -w example-cewl.txt
+# cewl -m 8 https://www.example.com -c -e --with-numbers -w example-cewl.txt
 
 cd /opt
 git clone https://github.com/digininja/CeWL.git
@@ -675,52 +677,18 @@ echo 'export PATH="$PATH:/root/.local/bin"' >> /root/.zshrc
 source ~/.zshrc
 echo
 
-#
-updatedb
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
-# Enabling Kali Autologin
 echo
 
-#echo "Enable Kali Autologin"
+echo "Enable Kali Autologin"
 sed -i '120s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
 sed -i '121s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
-#echo
-
-#echo "Kali Autologin Enabled"
-#sudo service lightdm restart
+sudo service lightdm restart
 chmod -R 777 /home/kali/
-
-# Enable TCP BBR (Bottleneck Bandwidth and RTT)
-# BBR is a congestion control algorithm developed by Google that can increase throughput on TCP connections.
-sudo sysctl net.ipv4.tcp_congestion_control=bbr
-sudo sysctl net.core.default_qdisc=fq
-
-# Add the following to /etc/sysctl.conf to make it persistent:
-echo "Making TCP BBR and FQ persistent across reboots..."
-echo "Making TCP BBR and FQ persistent across reboots" >> /etc/sysctl.conf
-echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
-echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
-      
-# Then, apply the changes:
-sudo sysctl -p
-
-# Disable screen lock
-xfconf-query -c xfce4-session -p /general/LockCommand -r
-
-# Set Kali to Presentation Mode
-xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/presentation-mode -T
-
-# Set the screen blank timeout to '0' (no blanking)
-xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/blank-on-ac -s 0
-xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/blank-on-battery -s 0
-
-# Disable automatic suspend
-xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/brightness-on-ac -s 100
-xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/brightness-on-battery -s 100
 
 # Kali Setup Finish Time
 date | tee kali-setup-finish-date.txt
-
+updatedb
 reboot
 # Just in case DNS issues: nano -c /etc/resolvconf/resolv.conf.d/head
 # Gucci Mang
