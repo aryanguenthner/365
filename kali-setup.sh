@@ -65,7 +65,7 @@ sudo sysctl -p
 xfconf-query -c xfce4-session -p /general/LockCommand -r
 
 # Set Kali to Presentation Mode
-xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/presentation-mode -T
+xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/presentation-mode -s true
 
 # Set the screen blank timeout to '0' (no blanking)
 xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/blank-on-ac -s 0
