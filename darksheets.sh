@@ -7,7 +7,7 @@
 # torghost -a -c us,mx,ca 
 # libreoffice --calc results+onions.txt
 # Tested on Kali 2024.3
-# Last updated 09/12/2024, minor evil updates, pay me later
+# Last updated 09/13/2024, minor evil updates, pay me later
 # https://github.com/aryanguenthner
 # The future is now
 # https://dark.fail/
@@ -37,7 +37,7 @@ echo
 # Check for Updates
 echo -e "\e[033mCheck for updates y/n: \e[0m"
 read UPS
-if [ $UPS == y ]
+if [ "$UPS" == "y" ]
 then
     echo
     echo "Running apt-get update"
@@ -54,7 +54,7 @@ echo
 # Check Tor Connectivity
 echo -e "\e[033mCheck Tor connectivity y/n: \e[0m"
 read TOR
-if [ $TOR == y ]
+if [ "$TOR" == "y" ]
 then
     echo
     echo "Checking Tor Connection"
