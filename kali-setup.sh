@@ -463,7 +463,7 @@ echo
 # Fix annoying apt-key
 # If Needed
 # sudo apt-key del <KEY_ID>
-      <B9F8 D658 297A F3EF C18D  5CDF A2F6 83C5 2980 AECF>
+#      <B9F8 D658 297A F3EF C18D  5CDF A2F6 83C5 2980 AECF>
 # sudo apt-key export 058F8B6B | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/mongo.gpg
 # sudo apt-key export 2007B954 | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/msf.gpg
 # sudo apt-key export 038651BD | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/slack.gpg
