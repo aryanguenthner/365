@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 09/14/2024, minor evil updates, pay me later
+# Last Updated 09/15/2024, minor evil updates, pay me later
 # Tested on Kali 2024.3 Gnome/XFCE
 # Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
 # cd 365 && sudo chmod a+x *.sh
@@ -430,15 +430,6 @@ cd /opt
 git clone https://github.com/s0md3v/Breacher.git
 echo
 
-: 'echo "Installing Impacket"
-cd /opt
-sudo pip3 install jinja2==2.10.1
-git clone https://github.com/SecureAuthCorp/impacket.git
-cd /opt
-cd impacket
-pip3 install -e .
-echo
-'
 # Clone the PhoneInfoga repository
 echo "Cloning the PhoneInfoga repository..."
 sudo git clone https://github.com/sundowndev/PhoneInfoga.git
@@ -568,6 +559,8 @@ chmod -R 777 /home/kali/
 # Kali Setup Finish Time
 date | tee kali-setup-finish-date.txt
 updatedb
+
+echo "Hack The Planet"
 reboot
 # Just in case DNS issues: nano -c /etc/resolvconf/resolv.conf.d/head
 # Gucci Mang
