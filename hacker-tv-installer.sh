@@ -1,6 +1,6 @@
 # Hypnotix Free TV on Kali 2023.3
 # 
-# 09/01/2023
+# 09/15/2024
 echo
 sudo apt-get update
 echo
@@ -16,22 +16,29 @@ then
 else
 
 # Download Hypnotix
-wget --no-check-certificate https://github.com/linuxmint/hypnotix/releases/download/master.mint21/packages.tar.gz > /dev/null 2>&1
-tar -xf packages.tar.gz > /dev/null 2>&1
-rm packages.tar.gz
-
-chmod -R 777 /opt/packages && cd /opt/packages
-dpkg -i *.deb
-
 echo "Installing Dependencies"
 echo
 sudo apt-get install -y dbus-x11 libmpv2 gir1.2-xapp-1.0 xapps-common debhelper python3-setproctitle dpkg-dev git
 
 cd /opt
+git clone https://github.com/linuxmint/hypnotix/ && cd hypnotix/
+
+wget --no-check-certificate http://packages.linuxmint.com//pool/main/c/circle-flags/circle-flags-svg_2.3.0_all.deb
+dpkg -i circle-flags-svg_2.3.0_all.deb
+
+cd /opt/hypnotix
 wget --no-check-certificate http://ftp.us.debian.org/debian/pool/main/i/imdbpy/python3-imdbpy_6.6-1_all.deb > /dev/null 2>&1
 dpkg -i python3-imdbpy_6.6-1_all.deb > /dev/null 2>&1
 rm python3-imdbpy_6.6-1_all.deb
 echo
+
+wget --no-check-certificate https://github.com/linuxmint/hypnotix/releases/download/master.lmde6/packages.tar.gz > /dev/null 2>&1
+tar -xf packages.tar.gz > /dev/null 2>&1
+
+
+cd packages/
+dpkg -i *.deb
+
 # Insurance
 sudo apt-get --fix-broken install -y
 updatedb
@@ -72,17 +79,17 @@ if [ "$D3" == "direct rendering: Yes" ]
 then
 
 echo
-echo "3D Ready"
+    echo "3D Ready"
 echo
 
 else
 
-echo "3D not Enabled"
+    echo "3D not Enabled"
 echo "Power off VM, Open VirtualBox, Settings > Display > Extended Features Enable 3D Acceleration"
 
 fi
 
-echo "Tip"
+    echo "Pro Tip"
 echo "Add this Provider -> https://iptv-org.github.io/iptv/index.m3u"
 echo
 echo "IPTV Provider with full version: https://iptv-org.github.io/iptv/index.nsfw.m3u"
