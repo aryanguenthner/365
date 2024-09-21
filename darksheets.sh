@@ -43,7 +43,7 @@ if [ "$UPS" == "y" ]
 then
     echo
     echo "Running apt-get update"
-    sudo apt-get update > /dev/null 2>&1
+    sudo apt-get update && apt-get full-upgrade -y
     echo
     echo
 else
@@ -60,7 +60,7 @@ if [ "$TOR" == "y" ]
 then
     echo
     echo "Checking Tor Connection"
-    curl -x socks5h://localhost:9050 -s https://check.torproject.org/api/ip | grep "true"
+    curl -x socks5h://localhost:9050 -s https://check.torproject.org/api/ip | grep "true" --color
     echo
     echo
 else
@@ -155,6 +155,29 @@ else
 fi
 echo
 
+# Define the path to the virtual environment
+VENV_DIR="venv"
+
+# Check if pypy3-venv is installed, and if not, install it
+if ! dpkg -l | grep -q pypy3-venv; then
+  echo "pypy3-venv is not installed. Installing it..."
+  sudo apt update
+  sudo apt install pypy3-venv -y
+else
+  echo "pypy3-venv is already installed."
+fi
+
+# Create the virtual environment
+echo "Creating virtual environment at $VENV_DIR..."
+python3 -m venv $VENV_DIR
+
+# Activate the virtual environment
+echo "Activating the virtual environment..."
+source $VENV_DIR/bin/activate
+
+# Install the package
+
+
 E=/usr/local/bin/eye
 if [ -f "$E" ]
 then
@@ -164,8 +187,13 @@ then
 else
 
     echo "Getting the Devil"
-    sudo pip install thedevilseye==2022.1.4.0
+sudo pip install thedevilseye==2022.1.4.0
 
+# Deactivate the virtual environment
+    echo "Deactivating the virtual environment..."
+deactivate
+
+echo "Installation complete."
 fi
 echo
 
@@ -252,7 +280,7 @@ then
     echo "Use NoScript! Block Javascript!"
     echo
     echo "To continue press:    CTRL + c"
-    sudo qterminal -e libreoffice --calc "$PWD"/results+onions.txt > /dev/null 2>&1
+sudo qterminal -e libreoffice --calc "$PWD"/results+onions.txt > /dev/null 2>&1
 
     echo "Close terminal press: CTRL + c"
 else
