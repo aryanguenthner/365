@@ -7,7 +7,7 @@
 # torghost -a -c us,mx,ca 
 # libreoffice --calc results+onions.txt
 # Tested on Kali 2024.3
-# Last updated 09/13/2024, minor evil updates, pay me later
+# Last updated 09/21/2024, minor evil updates, pay me later
 # https://github.com/aryanguenthner
 # The future is now
 # https://dark.fail/
@@ -16,6 +16,7 @@
 # https://chrome.google.com/webstore/detail/noscript/doojmbjmlfjjnbmnoijecmcbfeoakpjm/related?hl=en
 # http://guideeedvgbpkthetphncab5aqj7dp5t74y7vxsoonnvmaeamq74vuqd.onion/
 ######################################################
+echo
 echo "
 ██████╗░░█████╗░██████╗░██╗░░██╗░██████╗██╗░░██╗███████╗███████╗████████╗░██████╗
 ██╔══██╗██╔══██╗██╔══██╗██║░██╔╝██╔════╝██║░░██║██╔════╝██╔════╝╚══██╔══╝██╔════╝
@@ -24,6 +25,7 @@ echo "
 ██████╔╝██║░░██║██║░░██║██║░╚██╗██████╔╝██║░░██║███████╗███████╗░░░██║░░░██████╔╝
 ╚═════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░╚═╝░░╚═╝╚══════╝╚══════╝░░░╚═╝░░░╚═════╝░"
 echo "v1.1"
+echo
 
 # Setting Variables
 YELLOW=033m
@@ -36,7 +38,7 @@ echo
 
 # Check for Updates
 echo -e "\e[033mCheck for updates y/n: \e[0m"
-read UPS
+read -r UPS
 if [ "$UPS" == "y" ]
 then
     echo
@@ -53,7 +55,7 @@ echo
 
 # Check Tor Connectivity
 echo -e "\e[033mCheck Tor connectivity y/n: \e[0m"
-read TOR
+read -r TOR
 if [ "$TOR" == "y" ]
 then
     echo
@@ -85,11 +87,11 @@ echo
 echo -e "\e[034mGetting Network Information\e[0m"
 echo
 echo -e "\e[033mPublic IP\e[0m"
-echo $CITY
-echo $EXT
+echo "$CITY"
+echo "$EXT"
 echo
 echo -e "\e[033mKali IP\e[0m"
-echo $KALI | awk '{print $1}'
+echo "$KALI" | awk '{print $1}'
 echo
 sleep 1
 
@@ -98,7 +100,7 @@ echo -e "\e[033mRequirements Check\e[0m"
 echo
 # Get NoScript Addons
 XPI0=/home/kali/.mozilla/firefox/*default-esr/extensions/{73a6fe31-595d-460b-a920-fcc0f8843232}.xpi
-if [ -f $XPI0 ]
+if [ -f "$XPI0" ]
 then
 
     echo "Found NoScript Addon"
@@ -116,8 +118,8 @@ fi
 echo
 
 # Get Adblock Addons
-XPI1=/home/kali/.mozilla/firefox/*default-esr/extensions/{d10d0bf8-f5b5-c8b4-a8b2-2b9879e08c5d}.xpi
-if [ -f $XPI1 ]
+XPI1="/home/kali/.mozilla/firefox/*default-esr/extensions/{d10d0bf8-f5b5-c8b4-a8b2-2b9879e08c5d}.xpi"
+if [ -f "$XPI1" ]
 then
 
     echo "Found Adblock Addon"
@@ -135,8 +137,8 @@ fi
 echo
 
 # Get sponsorBlocker Addons
-XPI2=/home/kali/.mozilla/firefox/*default-esr/extensions/sponsorBlocker@ajay.app.xpi
-if [ -f $XPI2 ]
+XPI2="/home/kali/.mozilla/firefox/*default-esr/extensions/sponsorBlocker@ajay.app.xpi"
+if [ -f "$XPI2" ]
 then
 
     echo "Found sponsorBlocker Addon"
@@ -184,9 +186,9 @@ else
 # Use Tor Browswer or FF to view the onion links
 sudo apt-get install -y torbrowser-launcher
 
-cd /opt
+cd /opt || exit
 git clone https://github.com/aryanguenthner/TorGhost.git
-cd TorGhost
+cd TorGhost || exit
 sudo apt-get -y install python3-pyinstaller python3-notify2
 echo "One moment please - Installing TorGhost"
 sudo pip3 install . --ignore-installed stem > /dev/null 2>&1
@@ -242,7 +244,7 @@ echo -e "\e[033mOpen a darksheet with results y/n: \e[0m"
 read OPEN1
     echo
 # Open spreadsheet with results
-if [ $OPEN1 == y ]
+if [ "$OPEN1" == y ]
 then
     echo -e "\e[033mdarksheet results\e[0m"
     echo "Exit DarkSheets: CTRL + c"
@@ -250,7 +252,7 @@ then
     echo "Use NoScript! Block Javascript!"
     echo
     echo "To continue press:    CTRL + c"
-    sudo qterminal -e libreoffice --calc $PWD/results+onions.txt > /dev/null 2>&1
+    sudo qterminal -e libreoffice --calc "$PWD"/results+onions.txt > /dev/null 2>&1
 
     echo "Close terminal press: CTRL + c"
 else
@@ -259,14 +261,14 @@ else
 
 fi
 echo
-HIT1=`awk 'FNR == 1 {print $1}' results+onions.txt`
+HIT1=$(awk 'FNR == 1 {print $1}' results+onions.txt)
 
 # Connect to the Dark Web
 echo -en "\e[033mConnect to the Dark Web y/n: \e[0m"
 read -e DWEB0
     echo
 
-if [ $DWEB0 == y ]
+if [ "$DWEB0" == y ]
 then
 
     echo "Attempting to enter the Dark Web"
@@ -287,9 +289,9 @@ sleep 1
     echo
 
     echo -e "\e[033mDark Web IP\e[0m"
-    echo $CITY
+    echo "$CITY"
 
-    echo $EXT
+    echo "$EXT"
     echo
 else
     echo "Maybe next time"
@@ -302,7 +304,7 @@ echo -e "\e[033mOpen Firefox to view results y/n: \e[0m"
 read -e OPEN2
     echo
 
-if [ $OPEN2 == y ]
+if [ "$OPEN2" == y ]
 then
     echo "Opening Firefox with data from DarkSheets"
     echo
@@ -319,14 +321,14 @@ fi
 echo
 
 # Stay Organized
-    echo "Results Saved to -->" $PWD/results+onions.txt
+    echo "Results Saved to -->" "$PWD"/results+onions.txt
     echo
 
 # Exit the Dark Web
     echo -n 'Exit the Dark Web y/n: '
     echo
 read DWEB1
-if [ $DWEB1 == y ]
+if [ "$DWEB1" == y ]
 then
     echo
     echo "Trying to Exit the Dark Web"
@@ -336,8 +338,8 @@ sudo torghost -x
     echo "Exit DarkSheets: CTRL + c"
     echo
     echo -e "\e[033mYour Public IP\e[0m"
-    echo $CITY
-    echo $EXT
+    echo "$CITY"
+    echo "$EXT"
 
 else
 
