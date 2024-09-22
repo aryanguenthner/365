@@ -149,6 +149,24 @@ rm $DISCORD_DEB
 echo "Discord installation complete."
 echo
 
+# Define the Slack download URL
+SLACK_URL="https://downloads.slack-edge.com/releases/linux/4.33.90/prod/x64/slack-desktop-4.33.90-amd64.deb"
+
+# Download the latest Slack .deb package
+echo "Downloading the latest Slack .deb package..."
+wget -O slack-desktop.deb $SLACK_URL
+
+# Install the Slack .deb package
+echo "Installing Slack..."
+sudo dpkg -i slack-desktop.deb
+
+# Clean up the .deb package
+echo "Cleaning up..."
+rm -f slack-desktop.deb
+echo
+echo "Hey Slacker- Slack installation complete!"
+echo
+
 # Variables
 WKHTMLTOX_DEB_URL="https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bookworm_amd64.deb"
 WKHTMLTOX_DEB_FILE=wkhtmltox_0.12.6.1-3.bookworm_amd64.deb
