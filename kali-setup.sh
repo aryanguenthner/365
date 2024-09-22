@@ -69,7 +69,7 @@ echo
 # Prepare Kali installs
 apt-get update && apt-get -y full-upgrade && apt -y autoremove && updatedb
 echo
-sudo apt-get install -y shellcheck wkhtmltopdf yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2 libkrb5-dev pipx metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq cups system-config-printer gobuster libreoffice
+sudo apt-get install -y python3-distutils torbrowser-launcher shellcheck wkhtmltopdf yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2 libkrb5-dev pipx metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq cups system-config-printer gobuster libreoffice
 echo
 
 # Variables
@@ -191,38 +191,6 @@ echo
 pip install updog
 echo
 
-## VirtualBox Hack for USB Devices
-#sudo usermod -a -G vboxusers $USER
-
-: '
-# TODO: echo "OneListForAll"
-# cd /opt
-# git clone https://github.com/six2dez/OneListForAll.git
-# cd OneListForAll
-# 7z x onelistforall.7z.001
-# wget https://raw.githubusercontent.com/NotSoSecure/password_cracking_rules/master/OneRuleToRuleThemAll.rule
-# wget https://github.com/NotSoSecure/password_cracking_rules/blob/master/OneRuleToRuleThemAll.rule
-# wget -O rules.txt https://contest-2010.korelogic.com/rules.txt
-# cat rules.txt >> /etc/john/john.conf
-# echo
-'
-: '
-# TODO
-# # https://github.com/balena-io/etcher
-#echo "Downloading Etcher USB Media Creator"
-#mkdir -p /opt/balena-etcher-electron/chrome-sandbox
-#curl -lsLf \
-#   'https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh' \
-#   | sudo -E bash
-# Install Etcher
-#sudo apt-get update && apt-get -y install balena-etcher-electron
-#echo
-
-# TODO: Check this out
-# text in your terminal > ansi2html > nmap-report.html
-# ssmtp <--works good, just doesnt play with sendmail.
-# did not install > openjdk-13-jdk libc++1-13 libc++abi1-13 libindicator3-7 libunwind-13 python3.8-venv libappindicator3-1 
-'
 echo
 # Keep Nmap scans Organized
 mkdir -p /home/kali/Desktop/testing/nmapscans/
@@ -299,19 +267,24 @@ cd /opt
 go install github.com/OJ/gobuster/v3@latest
 echo
 
+# Ask user if they want to install extra Git repositories
+read -p "Would you like to install extra Git repositories? (yes/no): " response
+
+if [[ "$response" == "yes" ]]; then
+    echo "Proceeding with extra installations..."
+    echo "This is going to take a minute hold my root-beer"
+
 echo "PWN AD"
 cd /opt
 git clone https://github.com/Wh04m1001/DFSCoerce
 echo
+
 echo "Malicious Macro Builder"
 cd /opt
 git clone https://github.com/infosecn1nja/MaliciousMacroMSBuild.git
 echo
-echo "metagoofil"
-sudo apt-get -y install metagoofil
-echo
+
 echo "Subbrute"
-echo
 cd /opt
 git clone https://github.com/TheRook/subbrute.git
 echo
@@ -326,8 +299,7 @@ gem install mini_exiftool
 gem install rubyzip
 gem install spider
 echo
-echo "This is going to take a minute hold my root-beer"
-echo
+
 echo "BridgeKeeper - Employee OSINT"
 cd /opt
 git clone https://github.com/aryanguenthner/BridgeKeeper.git
@@ -451,6 +423,13 @@ cd /opt
 sudo git clone https://github.com/bitsadmin/wesng.git
 echo
 
+echo "Extra installations complete."
+
+else
+    echo "Skipping extra Git repositories installation."
+fi
+echo
+
 # Fix annoying apt-key
 # If Needed
 # sudo apt-key del <KEY_ID>
@@ -494,25 +473,23 @@ then
 
 else
     echo -e "\e[034mDownloading Missing $GWIT\e[0m"
-    wget --no-check-certificate 'https://drive.google.com/uc?export=download&id=1hXJAEQAFqFu5A4uR14dUWWdwWceLHz6D' -O /home/kali/Desktop/testing/urlwitness/gowitness
+    wget --no-check-certificate -O /home/kali/Desktop/testing/urlwitness/gowitness 'https://drive.google.com/uc?export=download&id=1hXJAEQAFqFu5A4uR14dUWWdwWceLHz6D'
     chmod -R 777 /home/kali
 
 fi
+echo
 
+echo "Tools For Darkweb Research"
 echo "The devils eye"
 pip install thedevilseye==2022.1.4.0
 # eye -q "hacker tools" | grep .onion > hackertoolse+onions.txt
 echo
 
-# Tor Web Browser Stuff
-# sudo gpg --keyserver pool.sks-keyservers.net --recv-keys EB774491D9FF06E2 && 
-sudo apt-get -y install python3-distutils torbrowser-launcher
-
 cd /opt
 sudo git clone https://github.com/aryanguenthner/TorGhost.git
 cd TorGhost
-sudo pip3 install . --ignore-installed stem
-sudo ./build.sh > /dev/null 2>&1
+sudo pip3 install stem . --ignore-installed 
+sudo ./build.sh
 echo
 
 echo "Hack The Planet"
@@ -549,12 +526,46 @@ echo
 
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
 echo
-
 echo "Enable Kali Autologin"
 sed -i '120s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
 sed -i '121s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
 sudo service lightdm restart
 chmod -R 777 /home/kali/
+echo
+
+## VirtualBox Hack for USB Devices
+#sudo usermod -a -G vboxusers $USER
+
+: '
+# TODO: echo "OneListForAll"
+# cd /opt
+# git clone https://github.com/six2dez/OneListForAll.git
+# cd OneListForAll
+# 7z x onelistforall.7z.001
+# wget https://raw.githubusercontent.com/NotSoSecure/password_cracking_rules/master/OneRuleToRuleThemAll.rule
+# wget https://github.com/NotSoSecure/password_cracking_rules/blob/master/OneRuleToRuleThemAll.rule
+# wget -O rules.txt https://contest-2010.korelogic.com/rules.txt
+# cat rules.txt >> /etc/john/john.conf
+# echo
+'
+: '
+# TODO
+# # https://github.com/balena-io/etcher
+#echo "Downloading Etcher USB Media Creator"
+#mkdir -p /opt/balena-etcher-electron/chrome-sandbox
+#curl -lsLf \
+#   'https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh' \
+#   | sudo -E bash
+# Install Etcher
+#sudo apt-get update && apt-get -y install balena-etcher-electron
+#echo
+
+# TODO: Check this out
+# text in your terminal > ansi2html > nmap-report.html
+# ssmtp <--works good, just doesnt play with sendmail.
+# did not install > openjdk-13-jdk libc++1-13 libc++abi1-13 libindicator3-7 libunwind-13 python3.8-venv libappindicator3-1 
+'
+echo
 
 # Kali Setup Finish Time
 date | tee kali-setup-finish-date.txt
