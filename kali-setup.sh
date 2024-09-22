@@ -479,22 +479,6 @@ else
 fi
 echo
 
-echo "Tools For Darkweb Research"
-echo "The devils eye"
-pip install thedevilseye==2022.1.4.0
-# eye -q "hacker tools" | grep .onion > hackertoolse+onions.txt
-echo
-
-cd /opt
-sudo git clone https://github.com/aryanguenthner/TorGhost.git
-cd TorGhost
-sudo pip3 install stem . --ignore-installed 
-sudo ./build.sh
-echo
-
-echo "Hack The Planet"
-echo
-
 # Insurance
 # sudo apt-get --reinstall install python3-debian -y
 # sudo apt --fix-broken install
