@@ -19,6 +19,21 @@ EXT=$(curl -s api.ipify.org)
 SUBNET=`ip r | awk 'NR==2' | awk '{print $1}'`
 PWD=$(pwd)
 
+# Get the directory where the kali-setup.sh is executed
+script_dir=$(pwd)
+
+# Define output log file in the same directory
+log_file="${script_dir}/kali.log"
+
+# Redirect all stdout and stderr to the log file
+exec > >(tee -a "$log_file") 2>&1
+
+# Start your script here
+echo "Running the script..."
+echo "This is an example output."
+sleep 2
+echo "Script completed!"
+
 # Today's Date
 timedatectl set-timezone America/Los_Angeles
 echo -e "\e[034mToday is\e[0m"
@@ -69,7 +84,7 @@ echo
 # Prepare Kali installs
 apt-get update && apt-get -y full-upgrade && apt -y autoremove && updatedb
 echo
-sudo apt-get install -y python3-distutils torbrowser-launcher shellcheck wkhtmltopdf yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2 libkrb5-dev pipx metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq cups system-config-printer gobuster libreoffice
+sudo apt-get install -y pipx python3-distutils torbrowser-launcher shellcheck wkhtmltopdf yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2 libkrb5-dev metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq cups system-config-printer gobuster libreoffice
 echo
 
 # Variables
@@ -195,8 +210,8 @@ chmod +x ~/.docker/cli-plugins/docker-compose
 echo "Installing NetExec"
 # TODO: Add NetExec Examples, add automation script
 # Enhanced CME
-pipx install git+https://github.com/Pennyw0rth/NetExec
-#pipx ensurepath
+sudo pipx install git+https://github.com/Pennyw0rth/NetExec
+sudo pipx ensurepath --prepend
 echo
 
 # Get Pippy wit it
@@ -211,7 +226,7 @@ echo
 
 echo
 # Keep Nmap scans Organized
-mkdir -p /home/kali/Desktop/testing/nmapscans/
+sudo mkdir -p /home/kali/Desktop/testing/nmapscans/
 
 # Upgrade Nmap User agent
 echo "Current Nmap User Agent"
@@ -220,6 +235,7 @@ echo
 echo "Upgraded Nmap User Agent"
 sed -i '160c\local USER_AGENT = stdnse.get_script_args('\''http.useragent'\'') or "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit\/601.3.9 (KHTML, like Gecko)"' /usr/share/nmap/nselib/http.lua
 sed -n '160p' /usr/share/nmap/nselib/http.lua
+echo
 
 # Nmap bootstrap file checker, creates beautiful nmap reports
 NB=/opt/365/nmap-bootstrap.xsl
@@ -286,7 +302,11 @@ go install github.com/OJ/gobuster/v3@latest
 echo
 
 # Ask user if they want to install extra Git repositories
-read -p "Would you like to install extra Git repositories? (yes/no): " response
+read -t 30 -p "Would you like to install extra Git repositories? (yes/no): " response
+echo
+
+# Default to "no" if no input is provided within 30 seconds
+response=${response:-no}
 
 if [[ "$response" == "yes" ]]; then
     echo "Proceeding with extra installations..."
@@ -485,6 +505,7 @@ echo
 # "View Report http://localhost:7171"
 # ./gowitness server report
 # Can I get a gowitness?
+sudo mkdir -p /home/kali/Desktop/testing/urlwitness/gowitness
 GWIT=/home/kali/Desktop/testing/urlwitness/gowitness
 if [ -f "$GWIT" ]
 then
@@ -503,28 +524,6 @@ echo
 # sudo apt --fix-broken install
 # sudo apt autoremove -y
 # systemctl restart ntp
-echo
-
-# Stop Docker
-# Remove Docker Interface until you need it
-sudo systemctl stop docker && systemctl disable docker && ip link delete docker0
-echo
-
-# IP Address
-echo 'hostname -I' >> /root/.zshrc
-
-# Customize Kali Paths
-# Set HISTCONTROL
-echo 'export HISTCONTROL="ignoredups"' >> /root/.zshrc
-
-# Update PATH variable with various directories
-echo 'export PATH="$PATH:/root/work"' >> /root/.zshrc
-echo 'export PATH="$PATH:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games"' >> /root/.zshrc
-echo 'export PATH="$PATH:/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin"' >> /root/.zshrc
-echo 'export PATH="$PATH:/root/.local/bin"' >> /root/.zshrc
-
-# Abide by the Source
-source ~/.zshrc
 echo
 
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
@@ -568,6 +567,28 @@ echo
 # ssmtp <--works good, just doesnt play with sendmail.
 # did not install > openjdk-13-jdk libc++1-13 libc++abi1-13 libindicator3-7 libunwind-13 python3.8-venv libappindicator3-1 
 '
+echo
+
+# Stop Docker
+# Remove Docker Interface until you need it
+sudo systemctl stop docker && systemctl disable docker && ip link delete docker0
+echo
+
+# IP Address
+echo 'hostname -I' >> /root/.zshrc
+
+# Customize Kali Paths
+# Set HISTCONTROL
+echo 'export HISTCONTROL="ignoredups"' >> /root/.zshrc
+
+# Update PATH variable with various directories
+echo 'export PATH="$PATH:/root/work"' >> /root/.zshrc
+echo 'export PATH="$PATH:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games"' >> /root/.zshrc
+echo 'export PATH="$PATH:/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin"' >> /root/.zshrc
+echo 'export PATH="$PATH:/root/.local/bin"' >> /root/.zshrc
+
+# Abide by the Source
+source ~/.zshrc
 echo
 
 # Kali Setup Finish Time
