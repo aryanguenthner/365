@@ -7,7 +7,7 @@
 # Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
 # cd 365 && sudo chmod a+x *.sh
 # chmod -R 777 /home/kali/
-# sudo ./kali-setup.sh | tee kali.log
+# sudo time ./kali-setup.sh 2>&1 | tee kali.log
 ################################################
 
 # Setting Variables
