@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 09/15/2024, minor evil updates, pay me later
+# Last Updated 09/22/2024, minor evil updates, pay me later
 # Tested on Kali 2024.3 Gnome/XFCE
 # Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
 # cd 365 && sudo chmod a+x *.sh
@@ -221,7 +221,7 @@ echo
 # Did you say Cloudflare Tunnel?
 # qterminal -e python3 -m http.server 80
 # qterminal -e cloudflared tunnel -url localhost:80
-dpkg -i /opt/365/cloudflared-linux-amd64.deb
+sudo dpkg -i /opt/365/cloudflared-linux-amd64.deb
 
 # Go Env Paths
 echo 'export PATH="$PATH:/usr/local/go/bin"' >> /root/.zshrc
@@ -273,6 +273,7 @@ read -p "Would you like to install extra Git repositories? (yes/no): " response
 if [[ "$response" == "yes" ]]; then
     echo "Proceeding with extra installations..."
     echo "This is going to take a minute hold my root-beer"
+    echo
 
 echo "PWN AD"
 cd /opt
