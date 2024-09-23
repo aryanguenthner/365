@@ -29,10 +29,9 @@ log_file="${script_dir}/kali.log"
 exec > >(tee -a "$log_file") 2>&1
 
 # Start your script here
-echo "Running the script..."
-echo "This is an example output."
+echo "Running the kali-setup.sh script..."
 sleep 2
-echo "Script completed!"
+echo "Script Running!"
 
 # Today's Date
 timedatectl set-timezone America/Los_Angeles
@@ -71,6 +70,7 @@ echo
 
 # Hackers like SSH
 echo "Enabling SSH"
+echo
 sed -i '40s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config > /dev/null 2>&1
 sudo systemctl enable ssh && sudo service ssh restart
 echo
@@ -84,8 +84,11 @@ echo
 # Prepare Kali installs
 apt-get update && apt-get -y full-upgrade && apt -y autoremove && updatedb
 echo
-sudo apt-get install -y pipx python3-distutils torbrowser-launcher shellcheck wkhtmltopdf yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2 libkrb5-dev metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq cups system-config-printer gobuster libreoffice
+sudo apt-get install -y pipx python3-distutils-extra torbrowser-launcher shellcheck wkhtmltopdf yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2t64 libkrb5-dev metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq cups system-config-printer gobuster libreoffice
 echo
+
+# Some dependencies before installing VirtualBox:
+sudo apt install -y gcc make linux-headers-$(uname -r)
 
 # Variables
 CHROME_DEB_URL="https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
@@ -123,7 +126,7 @@ echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] 
 # Step 3: Update the package database and install Signal
 echo "Updating package database and installing Signal Desktop..."
 sudo apt update && sudo apt install -y signal-desktop
-
+echo
 echo "Signal Desktop installation complete."
 echo
 
@@ -144,6 +147,7 @@ sudo apt install -y ./$ZOOM_DEB
 echo "Cleaning up..."
 rm $ZOOM_DEB
 echo "Zoom installation complete."
+echo
 
 # Download and Install Discord
 # Define Discord download URL and filename
@@ -157,6 +161,7 @@ wget -O $DISCORD_DEB $DISCORD_URL
 # Install Discord
 echo "Installing Discord..."
 sudo apt install -y ./$DISCORD_DEB
+echo
 
 # Remove the downloaded .deb file
 echo "Cleaning up..."
@@ -166,6 +171,7 @@ echo
 
 # Define the Slack download URL
 SLACK_URL="https://downloads.slack-edge.com/releases/linux/4.33.90/prod/x64/slack-desktop-4.33.90-amd64.deb"
+echo
 
 # Download the latest Slack .deb package
 echo "Downloading the latest Slack .deb package..."
@@ -174,11 +180,8 @@ wget -O slack-desktop.deb $SLACK_URL
 # Install the Slack .deb package
 echo "Installing Slack..."
 sudo dpkg -i slack-desktop.deb
-
-# Clean up the .deb package
-echo "Cleaning up..."
-rm -f slack-desktop.deb
 echo
+
 echo "Hey Slacker- Slack installation complete!"
 echo
 
@@ -199,6 +202,7 @@ echo "Downloading and installing Shodan Nrich"
 # Get your Shodan API Key
 wget https://gitlab.com/api/v4/projects/33695681/packages/generic/nrich/latest/nrich_latest_x86_64.deb
 sudo dpkg -i nrich_latest_x86_64.deb
+echo
 
 # Create the docker plugins directory
 mkdir -p ~/.docker/cli-plugins
@@ -214,15 +218,17 @@ sudo pipx install git+https://github.com/Pennyw0rth/NetExec
 sudo pipx ensurepath --prepend
 echo
 
+:' # errors
 # Get Pippy wit it
 python3 -m pip install --upgrade pip
 pip3 install --upgrade setuptools
 
 echo "Installing psycopg"
-pip3 install psycopg
+pip install psycopg
 echo
 pip install updog
 echo
+'
 
 echo
 # Keep Nmap scans Organized
@@ -577,19 +583,21 @@ echo
 # IP Address
 echo 'hostname -I' >> /root/.zshrc
 
+:'
 # Customize Kali Paths
 # Set HISTCONTROL
-echo 'export HISTCONTROL="ignoredups"' >> /root/.zshrc
+echo "export HISTCONTROL=ignoredups" >> /root/.zshrc
 
 # Update PATH variable with various directories
-echo 'export PATH="$PATH:/root/work"' >> /root/.zshrc
-echo 'export PATH="$PATH:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games"' >> /root/.zshrc
-echo 'export PATH="$PATH:/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin"' >> /root/.zshrc
-echo 'export PATH="$PATH:/root/.local/bin"' >> /root/.zshrc
+echo "export PATH=$PATH:/root/work" >> /root/.zshrc
+echo "export PATH=$PATH:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games" >> /root/.zshrc
+echo "export PATH=$PATH:/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin" >> /root/.zshrc
+echo "export PATH=$PATH:/root/.local/bin" >> /root/.zshrc
 
 # Abide by the Source
 source ~/.zshrc
 echo
+'
 
 # Kali Setup Finish Time
 date | tee kali-setup-finish-date.txt
