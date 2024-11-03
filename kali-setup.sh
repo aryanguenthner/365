@@ -32,6 +32,7 @@ exec > >(tee -a "$log_file") 2>&1
 echo "Running the kali-setup.sh script..."
 sleep 2
 echo "Script Running!"
+echo
 
 # Today's Date
 timedatectl set-timezone America/Los_Angeles
@@ -60,7 +61,6 @@ echo -e "\e[033mCurrent Subnet\e[0m"
 echo $SUBNET
 echo
 sleep 2
-echo
 
 # Disable IPV6
 echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
@@ -218,28 +218,26 @@ sudo pipx install git+https://github.com/Pennyw0rth/NetExec
 sudo pipx ensurepath --prepend
 echo
 
-:' # errors
-# Get Pippy wit it
-python3 -m pip install --upgrade pip
-pip3 install --upgrade setuptools
 
-echo "Installing psycopg"
-pip install psycopg
-echo
-# Install virtualenv if you don't have it
-sudo apt install python3-venv
+# Get Pippy wit it
+#python3 -m pip install --upgrade pip
+#pip3 install --upgrade setuptools
+
+#echo "Installing psycopg"
+#pip install psycopg
+#echo
+## Install virtualenv
+#sudo apt install python3-venv
 
 # Updog
 # Create a virtual environment
 python3 -m venv myenv
-
 # Activate the virtual environment
 source myenv/bin/activate
-
 # Now install updog
 pip install updog
 echo
-'
+
 
 echo
 # Keep Nmap scans Organized
@@ -249,8 +247,13 @@ sudo mkdir -p /home/kali/Desktop/testing/nmapscans/
 echo "Current Nmap User Agent"
 sed -n '160p' /usr/share/nmap/nselib/http.lua
 echo
-echo "Upgraded Nmap User Agent"
-sed -i '160c\local USER_AGENT = stdnse.get_script_args('\''http.useragent'\'') or "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit\/601.3.9 (KHTML, like Gecko)"' /usr/share/nmap/nselib/http.lua
+echo "Upgrading Nmap User Agent"
+echo "Before"
+sed -n '160p' /usr/share/nmap/nselib/http.lua
+# Works sed -i '160c\local USER_AGENT = stdnse.get_script_args('\'http.useragent\'') or "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko)"' /usr/share/nmap/nselib/http.lua
+sed -i '160c\local USER_AGENT = stdnse.get_script_args('\'http.useragent\'') or "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"' /usr/share/nmap/nselib/http.lua
+echo
+echo "After"
 sed -n '160p' /usr/share/nmap/nselib/http.lua
 echo
 
@@ -592,7 +595,10 @@ sudo systemctl stop docker && systemctl disable docker && ip link delete docker0
 echo
 
 # IP Address
-echo 'hostname -I' >> /root/.zshrc
+# Updated
+echo "$(hostname -I)" >> /root/.zshrc
+Old
+#echo 'hostname -I' >> /root/.zshrc
 
 :'
 # Customize Kali Paths
