@@ -558,7 +558,6 @@ echo
 ## VirtualBox Hack for USB Devices
 #sudo usermod -a -G vboxusers $USER
 
-: '
 # TODO: echo "OneListForAll"
 # cd /opt
 # git clone https://github.com/six2dez/OneListForAll.git
@@ -569,8 +568,7 @@ echo
 # wget -O rules.txt https://contest-2010.korelogic.com/rules.txt
 # cat rules.txt >> /etc/john/john.conf
 # echo
-'
-: '
+
 # TODO
 # # https://github.com/balena-io/etcher
 #echo "Downloading Etcher USB Media Creator"
@@ -586,7 +584,6 @@ echo
 # text in your terminal > ansi2html > nmap-report.html
 # ssmtp <--works good, just doesnt play with sendmail.
 # did not install > openjdk-13-jdk libc++1-13 libc++abi1-13 libindicator3-7 libunwind-13 python3.8-venv libappindicator3-1 
-'
 echo
 
 # Stop Docker
@@ -596,9 +593,7 @@ echo
 
 # IP Address
 # Updated
-echo "$(hostname -I)" >> /root/.zshrc
-Old
-#echo 'hostname -I' >> /root/.zshrc
+echo 'hostname -I' >> /root/.zshrc
 
 :'
 # Customize Kali Paths
