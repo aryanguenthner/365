@@ -240,11 +240,6 @@ source myenv/bin/activate
 pip install updog
 echo
 
-
-echo
-# Keep Nmap scans Organized
-sudo mkdir -p /home/kali/Desktop/testing/nmapscans/
-
 # Upgrade Nmap User agent
 echo "Current Nmap User Agent"
 sed -n '160p' /usr/share/nmap/nselib/http.lua
@@ -258,6 +253,10 @@ echo
 echo "After"
 sed -n '160p' /usr/share/nmap/nselib/http.lua
 echo
+
+echo
+# Keep Nmap scans Organized
+sudo mkdir -p /home/kali/Desktop/testing/nmapscans/
 
 # Nmap bootstrap file checker, creates beautiful nmap reports
 NB=/opt/365/nmap-bootstrap.xsl
@@ -273,6 +272,8 @@ wget --no-check-certificate -O /home/kali/Desktop/testing/nmapscans/nmap-bootstr
 
 fi
 echo
+
+sudo cp /opt/365/nmap-bootstrap.xsl /home/kali/Desktop/testing/nmapscans/
 
 # Did you say Cloudflare Tunnel?
 # qterminal -e python3 -m http.server 80
