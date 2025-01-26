@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 11/03/2024, minor evil updates, pay me later
+# Last Updated 10/25/2025, minor evil updates, pay me later
 # Tested on Kali 2024.3 Gnome/XFCE
 # Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
 # cd 365 && sudo chmod a+x *.sh
@@ -88,7 +88,9 @@ sudo apt-get install -y printer-driver-escpr pipx python3-distutils-extra torbro
 echo
 
 # Some dependencies before installing VirtualBox:
-sudo apt install -y gcc make linux-headers-$(uname -r)
+sudo apt-get install -y gcc make linux-headers-$(uname -r)
+# Install Vbox
+sudo apt-get install -y virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso
 
 # Variables
 CHROME_DEB_URL="https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
