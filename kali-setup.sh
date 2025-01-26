@@ -2,8 +2,8 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 10/25/2025, minor evil updates, pay me later
-# Tested on Kali 2024.3 Gnome/XFCE
+# Last Updated 01/26/2025, minor evil updates, pay me later
+# Tested on Kali 2024.4 Gnome/XFCE
 # Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
 # cd 365 && sudo chmod a+x *.sh
 # chmod -R 777 /home/kali/
@@ -84,13 +84,15 @@ echo
 # Prepare Kali installs
 apt-get update && apt-get -y full-upgrade && apt -y autoremove && updatedb
 echo
-sudo apt-get install -y printer-driver-escpr pipx python3-distutils-extra torbrowser-launcher shellcheck wkhtmltopdf yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2t64 libkrb5-dev metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq cups system-config-printer gobuster libreoffice
+sudo apt-get install -y printer-driver-escpr pipx python3-distutils-extra torbrowser-launcher shellcheck wkhtmltopdf yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2t64 libkrb5-dev metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq cups system-config-printer gobuster libreoffice rpi-imager
 echo
 
 # Some dependencies before installing VirtualBox:
 sudo apt-get install -y gcc make linux-headers-$(uname -r)
 # Install Vbox
 sudo apt-get install -y virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso
+sudo su modprobe vboxdrv
+sudo usermod -a -G vboxusers $USER
 
 # Variables
 CHROME_DEB_URL="https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
