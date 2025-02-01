@@ -2,13 +2,16 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 01/26/2025, minor evil updates, pay me later
-# Tested on Kali 2024.4 Gnome/XFCE
+# Last Updated 02/01/2025, minor evil updates, pay me later
+# Tested on Kali 2024.3 Gnome/XFCE
 # Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
 # cd 365 && sudo chmod a+x *.sh
 # chmod -R 777 /home/kali/
 # sudo time ./kali-setup.sh 2>&1 | tee kali.log
 ################################################
+
+# Add kali to sudoers
+echo "kali ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/kali
 
 # Setting Variables
 YELLOW=033m
@@ -36,6 +39,7 @@ echo
 
 # Today's Date
 timedatectl set-timezone America/Los_Angeles
+timedatectl set-ntp true
 echo -e "\e[034mToday is\e[0m"
 date '+%Y-%m-%d %r' | tee kali-setup-date.txt
 echo
@@ -84,15 +88,11 @@ echo
 # Prepare Kali installs
 apt-get update && apt-get -y full-upgrade && apt -y autoremove && updatedb
 echo
-sudo apt-get install -y printer-driver-escpr pipx python3-distutils-extra torbrowser-launcher shellcheck wkhtmltopdf yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2t64 libkrb5-dev metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq cups system-config-printer gobuster libreoffice rpi-imager
+sudo apt-get install -y mono-devel printer-driver-escpr pipx python3-distutils-extra torbrowser-launcher shellcheck wkhtmltopdf yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2t64 libkrb5-dev metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq cups system-config-printer gobuster libreoffice
 echo
 
 # Some dependencies before installing VirtualBox:
-sudo apt-get install -y gcc make linux-headers-$(uname -r)
-# Install Vbox
-sudo apt-get install -y virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso
-sudo su modprobe vboxdrv
-sudo usermod -a -G vboxusers $USER
+sudo apt install -y gcc make linux-headers-$(uname -r)
 
 # Variables
 CHROME_DEB_URL="https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
@@ -242,6 +242,11 @@ source myenv/bin/activate
 pip install updog
 echo
 
+
+echo
+# Keep Nmap scans Organized
+sudo mkdir -p /home/kali/Desktop/testing/nmapscans/
+
 # Upgrade Nmap User agent
 echo "Current Nmap User Agent"
 sed -n '160p' /usr/share/nmap/nselib/http.lua
@@ -255,10 +260,6 @@ echo
 echo "After"
 sed -n '160p' /usr/share/nmap/nselib/http.lua
 echo
-
-echo
-# Keep Nmap scans Organized
-sudo mkdir -p /home/kali/Desktop/testing/nmapscans/
 
 # Nmap bootstrap file checker, creates beautiful nmap reports
 NB=/opt/365/nmap-bootstrap.xsl
@@ -274,8 +275,6 @@ wget --no-check-certificate -O /home/kali/Desktop/testing/nmapscans/nmap-bootstr
 
 fi
 echo
-
-sudo cp /opt/365/nmap-bootstrap.xsl /home/kali/Desktop/testing/nmapscans/
 
 # Did you say Cloudflare Tunnel?
 # qterminal -e python3 -m http.server 80
@@ -551,7 +550,6 @@ echo
 # systemctl restart ntp
 echo
 
-# TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
 echo
 echo "Enable Kali Autologin"
 sed -i '120s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
@@ -563,6 +561,7 @@ echo
 ## VirtualBox Hack for USB Devices
 #sudo usermod -a -G vboxusers $USER
 
+# TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
 # TODO: echo "OneListForAll"
 # cd /opt
 # git clone https://github.com/six2dez/OneListForAll.git
