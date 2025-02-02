@@ -102,20 +102,21 @@ echo
 # Display Results
 echo -e "\e[031mTop Results\e[0m"
 head "$RESULT_FILE"
+echo
 echo "Saved results to $RESULT_FILE."
-    echo
+echo
 
 # Darksheets Results
-echo -e "\e[033mOpen a darksheet with results y/n: \e[0m"
+echo -e "\e[031mOpen a darksheet with results y/n: \e[0m"
 read OPEN1
     echo
 # Open spreadsheet with results
 if [ "$OPEN1" == y ]
 then
-    echo -e "\e[033mdarksheet results\e[0m"
+    echo -e "\e[031mdarksheet results\e[0m"
     echo "Exit DarkSheets: CTRL + c"
     echo
-    echo "Use NoScript! Block Javascript!"
+    echo "Pro Tip: Use NoScript! Block Javascript!"
     echo
     echo "To continue press:    CTRL + c"
 sudo qterminal -e libreoffice --calc "$PWD"/results+onions.txt > /dev/null 2>&1
@@ -131,8 +132,8 @@ fi
 # Ensure Tor is Installed and Running
 if ! command -v tor >/dev/null; then
     echo "Tor is not installed. Installing..."
-    sudo apt install -y tor torbrowser-launcher
-    sudo apt install -y python3-stem
+    sudo apt install -y tor torbrowser-launcher python3-stem
+
     echo
 fi
     echo
@@ -163,7 +164,7 @@ fi
 # Ask the user if they want to connect to the dark web
 read -p "Do you want to connect to the dark web? (y/N): " choice
 echo
-[[ "$choice" =~ ^[Yy]$ ]] && sudo python3 /usr/bin/torghost/torghost.py -s
+[[ "$choice" =~ ^[Yy]$ ]] && sudo python3 /usr/bin/torghost/torghost.py -s > /dev/null 2>&1
 echo
 # Get Dark Web IP
 EXT=$(dig +short myip.opendns.com @resolver1.opendns.com)
@@ -186,8 +187,9 @@ echo
 # Open FF
 echo -e "\e[033mOpen Firefox to view results y/n: \e[0m"
 read -e OPEN2
-    echo
+echo
 
+HIT1=$(awk 'FNR == 1 {print $1}' results+onions.txt)
 if [ "$OPEN2" == y ]
 then
     echo "Opening Firefox with data from DarkSheets"
