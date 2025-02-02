@@ -57,6 +57,13 @@ printf "| %-12s | %-15s |\n" "Country" "$COUNTRY"
 printf "| %-12s | %-15s |\n" "Kali IP" "$KALI"
 echo "---------------------------------"
 
+# Dependencies Check
+# Must have LibreOffice, TheDevilsEye,Tor,TorGhost,FireFox Set to allow Onion Sites
+
+# Editing Firefox about:config this allows DarkWeb .onion links to be opened with Firefox
+echo 'user_pref("network.dns.blockDotOnion", false);' > user.js
+mv user.js /home/kali/.mozilla/firefox/*default-esr/
+
 echo -e "\e[031mLooking for the Devil's Eye\e[0m"
 echo
 # Verify the Devil exists
@@ -74,6 +81,20 @@ else
     echo
 
 echo "The Devil's in your computer"
+fi
+echo
+
+# Verify LibreOffice is installed
+L=/usr/bin/libreoffice
+if [ -f "$L" ]
+then
+
+    echo -e "\e[031mFound LibreOffice\e[0m"
+
+else
+
+    echo -e "\e[031mPlease wait while LibreOffice is installed\e[0m"
+    echo
 fi
 echo
 
