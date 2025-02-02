@@ -41,8 +41,8 @@ RED='\033[31m'
 
 # Network Information
 echo -e "\e[031mGetting Network Information\e[0m"
-# Get public IP
-EXT=$(dig +short myip.opendns.com @resolver1.opendns.com)
+# Get public IP, Before Connecting to Dark Web
+EXT=$(curl -s https://api64.ipify.org)
 # Get country using ipinfo.io
 COUNTRY=$(curl -s ipinfo.io/country)
 # Get Kali IP (local IP)
@@ -167,11 +167,9 @@ echo
 [[ "$choice" =~ ^[Yy]$ ]] && sudo python3 /usr/bin/torghost/torghost.py -s > /dev/null 2>&1
 echo
 # Get Dark Web IP
-EXT=$(dig +short myip.opendns.com @resolver1.opendns.com)
-
+EXT=$(curl --socks5-hostname 127.0.0.1:9050 -s https://check.torproject.org/api/ip)
 # Get country using ipinfo.io
-COUNTRY=$(curl -s ipinfo.io/country)
-
+COUNTRY=$(curl --socks5-hostname 127.0.0.1:9050 -s ipinfo.io/country)
 # Get Kali IP (local IP)
 KALI=$(hostname -I | awk '{print $1}')
 
