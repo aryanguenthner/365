@@ -100,7 +100,7 @@ echo
 
 # Create Results File
 RESULT_FILE="results+onions.txt"
-echo -en "\e[031mWhat are you looking for: \e[0m"
+echo -en "\e[031mWhat are you researching: \e[0m"
 read -e SEARCH
 echo
 
@@ -118,6 +118,9 @@ echo
 echo "Saving results to $RESULT_FILE..."
 sudo /root/.local/share/pipx/venvs/thedevilseye/bin/eye -q "$SEARCH" | grep ".onion" > "$RESULT_FILE"
 sed '/^invest/d' "$RESULT_FILE" > "$RESULT_FILE.tmp" && mv "$RESULT_FILE.tmp" "$RESULT_FILE"
+sort -u "$RESULT_FILE" -o "$RESULT_FILE"
+echo "Total Onions Found:"
+wc "$RESULT_FILE"
 echo
 
 # Display Results
@@ -186,6 +189,16 @@ fi
 read -p "Do you want to connect to the dark web? (y/N): " choice
 echo
 [[ "$choice" =~ ^[Yy]$ ]] && sudo python3 /usr/bin/torghost/torghost.py -s > /dev/null 2>&1
+echo "Attempting To Connect to the Dark Web"
+# Simulate Progress Bar
+echo "Searching..."
+echo -ne '#####                     (33%)\r'
+sleep 1
+echo -ne '#############             (66%)\r'
+sleep 1
+echo -ne '#######################   (100%)\r'
+echo -ne '\n'
+echo
 echo
 # Get Dark Web IP
 EXT=$(curl --socks5-hostname 127.0.0.1:9050 -s https://check.torproject.org/api/ip)
