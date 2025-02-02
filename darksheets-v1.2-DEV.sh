@@ -21,7 +21,7 @@ cat <<'EOF'
 ██████╔╝██║░░██║██║░░██║██║░╚██╗██████╔╝██║░░██║███████╗███████╗░░░██║░░░██████╔╝
 ╚═════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░╚═╝░░╚═╝╚══════╝╚══════╝░░░╚═╝░░░╚═════╝░
 EOF
-echo "CTI Cyber Threat intelligence Research Tool v1.2"
+echo "CTI Cyber Threat intelligence v1.2"
 echo
 apt-get update
 echo
