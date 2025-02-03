@@ -58,26 +58,22 @@ printf "| %-12s | %-15s |\n" "Kali IP" "$KALI"
 echo "---------------------------------"
 
 # Dependencies Check
-# Must have LibreOffice, TheDevilsEye,Tor,TorGhost,FireFox Set to allow Onion Sites
+# Must have TheDevilsEye,LibreOffice,TorGhost,Tor,FireFox Set to allow Onion Sites
 
 # Editing Firefox about:config this allows DarkWeb .onion links to be opened with Firefox
 echo 'user_pref("network.dns.blockDotOnion", false);' > user.js
 mv user.js /home/kali/.mozilla/firefox/*default-esr/
-
-echo -e "\e[031mLooking for the Devil's Eye\e[0m"
 echo
+
 # Verify the Devil exists
 #E=/usr/local/bin/eye
 E=/root/.local/share/pipx/venvs/thedevilseye/bin/eye
 if [ -f "$E" ]
 then
-
     echo -e "\e[031mFound for the Devil's Eye\e[0m"
-
 else
-
     echo -e "\e[031mGetting the Devil\e[0m"
-    sudo pipx install thedevilseye==2022.1.4.0
+    sudo pipx install thedevilseye==2022.1.4.0 > /dev/null 2>&1
     echo
 
 echo "The Devil's in your computer"
@@ -88,16 +84,33 @@ echo
 L=/usr/bin/libreoffice
 if [ -f "$L" ]
 then
-
     echo -e "\e[031mFound LibreOffice\e[0m"
-
 else
-
     echo -e "\e[031mPlease wait while LibreOffice is installed\e[0m"
-    echo
+    apt-get install libreoffice
 fi
 echo
 
+# Install TorGhost
+# Example Country Codes: ca,mx,us,ru,br,bo,de,gb,fr,ir,by,cn
+TORNG=/usr/bin/torghostng
+if [ -f "$TORNG" ]
+then
+    echo -e "\e[031mFound TorghostNG\e[0m"
+    echo
+else
+    echo
+# Install TorghostNG
+   cd /opt
+   sudo git clone https://github.com/aryanguenthner/TorghostNG
+   cd TorghostNG
+   sudo touch /etc/sysctl.conf
+   sudo python3 install.py
+   echo "TorghostNG is installed"
+fi
+echo
+
+# What are you researching?
 # Create Results File
 RESULT_FILE="results+onions.txt"
 echo -en "\e[031mWhat are you researching: \e[0m"
@@ -105,7 +118,7 @@ read -e SEARCH
 echo
 
 # Simulate Progress Bar
-echo "Searching..."
+echo "Searching for Onions..."
 echo -ne '#####                     (33%)\r'
 sleep 1
 echo -ne '#############             (66%)\r'
@@ -115,24 +128,26 @@ echo -ne '\n'
 echo
 
 # Perform Devils Eye Search
-echo "Saving results to $RESULT_FILE..."
+echo "Saving results to $RESULT_FILE"
 sudo /root/.local/share/pipx/venvs/thedevilseye/bin/eye -q "$SEARCH" | grep ".onion" > "$RESULT_FILE"
 sed '/^invest/d' "$RESULT_FILE" > "$RESULT_FILE.tmp" && mv "$RESULT_FILE.tmp" "$RESULT_FILE"
 sort -u "$RESULT_FILE" -o "$RESULT_FILE"
-echo "Total Onions Found:"
-wc "$RESULT_FILE"
+echo
+echo -e "\e[031mTotal Onions Found:\e[0m"
+wc "$RESULT_FILE" | awk '{print $1}'
 echo
 
 # Display Results
 echo -e "\e[031mTop Results\e[0m"
 head "$RESULT_FILE"
 echo
+echo -e "\e[031mTotal Onions Found:\e[0m"
 echo "Saved results to $RESULT_FILE."
 echo
 
 # Darksheets Results
 echo -e "\e[031mOpen a darksheet with results y/n: \e[0m"
-read OPEN1
+read -e OPEN1
     echo
 # Open spreadsheet with results
 if [ "$OPEN1" == y ]
@@ -144,12 +159,9 @@ then
     echo
     echo "To continue press:    CTRL + c"
 sudo qterminal -e libreoffice --calc "$PWD"/results+onions.txt > /dev/null 2>&1
-
-    echo "Close terminal press: CTRL + c"
+    echo
 else
-
     echo "Maybe next time"
-
 fi
     echo
 
@@ -157,47 +169,40 @@ fi
 if ! command -v tor >/dev/null; then
     echo "Tor is not installed. Installing..."
     sudo apt install -y tor torbrowser-launcher python3-stem
-
     echo
 fi
     echo
-
-
 if ! systemctl is-active --quiet tor; then
     echo "Starting Tor service..."
     sudo systemctl start tor
     echo
 fi
-
-# Install TorGhost
-TOR=/usr/bin/torghost/torghost.py
-if [ -f "$TOR" ]
-then
-    echo "Torghost is already installed."
-    echo
-else
-    echo "Downloading & Installing TorGhost"
-wget -c --no-check-certificate https://github.com/aryanguenthner/TorGhost/releases/download/v3.1.1/torghost_3.1.1.deb
-    sudo dpkg -i torghost_3.1.1.deb
-    sudo chmod +x /usr/bin/torghost/torghost.py
-    sudo chown root:root /usr/bin/torghost/torghost.py
-
-fi
 echo
 
 # Ask the user if they want to connect to the dark web
-read -p "Do you want to connect to the dark web? (y/N): " choice
-echo
-[[ "$choice" =~ ^[Yy]$ ]] && sudo python3 /usr/bin/torghost/torghost.py -s > /dev/null 2>&1
-echo "Attempting To Connect to the Dark Web"
+echo -e "Do you want to connect to the dark web?: "
+read -e CONNECT
+if [ "$CONNECT" == "y" ]
+then
+    echo "Connecting to the Dark Web"
+    echo
+    torghostng -id ca
+    echo
+    echo "Attempting To Connect to the Dark Web"
 # Simulate Progress Bar
-echo -ne '#####                     (33%)\r'
-sleep 1
-echo -ne '#############             (66%)\r'
-sleep 1
-echo -ne '#######################   (100%)\r'
-echo -ne '\n'
-echo
+    echo -ne '#####                     (33%)\r'
+    sleep 1
+    echo -ne '#############             (66%)\r'
+    sleep 1
+    echo -ne '#######################   (100%)\r'
+    echo -ne '\n'
+    echo
+else
+    echo "Exiting Tor In Progress"
+    echo
+    sudo torghostng -x
+    echo "Tor exited successfully."
+fi
 echo
 # Get Dark Web IP
 EXT=$(curl --socks5-hostname 127.0.0.1:9050 -s https://check.torproject.org/api/ip)
@@ -215,41 +220,28 @@ printf "| %-12s | %-15s |\n" "Country" "$COUNTRY"
 printf "| %-12s | %-15s |\n" "Kali IP" "$KALI"
 echo "---------------------------------"
 echo
-# Open FF
-echo -e "\e[033mOpen Firefox to view results y/n: \e[0m"
+
+# Open Firefox
+echo -e "\e[031mOpen Firefox to view results y/n: \e[0m"
 read -e OPEN2
 echo
 
 HIT1=$(awk 'FNR == 1 {print $1}' results+onions.txt)
 if [ "$OPEN2" == y ]
 then
-    echo "Opening Firefox with data from DarkSheets"
+    echo "Opening Firefox with the First Result from DarkSheets"
     echo
 sudo qterminal -e su -c "firefox $HIT1" kali > /dev/null 2>&1
     echo
     echo "To continue: CTRL + c"
     echo
-    echo "To exit:     CTRL + c"
 else
 
     echo "Maybe next time"
-
 fi
     echo
-
-# Exit Tor
-echo -n 'Exit the Dark Web y/n: '
-echo
-read DWEB1
-if [ "$DWEB1" == "y" ]; then
-    echo "Exiting Tor..."
-    echo
-    sudo systemctl stop tor
-    echo "Tor exited successfully."
-    echo
-else
-    echo "Tor remains active."
-fi
 
 echo "DarkSheets script execution completed."
 echo
+echo "Exit Tor type: torghostng -x"
+#Pay Me later
