@@ -197,13 +197,6 @@ then
     echo -ne '#######################   (100%)\r'
     echo -ne '\n'
     echo
-else
-    echo "Exiting Tor In Progress"
-    echo
-    sudo torghostng -x
-    echo "Tor exited successfully."
-fi
-echo
 # Get Dark Web IP
 EXT=$(curl --socks5-hostname 127.0.0.1:9050 -s https://check.torproject.org/api/ip)
 # Get country using ipinfo.io
@@ -220,12 +213,10 @@ printf "| %-12s | %-15s |\n" "Country" "$COUNTRY"
 printf "| %-12s | %-15s |\n" "Kali IP" "$KALI"
 echo "---------------------------------"
 echo
-
 # Open Firefox
 echo -e "\e[031mOpen Firefox to view results y/n: \e[0m"
 read -e OPEN2
 echo
-
 HIT1=$(awk 'FNR == 1 {print $1}' results+onions.txt)
 if [ "$OPEN2" == y ]
 then
@@ -236,12 +227,18 @@ sudo qterminal -e su -c "firefox $HIT1" kali > /dev/null 2>&1
     echo "To continue: CTRL + c"
     echo
 else
-
     echo "Maybe next time"
 fi
     echo
-
-echo "DarkSheets script execution completed."
+    echo "DarkSheets script execution completed."
+    echo
+else
+    echo "Exiting Tor In Progress"
+    echo
+    sudo torghostng -x
+    echo "Tor exited successfully."
+fi
 echo
+
 echo "Exit Tor type: torghostng -x"
 #Pay Me later
