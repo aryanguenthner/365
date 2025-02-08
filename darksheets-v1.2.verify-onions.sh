@@ -31,6 +31,7 @@ date '+%Y-%m-%d %r' | tee darksheets-install.date
 CITY=$(curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2)
 PWD=$(pwd)
 RED='\033[31m'
+RANDOM=$$
 echo
 
 # Network Information
@@ -146,7 +147,7 @@ echo
 
 # Create Results File
 # Perform Devils Eye Search
-RESULT_FILE="results+onions.txt"
+RESULT_FILE="$(date +%Y%m%d).results+onions_$RANDOM.txt"
 echo "Saving results to $RESULT_FILE"
 sudo /root/.local/share/pipx/venvs/thedevilseye/bin/eye -q "$SEARCH" | grep ".onion" > "$RESULT_FILE"
 sed '/^invest/d' "$RESULT_FILE" > "$RESULT_FILE.tmp" && mv "$RESULT_FILE.tmp" "$RESULT_FILE"
@@ -208,6 +209,7 @@ printf "| %-12s | %-15s |\n" "Kali IP" "$KALI"
 echo "---------------------------------"
 echo
 echo -e "\e[031mVerifying Onion Links\e[0m"
+echo
 sudo cp /opt/365/onion_verifier.py $PWD
 # Simulated Progress Bar
 echo -ne '#####                     (33%)\r'
@@ -216,12 +218,15 @@ echo -ne '#############             (66%)\r'
 sleep 1
 echo -ne '#######################   (100%)\r'
 echo -ne '\n'
+echo
 sudo python3 onion_verifier.py
 echo
 echo -e "\e[031mVerified Onion Results\e[0m"
-VERIFIED_FILE="onion_titles.csv"
+VERIFIED_FILE=onion_titles.csv
+#VERIFIED_FILE="$(date +%Y%m%d).onion_titles_$RANDOM.csv"
 onion_count=$(wc -l < "$VERIFIED_FILE")
 echo -e "\e[31mOnions Found:\e[0m $onion_count"
+chmod -R 777 $PWD
 
 # Darksheets Results
 echo -e "\e[031mOpen a darksheet with results y/n: \e[0m"
@@ -236,7 +241,7 @@ then
     echo "Pro Tip: Use NoScript! Block Javascript!"
     echo
     echo "To continue press:    CTRL + c"
-sudo qterminal -e libreoffice --calc "$PWD"/onion_titles.csv > /dev/null 2>&1
+sudo qterminal -e libreoffice --calc "$PWD"/$VERIFIED_FILE > /dev/null 2>&1
     echo
 else
     echo "Maybe next time"
@@ -247,7 +252,7 @@ fi
 echo -e "\e[031mOpen Firefox to view results y/n: \e[0m"
 read -e OPEN2
 echo
-HIT1=$(awk 'FNR == 2 {print $2}' onion_titles.csv)
+HIT1=$(awk 'FNR == 2 {print $2}' $VERIFIED_FILE)
 if [ "$OPEN2" == y ]
 then
     echo "Opening Firefox with the First Result from DarkSheets"
