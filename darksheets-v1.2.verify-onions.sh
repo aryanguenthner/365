@@ -21,7 +21,12 @@ cat <<'EOF'
 ██████╔╝██║░░██║██║░░██║██║░╚██╗██████╔╝██║░░██║███████╗███████╗░░░██║░░░██████╔╝
 ╚═════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░╚═╝░░╚═╝╚══════╝╚══════╝░░░╚═╝░░░╚═════╝░
 EOF
-echo "CTI Cyber Threat intelligence v1.2"
+echo "OSINT CTI Cyber Threat intelligence v1.2"
+# Darksheets is meant for researchers and educational purposes only. This was developed to speed the investigation, enable clear documentation without pain and suffering. Pay me later.
+
+# Consider using spiderfoot,redtiger
+# https://github.com/smicallef/spiderfoot
+# https://github.com/loxy0dev/RedTiger-Tools
 echo
 # Todays Date
 sudo timedatectl set-timezone America/Los_Angeles
@@ -37,20 +42,35 @@ echo
 # Network Information
 echo -e "\e[031mGetting Network Information\e[0m"
 # Get public IP, Before Connecting to Dark Web
-EXT=$(curl -s https://api64.ipify.org)
-# Get country using ipinfo.io
-COUNTRY=$(curl -s ipinfo.io/country)
-# Get Kali IP (local IP)
+# Get location details using ipinfo.io
+# Fetch Public IP using multiple sources (fallback if one fails)
+EXT=$(curl -s https://api64.ipify.org || curl -s https://ifconfig.me || curl -s https://checkip.amazonaws.com)
+
+# If IP is still empty, set a default message
+if [[ -z "$EXT" ]]; then
+    EXT="Unavailable"
+fi
+
+# Get location details using ipinfo.io
+LOCATION=$(curl -s ipinfo.io/json)
+COUNTRY=$(echo "$LOCATION" | jq -r '.country')
+REGION=$(echo "$LOCATION" | jq -r '.region')
+CITY=$(echo "$LOCATION" | jq -r '.city')
+
+# Get local Kali IP
 KALI=$(hostname -I | awk '{print $1}')
 
 # Print in table format
 echo "---------------------------------"
-printf "| %-12s | %-15s |\n" "Label" "Value"
+printf "| %-12s | %-20s |\n" "Label" "Value"
 echo "---------------------------------"
-printf "| %-12s | %-15s |\n" "Public IP" "$EXT"
-printf "| %-12s | %-15s |\n" "Country" "$COUNTRY"
-printf "| %-12s | %-15s |\n" "Kali IP" "$KALI"
+printf "| %-12s | %-20s |\n" "Public IP" "$EXT"
+printf "| %-12s | %-20s |\n" "Country" "$COUNTRY"
+printf "| %-12s | %-20s |\n" "State" "$REGION"
+printf "| %-12s | %-20s |\n" "City" "$CITY"
+printf "| %-12s | %-20s |\n" "Kali IP" "$KALI"
 echo "---------------------------------"
+echo
 
 # Dependencies Check
 # Must have LibreOffice,TheDevilsEye,Tor,TorGhost,OnionVerifier,FireFox
@@ -121,7 +141,7 @@ fi
 E=/root/.local/share/pipx/venvs/thedevilseye/bin/eye
 if [ -f "$E" ]
 then
-    echo -e "\e[031mFound for the Devil's Eye\e[0m"
+    echo -e "\e[031mFound the Devil\e[0m"
 else
     echo -e "\e[031mGetting the Devil\e[0m"
     sudo pipx install thedevilseye==2022.1.4.0 > /dev/null 2>&1
@@ -131,8 +151,11 @@ fi
 echo
 
 # What are you researching?
-echo -en "\e[031mWhat are you researching: \e[0m"
-read -e SEARCH
+#echo -en "\e[031mWhat are you researching: \e[0m"
+#read -e SEARCH
+read -p "What are you researching: " SEARCH
+echo
+echo -e "\nSearching for $SEARCH"
 echo
 
 # Simulate Progress Bar
@@ -150,7 +173,7 @@ echo
 RESULT_FILE="$(date +%Y%m%d).results+onions_$RANDOM.txt"
 echo "Saving results to $RESULT_FILE"
 sudo /root/.local/share/pipx/venvs/thedevilseye/bin/eye -q "$SEARCH" | grep ".onion" > "$RESULT_FILE"
-sed '/^invest/d' "$RESULT_FILE" > "$RESULT_FILE.tmp" && mv "$RESULT_FILE.tmp" "$RESULT_FILE"
+sed '/^invest/d; /^222/d; /\.onion$/!d' "$RESULT_FILE" > "$RESULT_FILE.tmp" && mv "$RESULT_FILE.tmp" "$RESULT_FILE"
 sort -u "$RESULT_FILE" -o "$RESULT_FILE"
 echo -e "\e[31mOnions Found:\e[0m $(wc -l < "$RESULT_FILE")"
 echo
@@ -193,24 +216,50 @@ echo "🚫 Aborting Dark Web connection."
 fi
 
 # Get Dark Web IP
-EXT=$(curl --socks5-hostname 127.0.0.1:9050 -s --max-time 4 https://check.torproject.org/api/ip)
-# Get country using ipinfo.io
-COUNTRY=$(curl --socks5-hostname 127.0.0.1:9050 -s ipinfo.io/country)
-# Get Kali IP (local IP)
+# Get location details using ipinfo.io
+# Fetch Public IP using multiple sources (fallback if one fails)
+# Check if connected to Tor & extract IP correctly
+TOR_IP_JSON=$(curl --socks5-hostname 127.0.0.1:9050 -s --max-time 4 https://check.torproject.org/api/ip)
+TOR_IP=$(echo "$TOR_IP_JSON" | jq -r '.IP // empty')
+
+# Fetch Public IP and Location
+if [[ -n "$TOR_IP" ]]; then
+    EXT="$TOR_IP"
+    LOCATION=$(curl --socks5-hostname 127.0.0.1:9050 -s "http://ip-api.com/json/$EXT")
+else
+    EXT=$(curl -s https://api64.ipify.org || curl -s https://ifconfig.me || curl -s https://checkip.amazonaws.com)
+    LOCATION=$(curl -s "http://ip-api.com/json/$EXT")
+fi
+
+# Extract Country, State, and City (Handle Errors)
+COUNTRY=$(echo "$LOCATION" | jq -r '.country // "Unavailable"')
+REGION=$(echo "$LOCATION" | jq -r '.regionName // "Unavailable"')
+CITY=$(echo "$LOCATION" | jq -r '.city // "Unavailable"')
+
+# Get local Kali IP
 KALI=$(hostname -I | awk '{print $1}')
 
 # Print in table format
 echo "---------------------------------"
-printf "| %-12s | %-15s |\n" "Label" "Value"
+printf "| %-12s | %-20s |\n" "Label" "Value"
 echo "---------------------------------"
-printf "| %-12s | %-15s |\n" "Dark Web IP" "$EXT"
-printf "| %-12s | %-15s |\n" "Country" "$COUNTRY"
-printf "| %-12s | %-15s |\n" "Kali IP" "$KALI"
+printf "| %-12s | %-20s |\n" "Public IP" "$EXT"
+printf "| %-12s | %-20s |\n" "Country" "$COUNTRY"
+printf "| %-12s | %-20s |\n" "State" "$REGION"
+printf "| %-12s | %-20s |\n" "City" "$CITY"
+printf "| %-12s | %-20s |\n" "Kali IP" "$KALI"
 echo "---------------------------------"
 echo
+
 echo -e "\e[031mVerifying Onion Links\e[0m"
-echo
-sudo cp /opt/365/onion_verifier.py $PWD
+
+if [[ ! -f "$PWD/onion_verifier.py" ]]
+then
+    sudo cp /opt/365/onion_verifier.py "$PWD"
+else
+    echo "Onion Verifier already exists in the current directory."
+fi
+
 # Simulated Progress Bar
 echo -ne '#####                     (33%)\r'
 sleep 1
@@ -227,7 +276,6 @@ VERIFIED_FILE=onion_titles.csv
 onion_count=$(wc -l < "$VERIFIED_FILE")
 echo -e "\e[31mOnions Found:\e[0m $onion_count"
 chmod -R 777 $PWD
-
 # Darksheets Results
 echo -e "\e[031mOpen a darksheet with results y/n: \e[0m"
 read -e OPEN1

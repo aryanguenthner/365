@@ -30,7 +30,7 @@ def restart_tor():
 # Function to check if a .onion site is accessible
 def is_onion_live(url):
     try:
-        response = session.head(url, timeout=5, allow_redirects=True)
+        response = session.head(url, timeout=10, allow_redirects=True)
         return response.status_code == 200
     except requests.RequestException:
         return False
@@ -77,6 +77,7 @@ with open(input_file, "r", encoding="utf-8") as f:
     onion_sites = [line.strip() for line in f if line.strip()]
 
 # Using ThreadPoolExecutor to process requests concurrently
+# Using ThreadPoolExecutor to process requests concurrently
 with open(output_file, "w", newline="", encoding="utf-8") as file:
     writer = csv.writer(file)
     writer.writerow(["Onion Site", "Title"])
@@ -85,11 +86,16 @@ with open(output_file, "w", newline="", encoding="utf-8") as file:
     with ThreadPoolExecutor(max_workers=10) as executor:
         results = executor.map(process_site, onion_sites)
         
-        # Write results to file, excluding "Offline or Unreachable" sites
+        # Write results to file
         for result in results:
-            site, title = result
-            if title != "Offline or Unreachable":  # Exclude "Offline or Unreachable" results
-                writer.writerow(result)
+            if isinstance(result, (list, tuple)) and len(result) == 2:  # Ensure valid format
+                site, title = result
+                if isinstance(site, str) and site.endswith(".onion"):  # Only save .onion sites
+                    writer.writerow([site, title])  # Correct indentation
+                else:
+                    print(f"Skipping invalid entry: {result}")
+            else:
+                print(f"Malformed result entry: {result}")
 
         # Restart Tor every 15 requests (safe method)
         if len(onion_sites) % 15 == 0:
