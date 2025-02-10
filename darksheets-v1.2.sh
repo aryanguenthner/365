@@ -34,7 +34,7 @@ date '+%Y-%m-%d %r' | tee darksheets.run.date
 CITY=$(curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2)
 PWD=$(pwd)
 RED='\033[31m'
-RANDOM=$$
+#RANDOM=$$
 echo
 
 # Network Information
@@ -168,7 +168,7 @@ echo
 
 # Create Results File
 # Perform Devils Eye Search
-RESULTS_FILE="$(date +%Y%m%d).results.onion_$RANDOM.csv"
+RESULTS_FILE=results.onion.csv
 sudo /root/.local/share/pipx/venvs/thedevilseye/bin/eye -q "$SEARCH" | grep ".onion" > "$RESULTS_FILE"
 sed '/^invest/d; /^222/d; /\.onion$/!d' "$RESULTS_FILE" > "$RESULTS_FILE.tmp" && mv "$RESULTS_FILE.tmp" "$RESULTS_FILE"
 sort -u "$RESULTS_FILE" -o "$RESULTS_FILE"
@@ -250,6 +250,11 @@ COUNT=$(wc -l < "$RESULTS_FILE")
 echo -e "\e[31mTotal Onion Sites:\e[0m $COUNT"
 chmod -R 777 "$PWD"
 echo
+
+
+python3 onion_verifier.py
+
+ONIONS=onion_page_titles.csv
 # Darksheets Results
 read -p "Open a darksheet with results y/n: " OPEN1
 # Open spreadsheet with results
@@ -260,17 +265,17 @@ then
     echo
 # Open spreadsheet with all results
     echo "Opening DarkSheets with All Results"
-    sudo qterminal -e libreoffice --calc "$PWD"/$RESULTS_FILE > /dev/null 2>&1 &
+    sudo qterminal -e libreoffice --calc "$PWD"/$ONIONS > /dev/null 2>&1 &
     echo
 else
-    echo "The $RESULTS_FILE have been saved to: "$PWD""
+    echo "The $ONIONS have been saved to: "$PWD""
 fi
 
 # Open Firefox
 echo -e "\e[031mPro Tip: Use NoScript on the Dark Web! Block Javascript!\e[0m"
 read -p "Open Firefox to view results y/n: " OPEN2
 echo
-HIT1=$(awk 'FNR == 1 {print $1}' $RESULTS_FILE)
+HIT1=$(awk 'FNR == 2 {print $2}' $ONIONS)
 if [ "$OPEN2" == y ]
 then
     echo "Opening Firefox with the First Result from DarkSheets"

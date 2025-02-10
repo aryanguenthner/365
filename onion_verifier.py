@@ -69,8 +69,8 @@ def process_site(site):
     return [site, title]
 
 # Input and output files
-input_file = "results+onions.txt"
-output_file = "onion_titles.csv"
+input_file = "results.onion.csv"
+output_file = "onion_page_titles.csv"
 
 # Read .onion URLs from file
 with open(input_file, "r", encoding="utf-8") as f:
