@@ -41,8 +41,18 @@ def get_title(url):
         response = session.get(url, timeout=5)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
-        title = soup.title.string.strip() if soup.title else "No Title Found"
-        return title
+
+        # Handle missing title or empty title
+        if soup.title and soup.title.string:
+            return soup.title.string.strip()
+        
+        # Fallback: Use the first <h1> tag if title is missing
+        h1_tag = soup.find("h1")
+        if h1_tag and h1_tag.text.strip():
+            return h1_tag.text.strip()
+
+        return "No Title Found"
+    
     except requests.RequestException as e:
         return f"Error: {str(e)}"
 
@@ -65,7 +75,11 @@ def process_site(site):
         print(f"Skipping {site} due to URL formatting error: {e}")
         title = "Error: URL too long or malformed"
     
-    print(f"{site} -> {title}")
+    # ANSI escape code for red text
+    RED = "\033[31m"
+    RESET = "\033[0m"
+
+    print(f"{site} -> {RED}{title}{RESET}")
     return [site, title]
 
 # Input and output files
@@ -77,13 +91,12 @@ with open(input_file, "r", encoding="utf-8") as f:
     onion_sites = [line.strip() for line in f if line.strip()]
 
 # Using ThreadPoolExecutor to process requests concurrently
-# Using ThreadPoolExecutor to process requests concurrently
 with open(output_file, "w", newline="", encoding="utf-8") as file:
     writer = csv.writer(file)
     writer.writerow(["Onion Site", "Title"])
 
     # Limit the number of threads (adjust as needed, 10 threads as example)
-    with ThreadPoolExecutor(max_workers=10) as executor:
+    with ThreadPoolExecutor(max_workers=24) as executor:
         results = executor.map(process_site, onion_sites)
         
         # Write results to file
@@ -100,5 +113,5 @@ with open(output_file, "w", newline="", encoding="utf-8") as file:
         # Restart Tor every 15 requests (safe method)
         if len(onion_sites) % 15 == 0:
             restart_tor()
-
+print()
 print(f"Results saved to {output_file}")

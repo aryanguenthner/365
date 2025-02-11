@@ -62,10 +62,10 @@ KALI=$(hostname -I | awk '{print $1}')
 echo "---------------------------------"
 printf "| %-12s | %-20s |\n" "Label" "Value"
 echo "---------------------------------"
-printf "| %-12s | %-20s |\n" "Public IP" "$EXT"
+#printf "| %-12s | %-20s |\n" "Public IP" "$EXT"
 printf "| %-12s | %-20s |\n" "Country" "$COUNTRY"
 printf "| %-12s | %-20s |\n" "State" "$REGION"
-printf "| %-12s | %-20s |\n" "City" "$CITY"
+#printf "| %-12s | %-20s |\n" "City" "$CITY"
 printf "| %-12s | %-20s |\n" "Kali IP" "$KALI"
 echo "---------------------------------"
 echo
@@ -251,16 +251,17 @@ echo -e "\e[31mTotal Onion Sites:\e[0m $COUNT"
 chmod -R 777 "$PWD"
 echo
 
-
 python3 onion_verifier.py
 
 ONIONS=onion_page_titles.csv
 # Darksheets Results
+echo
 read -p "Open a darksheet with results y/n: " OPEN1
 # Open spreadsheet with results
 if [ "$OPEN1" == y ]
 then
     echo -e "\e[031mOpening DarkSheets results with LibreOffice\e[0m"
+    echo
     echo "Exit DarkSheets: CTRL + c"
     echo
 # Open spreadsheet with all results
@@ -273,9 +274,31 @@ fi
 
 # Open Firefox
 echo -e "\e[031mPro Tip: Use NoScript on the Dark Web! Block Javascript!\e[0m"
+echo
 read -p "Open Firefox to view results y/n: " OPEN2
 echo
-HIT1=$(awk 'FNR == 2 {print $2}' $ONIONS)
+#HIT1=$(awk 'FNR == 2 {print $1}' $ONIONS)
+#HIT1=$(awk '$0 ~ /\.onion/ {print $0; exit}' $ONIONS)
+#HIT1=$(awk '$0 ~ /\.onion/ {match($0, /https?:\/\/[^ ]*\.onion/); if (RSTART) print substr($0, RSTART, RLENGTH); exit}' $ONIONS)
+HIT1=$(awk -v search="$SEARCH" '
+    BEGIN { best_match = ""; best_score = -1 }
+    NR > 1 && $1 ~ /\.onion/ {  # Skip header, process .onion URLs
+        url = $1;
+        title = tolower($2);
+        search_lower = tolower(search);
+
+        score = 0;
+        if (index(title, search_lower)) { score += 10 }  # Strong match in title
+        if (index(url, search_lower)) { score += 5 }      # Some match in URL
+
+        if (score > best_score) {
+            best_match = url;
+            best_score = score;
+        }
+    }
+    END { print best_match }
+' $ONIONS)
+
 if [ "$OPEN2" == y ]
 then
     echo "Opening Firefox with the First Result from DarkSheets"
