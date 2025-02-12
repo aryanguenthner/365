@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 02/01/2025, minor evil updates, pay me later
+# Last Updated 02/11/2025, minor evil updates, pay me later
 # Tested on Kali 2024.3 Gnome/XFCE
 # Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
 # cd 365 && sudo chmod a+x *.sh
@@ -16,10 +16,6 @@ echo "kali ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/kali
 # Setting Variables
 YELLOW=033m
 BLUE=034m
-KALI=$(hostname -I)
-CITY=$(curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2)
-EXT=$(curl -s api.ipify.org) 
-SUBNET=`ip r | awk 'NR==2' | awk '{print $1}'`
 PWD=$(pwd)
 
 # Get the directory where the kali-setup.sh is executed
@@ -47,22 +43,38 @@ echo
 echo "Getting BIOS Info"
 sudo dmidecode -s bios-version | tee /home/kali/Desktop/bios-information.txt
 
-# Networking, Modified for IPv4
-echo -e "\e[033mNetwork Information\e[0m"
-echo
-echo -e "\e[033mPublic IP\e[0m"
-echo "$CITY"
-echo "$EXT"
-echo
+# Network Information
+echo -e "\e[031mGetting Network Information\e[0m"
+# Get location details using ipinfo.io
+# Fetch Public IP using multiple sources (fallback if one fails)
+EXT=$(curl -s https://api64.ipify.org || curl -s https://ifconfig.me || curl -s https://checkip.amazonaws.com)
 
-# Internal IP Address
-echo -e "\e[033mKali IP\e[0m"
-echo $KALI | awk '{print $1}'
-echo
+# If IP is still empty, set a default message
+if [[ -z "$EXT" ]]; then
+    EXT="Unavailable"
+fi
 
-# Subnet
-echo -e "\e[033mCurrent Subnet\e[0m"
-echo $SUBNET
+# Get location details using ipinfo.io
+LOCATION=$(curl -s ipinfo.io/json)
+COUNTRY=$(echo "$LOCATION" | jq -r '.country')
+REGION=$(echo "$LOCATION" | jq -r '.region')
+CITY=$(echo "$LOCATION" | jq -r '.city')
+
+# Get local Kali IP
+KALI=$(hostname -I | awk '{print $1}')
+SUBNET=`ip r | awk 'NR==2' | awk '{print $1}'`
+
+# Print in table format
+echo "---------------------------------"
+printf "| %-12s | %-20s |\n" "Label" "Value"
+echo "---------------------------------"
+printf "| %-12s | %-20s |\n" "Public IP" "$EXT"
+printf "| %-12s | %-20s |\n" "Country" "$COUNTRY"
+printf "| %-12s | %-20s |\n" "State" "$REGION"
+printf "| %-12s | %-20s |\n" "City" "$CITY"
+printf "| %-12s | %-20s |\n" "Kali IP" "$KALI"
+printf "| %-12s | %-20s |\n" "Subnet" "$SUBNET"
+echo "---------------------------------"
 echo
 sleep 2
 
@@ -617,9 +629,13 @@ echo
 
 # Kali Setup Finish Time
 date | tee kali-setup-finish-date.txt
-updatedb
 
+# Update the xfce4 panel
+sudo xfce4-panel-profiles load /opt/365/kali_panel_profile_backup_2025_02_11.tar.bz2
+
+updatedb
 echo "Hack The Planet"
 reboot
 # Just in case DNS issues: nano -c /etc/resolvconf/resolv.conf.d/head
 # Gucci Mang
+# Pay me later
