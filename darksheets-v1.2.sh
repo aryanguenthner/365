@@ -21,10 +21,10 @@ cat <<'EOF'
 EOF
 echo "OSINT CTI Cyber Threat intelligence v1.2"
 # Darksheets is meant for researchers and educational purposes only. This was developed to speed the investigation, enable clear documentation without pain and suffering. Pay me later.
-
 # Consider using spiderfoot,redtiger
 # https://github.com/smicallef/spiderfoot
 # https://github.com/loxy0dev/RedTiger-Tools
+echo "sudo ./darksheets-v1.2.sh"
 echo
 # Todays Date
 sudo timedatectl set-timezone America/Los_Angeles
@@ -181,22 +181,18 @@ echo
 echo "Saved results to "$PWD"/"$RESULTS_FILE""
 echo
 
-# Ask the user if they want to connect to the dark web
-read -p "Do you want to connect to the dark web? (y/n): " CONNECT
-
 # Check for TOR Connection
 echo "Starting Tor service"
 sudo systemctl start tor
 echo
 
-if [[ "$CONNECT" == "y" || "$CONNECT" == "Y" ]]; then
-echo "⚡ Attempting to connect to the Dark Web..."
+echo "Attempting to connect to the Dark Web..."
 echo
 # Starting Tor in the Netherlands
 # Example Country Codes: nl,de,us,ca,mx,ru,br,bo,gb,fr,ir,by,cn
 sudo torghostng -id nl
 echo
-echo -e "\e[031m⏳ Establishing dark web connection:\e[0m"
+echo -e "\e[031mEstablishing dark web connection:\e[0m"
     
 # Simulated Progress Bar
 echo -ne '#####                     (33%)\r'
@@ -206,10 +202,7 @@ sleep 1
 echo -ne '#######################   (100%)\r'
 echo -ne '\n'
 echo
-echo "✅ Connection Established. You can now access .onion sites."
-else
-echo "🚫 Aborting Dark Web connection."
-fi
+echo -e "\e[31mConnection Established. You can now access .onion sites.\e[0m $COUNT"
 
 # Get Dark Web IP
 # Get location details using ipinfo.io
@@ -245,45 +238,36 @@ printf "| %-12s | %-20s |\n" "City" "$CITY"
 printf "| %-12s | %-20s |\n" "Kali IP" "$KALI"
 echo "---------------------------------"
 echo
-
 COUNT=$(wc -l < "$RESULTS_FILE")
-echo -e "\e[31mTotal Onion Sites:\e[0m $COUNT"
 chmod -R 777 "$PWD"
 echo
-
-python3 onion_verifier.py
+echo -e "\e[31mGetting More Info on Onions\e[0m $COUNT"
+python3 onion_verifier.py | tee onion_verifier.log
+echo
 
 ONIONS=onion_page_titles.csv
 # Darksheets Results
 echo
-read -p "Open a darksheet with results y/n: " OPEN1
-# Open spreadsheet with results
-if [ "$OPEN1" == y ]
-then
-    echo -e "\e[031mOpening DarkSheets results with LibreOffice\e[0m"
-    echo
-    echo "Exit DarkSheets: CTRL + c"
-    echo
+echo -e "\e[031mOpening DarkSheets results with LibreOffice\e[0m"
+echo
+
 # Open spreadsheet with all results
-    echo "Opening DarkSheets with All Results"
-    sudo qterminal -e libreoffice --calc "$PWD"/$ONIONS > /dev/null 2>&1 &
-    echo
-else
-    echo "The $ONIONS have been saved to: "$PWD""
-fi
+qterminal -e libreoffice --calc "$PWD"/$ONIONS & disown > /dev/null 2>&1 &
+echo "The $ONIONS have been saved to: "$PWD""
+echo
 
 # Open Firefox
 echo -e "\e[031mPro Tip: Use NoScript on the Dark Web! Block Javascript!\e[0m"
-echo
-read -p "Open Firefox to view results y/n: " OPEN2
-echo
 #HIT1=$(awk 'FNR == 2 {print $1}' $ONIONS)
 #HIT1=$(awk '$0 ~ /\.onion/ {print $0; exit}' $ONIONS)
-#HIT1=$(awk '$0 ~ /\.onion/ {match($0, /https?:\/\/[^ ]*\.onion/); if (RSTART) print substr($0, RSTART, RLENGTH); exit}' $ONIONS)
-HIT1=$(awk -v search="$SEARCH" '
-    BEGIN { best_match = ""; best_score = -1 }
+#HIT1=$(awk '$0 ~ /\.onion/ {match($0, /http?:\/\/[^ ]*\.onion/); if (RSTART) print substr($0, RSTART, RLENGTH); exit}' $ONIONS)
+# Extract top 3 unique .onion URLs matching the search query
+readarray -t HITS < <(awk -v search="$SEARCH" '
+    BEGIN { count = 0 }
     NR > 1 && $1 ~ /\.onion/ {  # Skip header, process .onion URLs
         url = $1;
+        sub(/\.onion.*/, ".onion", url);  # Keep only the .onion domain
+        
         title = tolower($2);
         search_lower = tolower(search);
 
@@ -291,33 +275,62 @@ HIT1=$(awk -v search="$SEARCH" '
         if (index(title, search_lower)) { score += 10 }  # Strong match in title
         if (index(url, search_lower)) { score += 5 }      # Some match in URL
 
-        if (score > best_score) {
-            best_match = url;
-            best_score = score;
+        results[url] = score;
+    }
+    END {
+        # Sort results by score (descending) and print top 3 unique URLs
+        n = 0;
+        PROCINFO["sorted_in"] = "@val_num_desc"
+        for (url in results) {
+            print url
+            if (++n == 3) break
         }
     }
-    END { print best_match }
-' $ONIONS)
+' "$ONIONS")
 
-if [ "$OPEN2" == y ]
-then
-    echo "Opening Firefox with the First Result from DarkSheets"
+# Assign extracted values (fallback to empty string if fewer than 3)
+HIT1="${HITS[0]:-}"
+HIT2="${HITS[1]:-}"
+HIT3="${HITS[2]:-}"
 
-sudo qterminal -e su -c "firefox $HIT1" kali > /dev/null 2>&1
-    echo
-    echo "To continue: CTRL + c"
-else
-    echo
-fi
-
-echo "DarkSheets script execution completed."
+# Debugging (optional)
+echo "HIT1: $HIT1"
+echo "HIT2: $HIT2"
+echo "HIT3: $HIT3"
 echo
+
+echo "Opening Dark Web Sites in Firefox"
+qterminal -e qterminal -e su -c "firefox $HIT1" kali & disown > /dev/null 2>&1 &
+qterminal -e qterminal -e su -c "firefox $HIT2" kali & disown > /dev/null 2>&1 &
+qterminal -e qterminal -e su -c "firefox $HIT3" kali & disown > /dev/null 2>&1 &
+echo
+
+RESULTS_FILE=results.onion.csv
+echo "GoWitness Getting Screenshots, Be patient and let it run"
+echo
+qterminal -e ./gowitness file -f $RESULTS_FILE -p socks5://127.0.0.1:9050 & disown > /dev/null 2>&1 &&
+PID1=$!
+wait $PID1  # Wait for GoWitness screenshots to finish
+
+
+echo "Starting GoWitness Server, Open http://localhost:7171/ when the screenshots are ready"
+echo
+qterminal -e ./gowitness server & disown > /dev/null 2>&1 &&
+PID2=$!
+sleep 5  # Allow the server some time to start
+
+echo "Opening GoWitness Results in Firefox"
+GOSERVER="http://localhost:7171/gallery"
+qterminal -e qterminal -e su -c "firefox $GOSERVER" kali & disown > /dev/null 2>&1 &
+echo
+
 echo "Friendly reminder to exit the Dark Web type: torghostng -x"
-echo
 # Ask the user if they want to disconnect from the dark web
+echo
 read -p "Do you want to disconnect from dark web? (y/n): " DISCONNECT 
 
 if [[ "$DISCONNECT" == "y" || "$DISCONNECT" == "Y" ]]; then
+echo
 echo "⚡ Attempting to disconnect from the Dark Web..."
 
     echo
