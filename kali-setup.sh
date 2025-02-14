@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 02/11/2025, minor evil updates, pay me later
+# Last Updated 02/13/2025, minor evil updates, pay me later
 # Tested on Kali 2024.3 Gnome/XFCE
 # Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
 # cd 365 && sudo chmod a+x *.sh
@@ -626,6 +626,9 @@ echo "export PATH=$PATH:/root/.local/bin" >> /root/.zshrc
 source ~/.zshrc
 echo
 '
+# Updating /opt/365 permissions and file execution
+chmod -R 777 /opt/365
+chmod a+x /opt/365/*.sh /opt/365/*.py
 
 # Kali Setup Finish Time
 date | tee kali-setup-finish-date.txt
