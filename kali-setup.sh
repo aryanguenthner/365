@@ -2,11 +2,11 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 02/13/2025, minor evil updates, pay me later
-# Tested on Kali 2024.3 Gnome/XFCE
-# Usage: cd /opt/ && sudo git clone https://github.com/aryanguenthner/365
+# Last Updated 02/14/2025, minor evil updates, pay me later
+# Tested on Kali 2024.4 XFCE
+# Usage: sudo git clone https://github.com/aryanguenthner/365 /opt/
 # cd 365 && sudo chmod a+x *.sh
-# chmod -R 777 /home/kali/
+# chmod -R 777 /home/kali/ /opt/365
 # sudo time ./kali-setup.sh 2>&1 | tee kali.log
 ################################################
 
@@ -78,7 +78,7 @@ echo "---------------------------------"
 echo
 sleep 2
 
-# Disable IPV6
+# Disable IPv6
 echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
 echo "net.ipv6.conf.default.disable_ipv6 = 1"  >> /etc/sysctl.conf
 echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
@@ -97,13 +97,17 @@ echo
 echo "Be Patient, Installing Kali Dependencies"
 echo
 
+# Update the xfce4 panel
+sudo xfce4-panel-profiles load /opt/365/kali_panel_backup.tar.bz2
+sudo xfce4-panel -r
+
 # Prepare Kali installs
 apt-get update && apt-get -y full-upgrade && apt -y autoremove && updatedb
 echo
 sudo apt-get install -y mono-devel printer-driver-escpr pipx python3-distutils-extra torbrowser-launcher shellcheck wkhtmltopdf yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2t64 libkrb5-dev metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m jq cups system-config-printer gobuster libreoffice
 echo
 
-# Some dependencies before installing VirtualBox:
+# Some dependencies
 sudo apt install -y gcc make linux-headers-$(uname -r)
 
 # Variables
@@ -253,7 +257,6 @@ source myenv/bin/activate
 pip install updog
 echo
 
-echo
 # Keep Nmap scans Organized
 sudo mkdir -p /home/kali/Desktop/testing/nmapscans/
 
@@ -296,13 +299,17 @@ echo 'export PATH="$PATH:/usr/local/go/bin"' >> /root/.zshrc
 echo 'export PATH="$PATH:$HOME/go/bin"' >> /root/.zshrc
 echo 'export PATH="$PATH:/root/go"' >> /root/.zshrc
 
+# Updating /opt/365 permissions and file execution
+chmod -R 777 /opt/365
+chmod a+x /opt/365/*.sh /opt/365/*.py
+
 # Just Go for it!
 wget --no-check-certificate https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
 tar -xvzf go1.23.0.linux-amd64.tar.gz
 sudo mv go /usr/local
 echo
 # Get go Version
-source ~/.zshrc
+sudo source ~/.zshrc
 go version
 
 # Project Discovery Nuclei
@@ -559,6 +566,14 @@ echo
 # systemctl restart ntp
 echo
 
+# If installing in VM
+#VBOX1=$(dmidecode -s bios-version)
+#if [ VBOX1=Virtualbox ] 
+# then
+# echo "Skipping VBox Install"
+# else
+# apt-get install virtualbox
+#fi
 
 ## VirtualBox Hack for USB Devices
 #sudo usermod -a -G vboxusers $USER
@@ -599,7 +614,7 @@ echo
 
 # IP Address
 # Updated
-echo 'hostname -I' >> /root/.zshrc
+sudo echo 'hostname -I' >> /root/.zshrc
 
 :'
 # Customize Kali Paths
@@ -616,15 +631,9 @@ echo "export PATH=$PATH:/root/.local/bin" >> /root/.zshrc
 source ~/.zshrc
 echo
 '
-# Updating /opt/365 permissions and file execution
-chmod -R 777 /opt/365
-chmod a+x /opt/365/*.sh /opt/365/*.py
 
 # Kali Setup Finish Time
 date | tee kali-setup-finish-date.txt
-
-# Update the xfce4 panel
-sudo xfce4-panel-profiles load /opt/365/kali_panel_profile_backup_2025_02_14.tar.bz2
 
 updatedb
 echo "Hack The Planet"
@@ -632,7 +641,7 @@ echo "Enable Kali Autologin"
 sed -i '120s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
 sed -i '121s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
 sudo service lightdm restart
-chmod -R 777 /home/kali/
+
 echo
 reboot
 # Just in case DNS issues: nano -c /etc/resolvconf/resolv.conf.d/head
