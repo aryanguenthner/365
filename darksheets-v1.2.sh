@@ -244,7 +244,6 @@ echo
 echo -e "\e[31mGetting More Info on Onions\e[0m $COUNT"
 python3 onion_verifier.py | tee onion_verifier.log
 echo
-
 ONIONS=onion_page_titles.csv
 # Darksheets Results
 echo
@@ -252,8 +251,8 @@ echo -e "\e[031mOpening DarkSheets results with LibreOffice\e[0m"
 echo
 # Open spreadsheet with all results
 qterminal -e libreoffice --calc "$PWD"/$ONIONS --infilter=”CSV:44,34,0,1,4/2/1” --norestore & disown > /dev/null 2>&1 &
-echo "The Onions have been saved to: "$PWD""/$ONIONS
-echo
+echo "The Onions have been saved to: "$PWD"/"$ONIONS""
+
 # Open Firefox
 echo -e "\e[031mPro Tip: Use NoScript on the Dark Web! Block Javascript!\e[0m"
 #HIT1=$(awk 'FNR == 2 {print $1}' $ONIONS)
@@ -309,7 +308,7 @@ echo
 qterminal -e ./gowitness file -f $RESULTS_FILE -p socks5://127.0.0.1:9050 & disown > /dev/null 2>&1 &&
 PID1=$!
 wait $PID1  # Wait for GoWitness screenshots to finish
-
+sleep 10
 
 echo "Starting GoWitness Server, Open http://localhost:7171/ when the screenshots are ready"
 echo
@@ -321,6 +320,7 @@ echo "Opening GoWitness Results in Firefox"
 GOSERVER="http://localhost:7171/gallery"
 qterminal -e qterminal -e su -c "firefox $GOSERVER" kali & disown > /dev/null 2>&1 &
 echo
+sleep 10
 
 echo "Friendly reminder to exit the Dark Web type: torghostng -x"
 # Ask the user if they want to disconnect from the dark web
