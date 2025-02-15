@@ -248,9 +248,10 @@ ONIONS=onion_page_titles.csv
 # Darksheets Results
 echo
 echo -e "\e[031mOpening DarkSheets results with LibreOffice\e[0m"
-echo
+
 # Open spreadsheet with all results
 qterminal -e libreoffice --calc "$PWD"/$ONIONS --infilter=”CSV:44,34,0,1,4/2/1” --norestore & disown > /dev/null 2>&1 &
+echo
 echo "The Onions have been saved to: "$PWD"/"$ONIONS""
 
 # Open Firefox
@@ -290,16 +291,15 @@ HIT1="${HITS[0]:-}"
 HIT2="${HITS[1]:-}"
 HIT3="${HITS[2]:-}"
 
-# Debugging (optional)
-echo "HIT1: $HIT1"
-echo "HIT2: $HIT2"
-echo "HIT3: $HIT3"
-echo
-
 echo "Opening Dark Web Sites in Firefox"
 qterminal -e qterminal -e su -c "firefox $HIT1" kali & disown > /dev/null 2>&1 &
 qterminal -e qterminal -e su -c "firefox $HIT2" kali & disown > /dev/null 2>&1 &
 qterminal -e qterminal -e su -c "firefox $HIT3" kali & disown > /dev/null 2>&1 &
+echo
+# Debugging (optional)
+echo "HIT1: $HIT1"
+echo "HIT2: $HIT2"
+echo "HIT3: $HIT3"
 echo
 
 RESULTS_FILE=results.onion.csv
@@ -314,13 +314,12 @@ echo "Starting GoWitness Server, Open http://localhost:7171/ when the screenshot
 echo
 qterminal -e ./gowitness server & disown > /dev/null 2>&1 &&
 PID2=$!
-sleep 5  # Allow the server some time to start
+sleep 10  # Allow the server some time to start
 
 echo "Opening GoWitness Results in Firefox"
 GOSERVER="http://localhost:7171/gallery"
 qterminal -e qterminal -e su -c "firefox $GOSERVER" kali & disown > /dev/null 2>&1 &
 echo
-sleep 10
 
 echo "Friendly reminder to exit the Dark Web type: torghostng -x"
 # Ask the user if they want to disconnect from the dark web
