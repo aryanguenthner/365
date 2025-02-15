@@ -11,7 +11,7 @@
 ################################################
 echo
 # Add kali to sudoers
-echo "kali ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/kali
+echo "kali ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/kali > /dev/null 2>&1
 echo
 
 # Setting Variables
@@ -43,9 +43,8 @@ echo
 
 echo "Getting BIOS Info"
 sudo dmidecode -s bios-version | tee /home/kali/Desktop/bios-information.txt
-
+echo
 # Network Information
-echo -e "\e[031mGetting Network Information\e[0m"
 # Get location details using ipinfo.io
 # Fetch Public IP using multiple sources (fallback if one fails)
 EXT=$(curl -s https://api64.ipify.org || curl -s https://ifconfig.me || curl -s https://checkip.amazonaws.com)
@@ -56,6 +55,8 @@ if [[ -z "$EXT" ]]; then
 fi
 
 sudo apt-get update && apt-get -y install jq > /dev/null 2>&1
+echo
+echo -e "\e[031mGetting Network Information\e[0m"
 # Get location details using ipinfo.io
 LOCATION=$(curl -s ipinfo.io/json)
 COUNTRY=$(echo "$LOCATION" | jq -r '.country')
@@ -98,7 +99,7 @@ echo
 echo "Be Patient, Installing Kali Dependencies"
 echo
 
-# TODO: Update the xfce4 panel
+# TODO: Update Fix the xfce4 panel backup & restore
 # sudo xfce4-panel-profiles load /opt/365/kali-panel-backup.tar.bz2 > /dev/null 2>&1
 # sudo xfce4-panel > /dev/null 2>&1
 
