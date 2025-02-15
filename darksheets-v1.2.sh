@@ -24,7 +24,6 @@ echo "OSINT CTI Cyber Threat intelligence v1.2"
 # Consider using spiderfoot,redtiger
 # https://github.com/smicallef/spiderfoot
 # https://github.com/loxy0dev/RedTiger-Tools
-echo "sudo ./darksheets-v1.2.sh"
 echo
 # Todays Date
 sudo timedatectl set-timezone America/Los_Angeles
@@ -45,6 +44,8 @@ echo -e "\e[031mGetting Network Information\e[0m"
 EXT=$(curl -s https://api64.ipify.org || curl -s https://ifconfig.me || curl -s https://checkip.amazonaws.com)
 
 # If IP is still empty, set a default message
+# If "jq: parse error: Invalid numeric literal at line 3, column 0"
+# then you are already connected to Tor
 if [[ -z "$EXT" ]]; then
     EXT="Unavailable"
 fi
@@ -149,10 +150,7 @@ fi
 echo
 
 # What are you researching?
-#echo -en "\e[031mWhat are you researching: \e[0m"
-#read -e SEARCH
 read -p "What are you researching: " SEARCH
-echo
 echo -e "\nSearching for $SEARCH"
 echo
 
@@ -165,7 +163,6 @@ sleep 1
 echo -ne '#######################   (100%)\r'
 echo -ne '\n'
 echo
-
 # Create Results File
 # Perform Devils Eye Search
 RESULTS_FILE=results.onion.csv
@@ -179,8 +176,7 @@ echo
 head "$RESULTS_FILE"
 echo
 echo "Saved results to "$PWD"/"$RESULTS_FILE""
-
-
+echo
 # Check for TOR Connection
 echo "Starting Tor service"
 sudo systemctl start tor
@@ -192,7 +188,7 @@ echo
 # Example Country Codes: nl,de,us,ca,mx,ru,br,bo,gb,fr,ir,by,cn
 sudo torghostng -id nl
 echo
-echo -e "\e[031mEstablishing dark web connection:\e[0m"
+echo -e "\e[031mEstablishing a Connection to the Dark Web\e[0m"
     
 # Simulated Progress Bar
 echo -ne '#####                     (33%)\r'
@@ -200,9 +196,10 @@ sleep 1
 echo -ne '#############             (66%)\r'
 sleep 1
 echo -ne '#######################   (100%)\r'
+sleep 1
 echo -ne '\n'
 echo
-echo -e "\e[31mConnection Established. You can now access .onion sites.\e[0m $COUNT"
+echo -e "\e[31mConnection Established. You can now access .onion sites.\e[0m"
 
 # Get Dark Web IP
 # Get location details using ipinfo.io
@@ -210,7 +207,6 @@ echo -e "\e[31mConnection Established. You can now access .onion sites.\e[0m $CO
 # Check if connected to Tor & extract IP correctly
 TOR_IP_JSON=$(curl --socks5-hostname 127.0.0.1:9050 -s --max-time 4 https://check.torproject.org/api/ip)
 TOR_IP=$(echo "$TOR_IP_JSON" | jq -r '.IP // empty')
-
 # Fetch Public IP and Location
 if [[ -n "$TOR_IP" ]]; then
     EXT="$TOR_IP"
@@ -238,24 +234,24 @@ printf "| %-12s | %-20s |\n" "City" "$CITY"
 printf "| %-12s | %-20s |\n" "Kali IP" "$KALI"
 echo "---------------------------------"
 echo
-COUNT=$(wc -l < "$RESULTS_FILE")
 chmod -R 777 "$PWD"
-echo
-echo -e "\e[31mGetting More Info on Onions\e[0m $COUNT"
+COUNT=$(wc -l < "$RESULTS_FILE")
+echo -e "\e[31mGetting More Info on $COUNT Onions\e[0m"
+echo "---------------------------------"
 python3 onion_verifier.py | tee onion_verifier.log
 echo
 ONIONS=onion_page_titles.csv
 # Darksheets Results
-echo
 echo -e "\e[031mOpening DarkSheets results with LibreOffice\e[0m"
 
 # Open spreadsheet with all results
 qterminal -e libreoffice --calc "$PWD"/$ONIONS --infilter=”CSV:44,34,0,1,4/2/1” --norestore & disown > /dev/null 2>&1 &
 echo
 echo "The Onions have been saved to: "$PWD"/"$ONIONS""
-
+echo
 # Open Firefox
 echo -e "\e[031mPro Tip: Use NoScript on the Dark Web! Block Javascript!\e[0m"
+echo
 #HIT1=$(awk 'FNR == 2 {print $1}' $ONIONS)
 #HIT1=$(awk '$0 ~ /\.onion/ {print $0; exit}' $ONIONS)
 #HIT1=$(awk '$0 ~ /\.onion/ {match($0, /http?:\/\/[^ ]*\.onion/); if (RSTART) print substr($0, RSTART, RLENGTH); exit}' $ONIONS)
@@ -295,7 +291,6 @@ echo "Opening Dark Web Sites in Firefox"
 qterminal -e qterminal -e su -c "firefox $HIT1" kali & disown > /dev/null 2>&1 &
 qterminal -e qterminal -e su -c "firefox $HIT2" kali & disown > /dev/null 2>&1 &
 qterminal -e qterminal -e su -c "firefox $HIT3" kali & disown > /dev/null 2>&1 &
-echo
 # Debugging (optional)
 echo "HIT1: $HIT1"
 echo "HIT2: $HIT2"
@@ -303,21 +298,19 @@ echo "HIT3: $HIT3"
 echo
 
 RESULTS_FILE=results.onion.csv
+# Get Screenshot, Save results to db
 echo "GoWitness Getting Screenshots, Be patient and let it run"
 echo
-qterminal -e ./gowitness file -f $RESULTS_FILE -p socks5://127.0.0.1:9050 & disown > /dev/null 2>&1 &&
-PID1=$!
-wait $PID1  # Wait for GoWitness screenshots to finish
-sleep 10
+sudo qterminal -e ./gowitness scan file -f $RESULTS_FILE --threads 20 --write-db --chrome-proxy socks5://127.0.0.1:9050 & disown > /dev/null 2>&1 &
 
-echo "Starting GoWitness Server, Open http://localhost:7171/ when the screenshots are ready"
+# Start Web Server
+echo "Starting GoWitness Server, Open http://127.0.0.1:7171/ when the screenshots are ready"
 echo
-qterminal -e ./gowitness server & disown > /dev/null 2>&1 &&
-PID2=$!
-sleep 10  # Allow the server some time to start
+sudo qterminal -e ./gowitness report server & disown > /dev/null 2>&1 &
 
+# Open Firefox to see the results
 echo "Opening GoWitness Results in Firefox"
-GOSERVER="http://localhost:7171/gallery"
+GOSERVER="http://127.0.0.1:7171/gallery"
 qterminal -e qterminal -e su -c "firefox $GOSERVER" kali & disown > /dev/null 2>&1 &
 echo
 
@@ -325,7 +318,7 @@ echo "Friendly reminder to exit the Dark Web type: torghostng -x"
 # Ask the user if they want to disconnect from the dark web
 echo
 read -p "Do you want to disconnect from dark web? (y/n): " DISCONNECT 
-
+echo
 if [[ "$DISCONNECT" == "y" || "$DISCONNECT" == "Y" ]]; then
 echo
 echo "⚡ Attempting to disconnect from the Dark Web..."
