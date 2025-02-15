@@ -3,7 +3,7 @@
 # Made for OSINT CTI cyber security research on the Dark Deep Web
 # Intended to be used on Kali Linux
 # Updated for compatibility and better Tor handling
-# Hacked on 02/09/2025, pay me later
+# Hacked on 02/14/2025, pay me later
 # Great ideas
 # install_addon "https://addons.mozilla.org/firefox/downloads/file/4141345/noscript-11.4.26.xpi" "noscript"
 # install_addon "https://addons.mozilla.org/firefox/downloads/file/4125998/adblock_plus-3.17.1.xpi" "adblock_plus"
@@ -73,7 +73,7 @@ echo
 # Dependencies Check
 # Must have LibreOffice,TheDevilsEye,Tor,TorGhost,OnionVerifier,FireFox
 echo "Checking Requirements"
-sudo apt-get install -y tor torbrowser-launcher python3-stem  > /dev/null 2>&1
+sudo apt-get install -y jq tor torbrowser-launcher python3-stem libreoffice > /dev/null 2>&1
 # Simulated Progress Bar
 echo -ne '#####                     (33%)\r'
 sleep 1
@@ -170,7 +170,7 @@ echo
 # Perform Devils Eye Search
 RESULTS_FILE=results.onion.csv
 sudo /root/.local/share/pipx/venvs/thedevilseye/bin/eye -q "$SEARCH" | grep ".onion" > "$RESULTS_FILE"
-sed '/^invest/d; /^222/d; /\.onion$/!d' "$RESULTS_FILE" > "$RESULTS_FILE.tmp" && mv "$RESULTS_FILE.tmp" "$RESULTS_FILE"
+sed '/^invest/d; /^222/d; /^porn/d; /\.onion$/!d' "$RESULTS_FILE" > "$RESULTS_FILE.tmp" && mv "$RESULTS_FILE.tmp" "$RESULTS_FILE"
 sort -u "$RESULTS_FILE" -o "$RESULTS_FILE"
 echo -e "\e[31mOnions Found:\e[0m $(wc -l < "$RESULTS_FILE")"
 echo
@@ -179,7 +179,7 @@ echo
 head "$RESULTS_FILE"
 echo
 echo "Saved results to "$PWD"/"$RESULTS_FILE""
-echo
+
 
 # Check for TOR Connection
 echo "Starting Tor service"
@@ -245,7 +245,7 @@ echo -e "\e[31mGetting More Info on Onions\e[0m $COUNT"
 python3 onion_verifier.py | tee onion_verifier.log
 echo
 
-ONIONS=onion_page_titles.csv
+ONIONS=onion_page_titles.xls
 # Darksheets Results
 echo
 echo -e "\e[031mOpening DarkSheets results with LibreOffice\e[0m"

@@ -234,7 +234,6 @@ sudo pipx install git+https://github.com/Pennyw0rth/NetExec
 sudo pipx ensurepath --prepend
 echo
 
-
 # Get Pippy wit it
 #python3 -m pip install --upgrade pip
 #pip3 install --upgrade setuptools
@@ -253,7 +252,6 @@ source myenv/bin/activate
 # Now install updog
 pip install updog
 echo
-
 
 echo
 # Keep Nmap scans Organized
@@ -337,6 +335,16 @@ cd /opt
 go install github.com/OJ/gobuster/v3@latest
 echo
 
+echo "Cewl Password Lists"
+# cewl -m 8 https://www.example.com -c -e --with-numbers -w example-cewl.txt
+cd /opt
+git clone https://github.com/digininja/CeWL.git
+gem install mime-types
+gem install mini_exiftool
+gem install rubyzip
+gem install spider
+echo
+
 # Ask user if they want to install extra Git repositories
 read -t 30 -p "Would you like to install extra Git repositories? (yes/no): " response
 echo
@@ -362,17 +370,6 @@ echo
 echo "Subbrute"
 cd /opt
 git clone https://github.com/TheRook/subbrute.git
-echo
-
-echo "Cewl Password Lists"
-# cewl -m 8 https://www.example.com -c -e --with-numbers -w example-cewl.txt
-
-cd /opt
-git clone https://github.com/digininja/CeWL.git
-gem install mime-types
-gem install mini_exiftool
-gem install rubyzip
-gem install spider
 echo
 
 echo "BridgeKeeper - Employee OSINT"
@@ -562,13 +559,6 @@ echo
 # systemctl restart ntp
 echo
 
-echo
-echo "Enable Kali Autologin"
-sed -i '120s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
-sed -i '121s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
-sudo service lightdm restart
-chmod -R 777 /home/kali/
-echo
 
 ## VirtualBox Hack for USB Devices
 #sudo usermod -a -G vboxusers $USER
@@ -634,10 +624,16 @@ chmod a+x /opt/365/*.sh /opt/365/*.py
 date | tee kali-setup-finish-date.txt
 
 # Update the xfce4 panel
-sudo xfce4-panel-profiles load /opt/365/kali_panel_profile_backup_2025_02_11.tar.bz2
+sudo xfce4-panel-profiles load /opt/365/kali_panel_profile_backup_2025_02_14.tar.bz2
 
 updatedb
 echo "Hack The Planet"
+echo "Enable Kali Autologin"
+sed -i '120s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
+sed -i '121s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
+sudo service lightdm restart
+chmod -R 777 /home/kali/
+echo
 reboot
 # Just in case DNS issues: nano -c /etc/resolvconf/resolv.conf.d/head
 # Gucci Mang
