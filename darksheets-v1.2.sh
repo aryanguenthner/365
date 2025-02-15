@@ -245,14 +245,14 @@ echo -e "\e[31mGetting More Info on Onions\e[0m $COUNT"
 python3 onion_verifier.py | tee onion_verifier.log
 echo
 
-ONIONS=onion_page_titles.xls
+ONIONS=onion_page_titles.csv
 # Darksheets Results
 echo
 echo -e "\e[031mOpening DarkSheets results with LibreOffice\e[0m"
 echo
 
 # Open spreadsheet with all results
-qterminal -e libreoffice --calc "$PWD"/$ONIONS & disown > /dev/null 2>&1 &
+qterminal -e libreoffice --calc "$PWD"/$ONIONS --infilter=”CSV:44,34,0,1,4/2/1” --norestore & disown > /dev/null 2>&1 &
 echo "The $ONIONS have been saved to: "$PWD""
 echo
 
