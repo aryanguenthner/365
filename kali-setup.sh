@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 02/14/2025, minor evil updates, pay me later
+# Last Updated 02/15/2025, minor evil updates, pay me later
 # Tested on Kali 2024.4 XFCE
 # Usage: sudo git clone https://github.com/aryanguenthner/365 /opt/
 # cd 365 && sudo chmod a+x *.sh
@@ -55,7 +55,7 @@ if [[ -z "$EXT" ]]; then
     EXT="Unavailable"
 fi
 
-sudo apt-get -y install jq
+sudo apt-get update && apt-get -y install jq > /dev/null 2>&1
 # Get location details using ipinfo.io
 LOCATION=$(curl -s ipinfo.io/json)
 COUNTRY=$(echo "$LOCATION" | jq -r '.country')
@@ -103,7 +103,7 @@ echo
 # sudo xfce4-panel > /dev/null 2>&1
 
 # Prepare Kali installs
-apt-get update && apt-get -y full-upgrade && apt -y autoremove && updatedb
+apt-get update && apt-get -y upgrade && full-upgrade && apt -y autoremove && updatedb
 echo
 sudo apt-get install -y mono-devel printer-driver-escpr pipx python3-distutils-extra torbrowser-launcher shellcheck wkhtmltopdf yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2t64 libkrb5-dev metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m cups system-config-printer gobuster libreoffice
 echo
