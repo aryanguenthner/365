@@ -5,11 +5,9 @@ OSINT, Threat Hunting, Network and Web Recon, Discovery, Enumeration, Vulnerabil
 
 sudo su
 <br>
-cd /opt
+sudo git clone https://github.com/aryanguenthner/365 /opt/365 && cd 365
 <br>
-git clone https://github.com/aryanguenthner/365
-cd 365
+chmod a+x *.sh *.py
+chmod -R 777 /opt/365
 <br>
-chmod +x *.sh
-<br>
-./kali-setup.sh | tee kali.log
+sudo ./kali-setup.sh | tee kali.log
