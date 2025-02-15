@@ -250,12 +250,10 @@ ONIONS=onion_page_titles.csv
 echo
 echo -e "\e[031mOpening DarkSheets results with LibreOffice\e[0m"
 echo
-
 # Open spreadsheet with all results
 qterminal -e libreoffice --calc "$PWD"/$ONIONS --infilter=”CSV:44,34,0,1,4/2/1” --norestore & disown > /dev/null 2>&1 &
-echo "The $ONIONS have been saved to: "$PWD""
+echo "The Onions have been saved to: "$PWD""/$ONIONS
 echo
-
 # Open Firefox
 echo -e "\e[031mPro Tip: Use NoScript on the Dark Web! Block Javascript!\e[0m"
 #HIT1=$(awk 'FNR == 2 {print $1}' $ONIONS)
