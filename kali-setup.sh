@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 02/15/2025, minor evil updates, pay me later
+# Last Updated 02/16/2025, minor evil updates, pay me later
 # Tested on Kali 2024.4 XFCE
 # Usage: sudo git clone https://github.com/aryanguenthner/365 /opt/
 # cd 365 && sudo chmod a+x *.sh
@@ -89,7 +89,7 @@ echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
 # Hackers like SSH
 echo "Enabling SSH"
 echo
-sed -i '40s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config > /dev/null 2>&1
+sudo sed -i '40s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config > /dev/null 2>&1
 sudo systemctl enable ssh && sudo service ssh restart
 echo
 
@@ -104,7 +104,7 @@ echo
 # sudo xfce4-panel > /dev/null 2>&1
 
 # Prepare Kali installs
-apt-get update && apt-get -y upgrade && full-upgrade && apt -y autoremove && updatedb
+sudo apt-get update && apt-get -y upgrade && full-upgrade && apt -y autoremove && updatedb
 echo
 sudo apt-get install -y mono-devel printer-driver-escpr pipx python3-distutils-extra torbrowser-launcher shellcheck wkhtmltopdf yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2t64 libkrb5-dev metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m cups system-config-printer gobuster libreoffice
 echo
@@ -138,7 +138,7 @@ echo
 # Signal Install
 # Step 1: Install the official public software signing key
 echo "Installing the Signal Desktop public software signing key..."
-wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
+wget --no-check-certificate -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
 sudo mv signal-desktop-keyring.gpg /usr/share/keyrings/
 
 # Step 2: Add the Signal repository to the list of repositories
@@ -159,7 +159,7 @@ ZOOM_DEB="zoom_amd64.deb"
 
 # Download Zoom .deb package
 echo "Downloading Zoom for Linux..."
-wget -O $ZOOM_DEB $ZOOM_URL
+wget --no-check-certificate -O $ZOOM_DEB $ZOOM_URL
 
 # Install Zoom
 echo "Installing Zoom..."
@@ -178,7 +178,7 @@ DISCORD_DEB="discord.deb"
 
 # Download Discord .deb package
 echo "Downloading Discord for Linux..."
-wget -O $DISCORD_DEB $DISCORD_URL
+wget --no-check-certificate -O $DISCORD_DEB $DISCORD_URL
 
 # Install Discord
 echo "Installing Discord..."
@@ -197,13 +197,12 @@ echo
 
 # Download the latest Slack .deb package
 echo "Downloading the latest Slack .deb package..."
-wget -O slack-desktop.deb $SLACK_URL
+wget --no-check-certificate -O slack-desktop.deb $SLACK_URL
 
 # Install the Slack .deb package
 echo "Installing Slack..."
 sudo dpkg -i slack-desktop.deb
 echo
-
 echo "Hey Slacker- Slack installation complete!"
 echo
 
@@ -213,7 +212,7 @@ WKHTMLTOX_DEB_FILE=wkhtmltox_0.12.6.1-3.bookworm_amd64.deb
 
 # Download the wkhtmltox Debian package
 echo "Downloading wkhtmltox..."
-wget -O "$WKHTMLTOX_DEB_FILE" "$WKHTMLTOX_DEB_URL"
+wget --no-check-certificate -O "$WKHTMLTOX_DEB_FILE" "$WKHTMLTOX_DEB_URL"
 chmod -R 777 $WKHTMLTOX_DEB_FILE
 
 # Install the wkhtmltox downloaded package
@@ -222,7 +221,7 @@ sudo dpkg -i "$WKHTMLTOX_DEB_FILE"
 
 echo "Downloading and installing Shodan Nrich"
 # Get your Shodan API Key
-wget https://gitlab.com/api/v4/projects/33695681/packages/generic/nrich/latest/nrich_latest_x86_64.deb
+wget --no-check-certificate https://gitlab.com/api/v4/projects/33695681/packages/generic/nrich/latest/nrich_latest_x86_64.deb
 sudo dpkg -i nrich_latest_x86_64.deb
 echo
 
@@ -296,23 +295,26 @@ echo
 # qterminal -e cloudflared tunnel -url localhost:80
 sudo dpkg -i /opt/365/cloudflared-linux-amd64.deb
 
-# Go Env Paths
-echo 'export PATH="$PATH:/usr/local/go/bin"' >> /root/.zshrc
-echo 'export PATH="$PATH:$HOME/go/bin"' >> /root/.zshrc
-echo 'export PATH="$PATH:/root/go"' >> /root/.zshrc
-
 # Updating /opt/365 permissions and file execution
-chmod -R 777 /opt/365
-chmod a+x /opt/365/*.sh /opt/365/*.py
+sudo chmod -R 777 /opt/365
+sudo chmod a+x /opt/365/*.sh /opt/365/*.py
 
-# Just Go for it!
+# Installing Go!
 wget --no-check-certificate https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
-tar -xvzf go1.23.0.linux-amd64.tar.gz
-sudo mv go /usr/local
+sudo tar -c /usr/local -xvzf go1.23.0.linux-amd64.tar.gz
 echo
-# Get go Version
-sudo source ~/.zshrc
-go version
+
+# IP Address
+sudo echo 'hostname -I' >> /root/.zshrc
+
+# Set up Go environment variables
+echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' | sudo tee -a /etc/profile /root/.zshrc /root/.bashrc > /dev/null
+source /etc/profile
+source ~/.zshrc
+source ~/.bashrc
+
+# Verify installation
+go version || echo "Go installation failed!"
 
 # Project Discovery Nuclei
 cd /opt
@@ -345,9 +347,9 @@ go install github.com/OJ/gobuster/v3@latest
 echo
 
 echo "Cewl Password Lists"
-# cewl -m 8 https://www.example.com -c -e --with-numbers -w example-cewl.txt
-cd /opt
-git clone https://github.com/digininja/CeWL.git
+# cewl -m 8 https://www.bobandalice.com -c -e --with-numbers -w example-cewl.txt
+git clone https://github.com/digininja/CeWL.git /opt/cewl
+cd cewl
 gem install mime-types
 gem install mini_exiftool
 gem install rubyzip
@@ -415,19 +417,6 @@ echo "Payloads All The Things"
 cd /opt
 git clone https://github.com/swisskyrepo/PayloadsAllTheThings.git
 echo
-
-echo "SprayingToolKit"
-cd /opt
-git clone https://github.com/byt3bl33d3r/SprayingToolkit.git
-: ' Nmap works dont forget --> nmap -iL smb-ips.txt --stats-every=1m -Pn -p 445 -script smb-brute --script-args='smbpassword=Summer2023,userdb=usernames.txt,smbdomain=xxx.com,smblockout=true' -oA nmap-smb-brute-2023-07-19
-'
-echo
-: ' Hydra works dont forget --> hydra -p Summer2019 -l Administrator smb://192.168.1.23
-Metasploit works dont forget --> 
-set smbpass Summer2019
-set smbuser Administrator
-set rhosts 192.168.1.251
-run '
 
 echo "Awesome XSS"
 cd /opt
@@ -498,14 +487,23 @@ sudo curl -sSL https://raw.githubusercontent.com/sundowndev/PhoneInfoga/master/s
 # Run PhoneInfoga
 echo "Running PhoneInfoga..."
 sudo ./phoneinfoga
+
 # Windows Exploit Suggester Next Gen
 echo
-cd /opt
-sudo git clone https://github.com/bitsadmin/wesng.git
+sudo git clone https://github.com/bitsadmin/wesng.git /opt/wseng
 echo
 
+echo "SprayingToolKit"
+git clone https://github.com/byt3bl33d3r/SprayingToolkit.git /opt/SprayingToolkit
+: ' Nmap works dont forget --> nmap -iL smb-ips.txt --stats-every=1m -Pn -p 445 -script smb-brute --script-args='smbpassword=Summer2023,userdb=usernames.txt,smbdomain=xxx.com,smblockout=true' -oA nmap-smb-brute-2023-07-19'
+: ' Hydra works dont forget --> hydra -p Summer2019 -l Administrator smb://192.168.1.23
+Metasploit works dont forget --> 
+set smbpass Summer2019
+set smbuser Administrator
+set rhosts 192.168.1.251
+run '
+echo
 echo "Extra installations complete."
-
 else
     echo "Skipping extra Git repositories installation."
 fi
@@ -514,7 +512,7 @@ echo
 # Fix annoying apt-key
 # If Needed
 # sudo apt-key del <KEY_ID>
-#      <B9F8 D658 297A F3EF C18D  5CDF A2F6 83C5 2980 AECF>
+# <B9F8 D658 297A F3EF C18D  5CDF A2F6 83C5 2980 AECF>
 # sudo apt-key export 058F8B6B | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/mongo.gpg
 # sudo apt-key export 2007B954 | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/msf.gpg
 # sudo apt-key export 038651BD | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/slack.gpg
@@ -538,29 +536,20 @@ echo
 #yes | ivre flowcli --init
 #yes | sudo ivre runscansagentdb --init
 # 40 Min download --> sudo ivre ipdata --download
-#echo -e '\r'
+#echo -e '\n'
 #echo
 
-# Can I get a Witness?
-# Get Screenshots
-# ./gowitness file -f url-results.txt
-# "View Report http://localhost:7171"
-# ./gowitness server report
-# Can I get a gowitness?
-sudo mkdir -p /home/kali/Desktop/testing/urlwitness/gowitness
+# Verify gowitness 3.0.5 is in /opt/365
+sudo mkdir -p /home/kali/Desktop/testing/urlwitness/
 GWIT=/home/kali/Desktop/testing/urlwitness/gowitness
 if [ -f "$GWIT" ]
 then
-    echo "Found gowitness"
-
+    echo -e "\e[031mFound GoWitness 3.0.5\e[0m"
 else
-    echo -e "\e[034mDownloading Missing $GWIT\e[0m"
-    wget --no-check-certificate -O /home/kali/Desktop/testing/urlwitness/gowitness 'https://drive.google.com/uc?export=download&id=1hXJAEQAFqFu5A4uR14dUWWdwWceLHz6D'
+    echo -e "\e[031mDownloading Missing GoWitness 3.0.5\e[0m"
+    wget --no-check-certificate -O /home/kali/Desktop/gowitness 'https://drive.google.com/uc?export=download&id=1C-FpaGQA288dM5y40X1tpiNiN8EyNJKS' # gowitness 3.0.5
     chmod -R 777 /home/kali
-
 fi
-echo
-
 # Insurance
 # sudo apt-get --reinstall install python3-debian -y
 # sudo apt --fix-broken install
@@ -570,7 +559,7 @@ echo
 
 # If installing in VM
 #VBOX1=$(dmidecode -s bios-version)
-#if [ VBOX1=Virtualbox ] 
+#if [ -f 'VBOX1 == Virtualbox' ] 
 # then
 # echo "Skipping VBox Install"
 # else
@@ -611,28 +600,9 @@ echo
 
 # Stop Docker
 # Remove Docker Interface until you need it
-sudo systemctl stop docker && systemctl disable docker && ip link delete docker0
-echo
-
-# IP Address
-# Updated
-sudo echo 'hostname -I' >> /root/.zshrc
-
-:'
-# Customize Kali Paths
-# Set HISTCONTROL
-echo "export HISTCONTROL=ignoredups" >> /root/.zshrc
-
-# Update PATH variable with various directories
-echo "export PATH=$PATH:/root/work" >> /root/.zshrc
-echo "export PATH=$PATH:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games" >> /root/.zshrc
-echo "export PATH=$PATH:/usr/lib/jvm/java-11-openjdk-amd64/:/snap/bin" >> /root/.zshrc
-echo "export PATH=$PATH:/root/.local/bin" >> /root/.zshrc
-
-# Abide by the Source
-source ~/.zshrc
-echo
-'
+sudo systemctl stop docker
+sudo systemctl disable docker
+sudo ip link delete docker0
 
 # Kali Setup Finish Time
 date | tee kali-setup-finish-date.txt
