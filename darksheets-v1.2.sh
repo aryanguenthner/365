@@ -3,7 +3,7 @@
 # Made for OSINT CTI cyber security research on the Dark Deep Web
 # Intended to be used on Kali Linux
 # Updated for compatibility and better Tor handling
-# Hacked on 02/14/2025, pay me later
+# Hacked on 02/15/2025, pay me later
 # Great ideas
 # install_addon "https://addons.mozilla.org/firefox/downloads/file/4141345/noscript-11.4.26.xpi" "noscript"
 # install_addon "https://addons.mozilla.org/firefox/downloads/file/4125998/adblock_plus-3.17.1.xpi" "adblock_plus"
@@ -23,7 +23,7 @@ echo "OSINT CTI Cyber Threat intelligence v1.2"
 # Darksheets is meant for researchers and educational purposes only. This was developed to speed the investigation, enable clear documentation without pain and suffering. Pay me later.
 # Consider using spiderfoot,redtiger
 # https://github.com/smicallef/spiderfoot
-# https://github.com/loxy0dev/RedTiger-Tools
+
 echo
 # Todays Date
 sudo timedatectl set-timezone America/Los_Angeles
