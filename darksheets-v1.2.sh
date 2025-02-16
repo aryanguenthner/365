@@ -298,7 +298,7 @@ for HIT in "${HITS[@]}"; do
 done
 
 # Debugging (optional)
-printf "HITs:\n%s\n" "${HITS[@]}"
+printf "\n%s\n" "${HITS[@]}"
 echo
 
 RESULTS_FILE=results.onion.csv
