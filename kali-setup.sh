@@ -356,6 +356,19 @@ gem install rubyzip
 gem install spider
 echo
 
+# Verify gowitness 3.0.5 is in /opt/365
+GWIT=/opt/365/gowitness
+if [ -f "$GWIT" ]
+then
+    echo -e "\e[031mFound GoWitness 3.0.5\e[0m"
+else
+    echo -e "\e[031mDownloading Missing GoWitness 3.0.5\e[0m"
+    wget --no-check-certificate -O /opt/365/gowitness 'https://drive.google.com/uc?export=download&id=1C-FpaGQA288dM5y40X1tpiNiN8EyNJKS' # gowitness 3.0.5
+    chmod a+x /opt/365/gowitness
+    chmod -R 777 /opt/365/
+fi
+echo
+
 # Ask user if they want to install extra Git repositories
 read -t 30 -p "Would you like to install extra Git repositories? (yes/no): " response
 echo
@@ -539,23 +552,11 @@ echo
 #echo -e '\n'
 #echo
 
-# Verify gowitness 3.0.5 is in /opt/365
-sudo mkdir -p /home/kali/Desktop/testing/urlwitness/
-GWIT=/home/kali/Desktop/testing/urlwitness/gowitness
-if [ -f "$GWIT" ]
-then
-    echo -e "\e[031mFound GoWitness 3.0.5\e[0m"
-else
-    echo -e "\e[031mDownloading Missing GoWitness 3.0.5\e[0m"
-    wget --no-check-certificate -O /home/kali/Desktop/gowitness 'https://drive.google.com/uc?export=download&id=1C-FpaGQA288dM5y40X1tpiNiN8EyNJKS' # gowitness 3.0.5
-    chmod -R 777 /home/kali
-fi
 # Insurance
 # sudo apt-get --reinstall install python3-debian -y
 # sudo apt --fix-broken install
 # sudo apt autoremove -y
 # systemctl restart ntp
-echo
 
 # If installing in VM
 #VBOX1=$(dmidecode -s bios-version)
