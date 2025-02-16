@@ -82,9 +82,7 @@ echo -ne '#############             (66%)\r'
 sleep 1
 echo -ne '#######################   (100%)\r'
 echo -ne '\n'
-echo
-echo "Config Looks Good So Far"
-echo
+
 # Verify gowitness 3.0.5 is in /opt/365
 GOWIT=/opt/365/gowitness
 if [ -f "$GOWIT" ]
@@ -92,8 +90,9 @@ then
     echo -e "\e[031mFound GoWitness 3.0.5\e[0m"
 else
     echo -e "\e[031mDownloading Missing GoWitness 3.0.5\e[0m"
-    wget --no-check-certificate -O /home/kali/Desktop/gowitness 'https://drive.google.com/uc?export=download&id=1C-FpaGQA288dM5y40X1tpiNiN8EyNJKS' # gowitness 3.0.5
-    chmod -R 777 /home/kali
+    wget --no-check-certificate -O /opt/365/gowitness 'https://drive.google.com/uc?export=download&id=1C-FpaGQA288dM5y40X1tpiNiN8EyNJKS' # gowitness 3.0.5
+    chmod a+x /opt/365/gowitness
+    chmod -R 777 /opt/365
 fi
 echo
 # Verify LibreOffice is installed
@@ -134,6 +133,7 @@ else
     echo
     echo "The Devil's in your computer"
 fi
+echo -ne '#######################\r'
 echo
 
 # Editing Firefox about:config this allows DarkWeb .onion links to be opened with Firefox
@@ -150,6 +150,9 @@ else
     sudo mv user.js /home/kali/.mozilla/firefox/*default-esr/
 fi
 echo
+
+echo "Config Looks Good So Far"
+echo -ne '\n'
 
 # What are you researching?
 read -p "What are you researching: " SEARCH
@@ -291,7 +294,7 @@ echo "Opening Dark Web Sites in Firefox"
 
 for HIT in "${HITS[@]}"; do
     [ -n "$HIT" ] && 
-    qterminal -e bash su -c "firefox $HIT" kali & disown > /dev/null 2>&1 &
+    qterminal -e qterminal -e su -c "firefox $HIT" kali & disown > /dev/null 2>&1 &
 done
 
 # Debugging (optional)
