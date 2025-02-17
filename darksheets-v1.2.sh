@@ -95,6 +95,7 @@ else
     chmod -R 777 /opt/365
 fi
 echo
+
 # Verify LibreOffice is installed
 L=/usr/bin/libreoffice
 if [ -f "$L" ]
@@ -187,10 +188,9 @@ echo "Starting Tor service"
 sudo systemctl start tor
 echo
 
-echo "Attempting to connect to the Dark Web..."
-echo
 # Starting Tor in the Netherlands
 # Example Country Codes: nl,de,us,ca,mx,ru,br,bo,gb,fr,ir,by,cn
+echo "Attempting to connect to the Dark Web..."
 sudo torghostng -id nl
 echo
 echo -e "\e[031mEstablishing a Connection to the Dark Web\e[0m"
@@ -243,23 +243,26 @@ chmod -R 777 "$PWD"
 COUNT=$(wc -l < "$RESULTS_FILE")
 echo -e "\e[31mGetting More Info on $COUNT Onions\e[0m"
 echo "---------------------------------"
+echo
 python3 onion_verifier.py | tee onion_verifier.log
 echo
-ONIONS=onion_page_titles.csv
-# Darksheets Results
-echo -e "\e[031mOpening DarkSheets results with LibreOffice\e[0m"
+
+# Get Screenshot, Save results to db
+echo "GoWitness Getting Screenshots, Be patient and let it run"
+sudo qterminal -e ./gowitness scan file -f "$RESULTS_FILE" --threads 25 --write-db --chrome-proxy socks5://127.0.0.1:9050 > /dev/null 2>&1 & disown
+echo
 
 # Open spreadsheet with all results
-qterminal -e libreoffice --calc "$PWD"/$ONIONS --infilter=”CSV:44,34,0,1,4/2/1” --norestore & disown > /dev/null 2>&1 &
+echo -e "\e[031mOpening DarkSheets results with LibreOffice\e[0m"
+ONIONS=onion_page_titles.csv
+sudo libreoffice --calc "$PWD"/$ONIONS --infilter=”CSV:44,34,0,1,4/2/1” --norestore > /dev/null 2>&1 & disown
 echo
 echo "The Onions have been saved to: "$PWD"/"$ONIONS""
 echo
 # Open Firefox
 echo -e "\e[031mPro Tip: Use NoScript on the Dark Web! Block Javascript!\e[0m"
 echo
-#HIT1=$(awk 'FNR == 2 {print $1}' $ONIONS)
-#HIT1=$(awk '$0 ~ /\.onion/ {print $0; exit}' $ONIONS)
-#HIT1=$(awk '$0 ~ /\.onion/ {match($0, /http?:\/\/[^ ]*\.onion/); if (RSTART) print substr($0, RSTART, RLENGTH); exit}' $ONIONS)
+
 # Extract top 3 unique .onion URLs matching the search query
 readarray -t HITS < <(awk -v search="$SEARCH" '
     BEGIN { count = 0 }
@@ -289,45 +292,36 @@ readarray -t HITS < <(awk -v search="$SEARCH" '
 
 # Assign extracted values (fallback to empty string if fewer than 3)
 HITS=("${HITS[@]:0:3}")  # Keep only the first 3 elements
-
 echo "Opening Dark Web Sites in Firefox"
-
 for HIT in "${HITS[@]}"; do
     [ -n "$HIT" ] && 
-    qterminal -e qterminal -e su -c "firefox $HIT" kali & disown > /dev/null 2>&1 &
+    sudo -u kali firefox $HIT > /dev/null 2>&1 & disown
 done
 
 # Debugging (optional)
 printf "\n%s\n" "${HITS[@]}"
 echo
 
-RESULTS_FILE=results.onion.csv
-# Get Screenshot, Save results to db
-echo "GoWitness Getting Screenshots, Be patient and let it run"
-echo
-qterminal -e ./gowitness scan file -f $RESULTS_FILE --threads 25 --write-db --chrome-proxy socks5://127.0.0.1:9050 & disown > /dev/null 2>&1 &
-
 # After results have been saved to db, Start Web Server
 echo "Starting GoWitness Server, Open http://127.0.0.1:7171/ when the screenshots are ready"
+sudo qterminal -e ./gowitness report server > /dev/null 2>&1 & disown
 echo
-qterminal -e ./gowitness report server & disown > /dev/null 2>&1 &
 
 # After the web server has started, Open Firefox to see the results
 echo "Opening GoWitness Results in Firefox"
-GOSERVER="http://127.0.0.1:7171/gallery"
-qterminal -e qterminal -e su -c "firefox $GOSERVER" kali & disown > /dev/null 2>&1 &
 echo
+GOSERVER="http://127.0.0.1:7171/gallery"
+sudo -u kali firefox $GOSERVER > /dev/null 2>&1 & disown
 
-echo "Friendly reminder to exit the Dark Web type: torghostng -x"
 # Ask the user if they want to disconnect from the dark web
+echo "Friendly reminder to exit the Dark Web type: torghostng -x"
 echo
 read -p "Do you want to disconnect from dark web? (y/n): " DISCONNECT 
 echo
 if [[ "$DISCONNECT" == "y" || "$DISCONNECT" == "Y" ]]; then
 echo
-echo "⚡ Attempting to disconnect from the Dark Web..."
-
-    echo
+echo "Attempting to disconnect from the Dark Web..."
+    
     echo "Exiting Dark Web"
     echo
     echo -e "\e[031mBack to the real world\e[0m"
