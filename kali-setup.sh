@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 02/16/2025, minor evil updates, pay me later
+# Last Updated 02/17/2025, minor evil updates, pay me later
 # Tested on Kali 2024.4 XFCE
 # Usage: sudo git clone https://github.com/aryanguenthner/365 /opt/
 # cd 365 && sudo chmod a+x *.sh
@@ -109,7 +109,7 @@ echo
 sudo apt-get install -y mono-devel printer-driver-escpr pipx python3-distutils-extra torbrowser-launcher shellcheck wkhtmltopdf yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2t64 libkrb5-dev metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m cups system-config-printer gobuster libreoffice
 echo
 
-# Some dependencies
+# Some dependencies, might fix vbox issues
 sudo apt install -y gcc make linux-headers-$(uname -r)
 
 # Variables
@@ -369,6 +369,47 @@ else
 fi
 echo
 
+echo "Checking if you need Virtualbox installed"
+# Detect if running on VirtualBox or a physical machine
+VBOX=$(sudo dmidecode -s system-manufacturer)  # e.g., "LENOVO" for physical machine
+VBOX1=$(sudo dmidecode -s bios-version)  # "VirtualBox" if running inside a VM
+
+# Check if running in VirtualBox
+if [[ "$VBOX1" == "VirtualBox" ]]; then
+    echo "Running inside VirtualBox. Skipping installation."
+    exit 0
+else
+    echo "Running on a physical machine. Proceeding with installation."
+fi
+
+# Update package list
+echo "Updating package list..."
+sudo apt-get update && sudo apt-get upgrade -y
+
+# Add Oracle VirtualBox GPG key (alternative for apt-key deprecation)
+echo "Adding Oracle VirtualBox GPG key..."
+wget -qO- https://www.virtualbox.org/download/oracle_vbox_2016.asc | sudo tee /etc/apt/trusted.gpg.d/oracle_vbox_2016.asc > /dev/null
+
+# Install prerequisites
+echo "Installing required packages..."
+wget http://ftp.us.debian.org/debian/pool/main/libv/libvpx/libvpx7_1.12.0-1+deb12u3_amd64.deb
+sudo dpkg -i ./libvpx7_1.12.0-1+deb12u3_amd64.deb
+
+# Install VirtualBox and dependencies
+echo "Installing VirtualBox..."
+sudo apt-get install -y virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-utils virtualbox-qt virtualbox-guest-x11 linux-headers-$(uname -r)
+
+# Add current user to vboxusers group
+echo "Adding user to vboxusers group..."
+sudo usermod -a -G vboxusers $USER
+
+echo "VirtualBox installation completed!"
+
+# Insurance
+# sudo modprobe vboxnetflt
+
+# Cross your fingers
+
 # Ask user if they want to install extra Git repositories
 read -t 30 -p "Would you like to install extra Git repositories? (yes/no): " response
 echo
@@ -557,18 +598,6 @@ echo
 # sudo apt --fix-broken install
 # sudo apt autoremove -y
 # systemctl restart ntp
-
-# If installing in VM
-#VBOX1=$(dmidecode -s bios-version)
-#if [ -f 'VBOX1 == Virtualbox' ] 
-# then
-# echo "Skipping VBox Install"
-# else
-# apt-get install virtualbox
-#fi
-
-## VirtualBox Hack for USB Devices
-#sudo usermod -a -G vboxusers $USER
 
 # TODO: Add this to VLC https://broadcastify.cdnstream1.com/24051
 # TODO: echo "OneListForAll"
