@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 02/17/2025, minor evil updates, pay me later
+# Last Updated 02/18/2025, minor evil updates, pay me later
 # Tested on Kali 2024.4 XFCE
 # Usage: sudo git clone https://github.com/aryanguenthner/365 /opt/
 # cd 365 && sudo chmod a+x *.sh
@@ -10,9 +10,14 @@
 # sudo time ./kali-setup.sh 2>&1 | tee kali.log
 ################################################
 echo
-# Add kali to sudoers
-echo "kali ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/kali > /dev/null 2>&1
-echo
+# Add kali to sudoers# Check if 'kali' is already in the sudoers file
+if sudo grep -q "^kali ALL=(ALL) NOPASSWD:ALL" /etc/sudoers.d/kali 2>/dev/null; then
+    echo "'kali' is already in sudoers. Skipping addition."
+else
+    echo "Adding 'kali' to sudoers..."
+    echo "kali ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/kali > /dev/null
+    echo "'kali' added to sudoers."
+fi
 
 # Setting Variables
 YELLOW=033m
