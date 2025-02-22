@@ -28,7 +28,10 @@ echo
 # Todays Date
 sudo timedatectl set-timezone America/Los_Angeles
 echo -e "\e[034mToday is\e[0m"
-date '+%Y-%m-%d %r' | tee darksheets.run.date
+export LC_TIME="en_US.UTF-8"
+DATE=date
+date | tee darksheets.run.date
+
 # Setting Variables
 CITY=$(curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2)
 PWD=$(pwd)
@@ -310,7 +313,7 @@ echo
 # After the web server has started, Open Firefox to see the results
 echo "Opening GoWitness Results in Firefox"
 echo
-GOSERVER="http://127.0.0.1:7171/gallery"
+GOSERVER=http://127.0.0.1:7171/gallery
 sudo -u kali firefox $GOSERVER > /dev/null 2>&1 & disown
 
 # Ask the user if they want to disconnect from the dark web
