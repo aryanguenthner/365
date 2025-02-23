@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Red Team Setup Automation Script
-# Last Updated 02/18/2025, minor evil updates, pay me later
+# Last Updated 02/23/2025, minor evil updates, pay me later
 # Tested on Kali 2024.4 XFCE
 # Usage: sudo git clone https://github.com/aryanguenthner/365 /opt/
 # cd 365 && sudo chmod a+x *.sh
@@ -10,6 +10,9 @@
 # sudo time ./kali-setup.sh 2>&1 | tee kali.log
 ################################################
 echo
+# TODO: Create a splash screen with menu options
+# Menu options: 1 = Update Kali, 2 = Install kali Setup, 3 Install Kali Extra's, 4 Give me it all
+
 # Add kali to sudoers# Check if 'kali' is already in the sudoers file
 if sudo grep -q "^kali ALL=(ALL) NOPASSWD:ALL" /etc/sudoers.d/kali 2>/dev/null; then
     echo "'kali' is already in sudoers. Skipping addition."
@@ -23,6 +26,7 @@ fi
 YELLOW=033m
 BLUE=034m
 PWD=$(pwd)
+export LC_TIME="en_US.UTF-8"
 
 # Get the directory where the kali-setup.sh is executed
 script_dir=$(pwd)
@@ -43,7 +47,7 @@ echo
 timedatectl set-timezone America/Los_Angeles
 timedatectl set-ntp true
 echo -e "\e[034mToday is\e[0m"
-date '+%Y-%m-%d %r' | tee kali-setup-date.txt
+date | tee kali-setup-date.txt
 echo
 
 echo "Getting BIOS Info"
@@ -109,14 +113,15 @@ echo
 # sudo xfce4-panel > /dev/null 2>&1
 
 # Prepare Kali installs
-sudo apt-get update && apt-get -y upgrade && full-upgrade && apt -y autoremove && updatedb
+sudo apt-get update && apt-get -y upgrade && apt-get -y full-upgrade
 echo
-sudo apt-get install -y mono-devel printer-driver-escpr pipx python3-distutils-extra torbrowser-launcher shellcheck wkhtmltopdf yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2t64 libkrb5-dev metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m cups system-config-printer gobuster libreoffice
+sudo apt-get install -y mono-devel printer-driver-escpr pipx python3-distutils-extra torbrowser-launcher shellcheck yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2t64 libkrb5-dev metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m cups system-config-printer gobuster libreoffice
 echo
 
 # Some dependencies, might fix vbox issues
 sudo apt install -y gcc make linux-headers-$(uname -r)
 
+sudo apt -y autoremove && updatedb
 # Variables
 CHROME_DEB_URL="https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
 DEB_FILE="google-chrome-stable_current_amd64.deb"
@@ -306,7 +311,7 @@ sudo chmod a+x /opt/365/*.sh /opt/365/*.py
 
 # Installing Go!
 wget --no-check-certificate https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
-sudo tar -c /usr/local -xvzf go1.23.0.linux-amd64.tar.gz
+sudo tar -c /usr/local -vzf go1.23.0.linux-amd64.tar.gz
 echo
 
 # IP Address
@@ -544,8 +549,9 @@ echo "Running the PhoneInfoga install script..."
 sudo curl -sSL https://raw.githubusercontent.com/sundowndev/PhoneInfoga/master/support/scripts/install | sudo bash
 
 # Run PhoneInfoga
+sudo mv ./phoneinfoga /usr/local/bin/phoneinfoga
 echo "Running PhoneInfoga..."
-sudo ./phoneinfoga
+sudo phoneinfoga scan -n 8085551212
 
 # Windows Exploit Suggester Next Gen
 echo
