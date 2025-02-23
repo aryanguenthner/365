@@ -299,18 +299,24 @@ sudo dpkg -i /opt/365/cloudflared-linux-amd64.deb
 sudo chmod -R 777 /opt/365
 sudo chmod a+x /opt/365/*.sh /opt/365/*.py
 
-# Installing Go!
-    echo -e "\e[034mInstalling Go\e[0m"
-wget --no-check-certificate https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
-sudo tar -xvzf go1.23.0.linux-amd64.tar.gz -C /usr/local
+# Verify Go 1.23.0 installation
+if go version 2>/dev/null | grep -q "go1.23.0"; then
+    echo "Go is version 1.23.0 installed"
+else
+    echo -e "\e[34mDownloading and Installing Go\e[0m"
+    wget --no-check-certificate https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
+    sudo tar -xvzf go1.23.0.linux-amd64.tar.gz -C /usr/local
+    echo "Go installation complete."
+fi
 echo
 
 # Setting up Go environment variables
 echo "Configuring Go environment..."
-echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
-echo 'export GOPATH=$HOME/go' >> ~/.bashrc
-echo 'export PATH=$PATH:$GOPATH/bin' >> ~/.bashrc
-source ~/.bashrc  # Reload shell configuration
+echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.zshrc
+echo 'export GOPATH=$HOME/go' >> ~/.zshrc
+echo 'export PATH=$PATH:$GOPATH/bin' >> ~/.zshrc
+source /etc/profile
+source ~/.zshrc  # Reload shell configuration
 
 # IP Address# 
 echo "Check if hostname -I is already in /root/.zshrc"
@@ -320,13 +326,7 @@ if ! grep -q "hostname -I" /root/.zshrc; then
 else
     echo "'hostname -I' is already in /root/.zshrc. Skipping..."
 fi
-
-source /etc/profile
-source ~/.zshrc
-source ~/.bashrc
-
-# Verify installation
-go version || echo "Go installation failed!"
+echo
 
 # Project Discovery Nuclei
 cd /opt
@@ -634,7 +634,9 @@ echo
 # TODO: Check this out
 # text in your terminal > ansi2html > nmap-report.html
 # ssmtp <--works good, just doesnt play with sendmail.
-# did not install > openjdk-13-jdk libc++1-13 libc++abi1-13 libindicator3-7 libunwind-13 python3.8-venv libappindicator3-1 
+# did not install > openjdk-13-jdk libc++1-13 libc++abi1-13 libindicator3-7 libunwind-13 python3.8-venv libappindicator3-1
+# sendmail
+
 echo
 
 # Stop Docker
