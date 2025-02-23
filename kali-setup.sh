@@ -119,9 +119,9 @@ sudo apt-get install -y mono-devel printer-driver-escpr pipx python3-distutils-e
 echo
 
 # Some dependencies, might fix vbox issues
-sudo apt install -y gcc make linux-headers-$(uname -r)
+sudo apt-get install -y gcc make linux-headers-$(uname -r)
 
-sudo apt -y autoremove && updatedb
+sudo apt-get autoremove -y && updatedb
 # Variables
 CHROME_DEB_URL="https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
 DEB_FILE="google-chrome-stable_current_amd64.deb"
@@ -249,16 +249,6 @@ sudo pipx install git+https://github.com/Pennyw0rth/NetExec
 sudo pipx ensurepath --prepend
 echo
 
-# Get Pippy wit it
-#python3 -m pip install --upgrade pip
-#pip3 install --upgrade setuptools
-
-#echo "Installing psycopg"
-#pip install psycopg
-#echo
-## Install virtualenv
-#sudo apt install python3-venv
-
 # Updog
 # Create a virtual environment
 python3 -m venv myenv
@@ -310,15 +300,27 @@ sudo chmod -R 777 /opt/365
 sudo chmod a+x /opt/365/*.sh /opt/365/*.py
 
 # Installing Go!
+    echo -e "\e[034mInstalling Go\e[0m"
 wget --no-check-certificate https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
-sudo tar -c /usr/local -vzf go1.23.0.linux-amd64.tar.gz
+sudo tar -xvzf go1.23.0.linux-amd64.tar.gz -C /usr/local
 echo
 
-# IP Address
-sudo echo 'hostname -I' >> /root/.zshrc
+# Setting up Go environment variables
+echo "Configuring Go environment..."
+echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+echo 'export GOPATH=$HOME/go' >> ~/.bashrc
+echo 'export PATH=$PATH:$GOPATH/bin' >> ~/.bashrc
+source ~/.bashrc  # Reload shell configuration
 
-# Set up Go environment variables
-echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' | sudo tee -a /etc/profile /root/.zshrc /root/.bashrc > /dev/null
+# IP Address# 
+echo "Check if hostname -I is already in /root/.zshrc"
+if ! grep -q "hostname -I" /root/.zshrc; then
+    echo "Adding 'hostname -I' to /root/.zshrc..."
+    echo 'hostname -I' | sudo tee -a /root/.zshrc > /dev/null
+else
+    echo "'hostname -I' is already in /root/.zshrc. Skipping..."
+fi
+
 source /etc/profile
 source ~/.zshrc
 source ~/.bashrc
@@ -392,16 +394,12 @@ else
     echo "Running on a physical machine. Proceeding with installation."
 fi
 
-# Update package list
-echo "Updating package list..."
-sudo apt-get update && sudo apt-get upgrade -y
-
 # Add Oracle VirtualBox GPG key (alternative for apt-key deprecation)
 echo "Adding Oracle VirtualBox GPG key..."
 wget -qO- https://www.virtualbox.org/download/oracle_vbox_2016.asc | sudo tee /etc/apt/trusted.gpg.d/oracle_vbox_2016.asc > /dev/null
 
 # Install prerequisites
-echo "Installing required packages..."
+echo "Installing VBox required packages..."
 wget http://ftp.us.debian.org/debian/pool/main/libv/libvpx/libvpx7_1.12.0-1+deb12u3_amd64.deb
 sudo dpkg -i ./libvpx7_1.12.0-1+deb12u3_amd64.deb
 
@@ -417,7 +415,6 @@ echo "VirtualBox installation completed!"
 
 # Insurance
 # sudo modprobe vboxnetflt
-
 # Cross your fingers
 
 # Ask user if they want to install extra Git repositories
@@ -537,6 +534,7 @@ git clone https://github.com/s0md3v/Breacher.git
 echo
 
 # Clone the PhoneInfoga repository
+# You will need API to get most of this tool
 echo "Cloning the PhoneInfoga repository..."
 sudo git clone https://github.com/sundowndev/PhoneInfoga.git
 
