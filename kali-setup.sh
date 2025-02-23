@@ -381,42 +381,6 @@ else
 fi
 echo
 
-echo "Checking if you need Virtualbox installed"
-# Detect if running on VirtualBox or a physical machine
-VBOX=$(sudo dmidecode -s system-manufacturer)  # e.g., "LENOVO" for physical machine
-VBOX1=$(sudo dmidecode -s bios-version)  # "VirtualBox" if running inside a VM
-
-# Check if running in VirtualBox
-if [[ "$VBOX1" == "VirtualBox" ]]; then
-    echo "Running inside VirtualBox. Skipping installation."
-    exit 0
-else
-    echo "Running on a physical machine. Proceeding with installation."
-fi
-
-# Add Oracle VirtualBox GPG key (alternative for apt-key deprecation)
-echo "Adding Oracle VirtualBox GPG key..."
-wget -qO- https://www.virtualbox.org/download/oracle_vbox_2016.asc | sudo tee /etc/apt/trusted.gpg.d/oracle_vbox_2016.asc > /dev/null
-
-# Install prerequisites
-echo "Installing VBox required packages..."
-wget http://ftp.us.debian.org/debian/pool/main/libv/libvpx/libvpx7_1.12.0-1+deb12u3_amd64.deb
-sudo dpkg -i ./libvpx7_1.12.0-1+deb12u3_amd64.deb
-
-# Install VirtualBox and dependencies
-echo "Installing VirtualBox..."
-sudo apt-get install -y virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-utils virtualbox-qt virtualbox-guest-x11 linux-headers-$(uname -r)
-
-# Add current user to vboxusers group
-echo "Adding user to vboxusers group..."
-sudo usermod -a -G vboxusers $USER
-
-echo "VirtualBox installation completed!"
-
-# Insurance
-# sudo modprobe vboxnetflt
-# Cross your fingers
-
 # Ask user if they want to install extra Git repositories
 read -t 30 -p "Would you like to install extra Git repositories? (yes/no): " response
 echo
@@ -636,7 +600,6 @@ echo
 # ssmtp <--works good, just doesnt play with sendmail.
 # did not install > openjdk-13-jdk libc++1-13 libc++abi1-13 libindicator3-7 libunwind-13 python3.8-venv libappindicator3-1
 # sendmail
-
 echo
 
 # Stop Docker
@@ -645,9 +608,6 @@ sudo systemctl stop docker
 sudo systemctl disable docker
 sudo ip link delete docker0
 
-# Kali Setup Finish Time
-date | tee kali-setup-finish-date.txt
-
 updatedb
 echo "Hack The Planet"
 echo "Enable Kali Autologin"
@@ -655,6 +615,43 @@ sed -i '120s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
 sed -i '121s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
 sudo service lightdm restart
 
+echo "Checking if you need Virtualbox installed"
+# Detect if running on VirtualBox or a physical machine
+VBOX=$(sudo dmidecode -s system-manufacturer)  # e.g., "LENOVO" for physical machine
+VBOX1=$(sudo dmidecode -s bios-version)  # "VirtualBox" if running inside a VM
+
+# Check if running in VirtualBox
+if [[ "$VBOX1" == "VirtualBox" ]]; then
+    echo "Running inside VirtualBox. Skipping installation."
+    exit 0
+else
+    echo "Running on a physical machine. Proceeding with installation."
+fi
+
+# Add Oracle VirtualBox GPG key (alternative for apt-key deprecation)
+echo "Adding Oracle VirtualBox GPG key..."
+wget -qO- https://www.virtualbox.org/download/oracle_vbox_2016.asc | sudo tee /etc/apt/trusted.gpg.d/oracle_vbox_2016.asc > /dev/null
+
+# Install prerequisites
+echo "Installing VBox required packages..."
+wget http://ftp.us.debian.org/debian/pool/main/libv/libvpx/libvpx7_1.12.0-1+deb12u3_amd64.deb
+sudo dpkg -i ./libvpx7_1.12.0-1+deb12u3_amd64.deb
+
+# Install VirtualBox and dependencies
+echo "Installing VirtualBox..."
+sudo apt-get install -y virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-utils virtualbox-qt virtualbox-guest-x11 linux-headers-$(uname -r)
+
+# Add current user to vboxusers group
+echo "Adding user to vboxusers group..."
+sudo usermod -a -G vboxusers $USER
+echo "VirtualBox installation completed!"
+
+# Insurance
+# sudo modprobe vboxnetflt
+# Cross your fingers
+
+# Kali Setup Finish Time
+date | tee kali-setup-finish-date.txt
 echo
 reboot
 # Just in case DNS issues: nano -c /etc/resolvconf/resolv.conf.d/head
