@@ -1,157 +1,265 @@
 #!/usr/bin/env bash
 
 #######################################################
-# Discover targets by doing a ping sweep
 # Enumerate open ports and services
+# Added feature to scan on Dark Web
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
 # Tested on Kali 2024.2
-# Last minor updated 08/23/2024
+# Last minor updated 02/23/2025
 # The future is now
 # Edit this script to fit your system
 # Got Nmap?
 ######################################################
+# MOBILE=TODO enable mobile alerts to be sent when scan is completed
 
 # Setting Variables
-YELLOW=034m
 BLUE=034m
-EXT=$(curl -s ifconfig.me) 
-KALI=$(hostname -I)
 CITY=$(curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2)
 SUBNET=$(ip r | awk 'FNR == 2 {print $1}')
 TARGETS=targets.txt
-FILE0=$(date +%Y%m%d).nmap-pingsweep_$RANDOM
+#FILE0=$(date +%Y%m%d).nmap-pingsweep_$RANDOM
 FILE1=$(date +%Y%m%d).nmapscan_$RANDOM
 BOOTSTRAP=nmap-bootstrap.xsl
 NV=$(nmap -V | awk 'FNR == 1 {print $1,$2,$3}')
 RANDOM=$$
 PWD=$(pwd)
-# MOBILE=TODO enable mobile alerts to be sent when scan is completed
-SYNTAX="nmap --script http-screenshot --exclude $KALI -T4 -sV -Pn -sC -p- --open -vvvv --stats-every=1m --max-retries=0 --min-hostgroup=100 --min-parallelism=100 -iL $TARGETS -oA $PWD/$FILE1"
+#SCRIPTS=""
+SYNTAX="nmap --exclude $KALI -T4 -Pn -sV -sC -p- --open -vvvv --stats-every=1m --max-retries=0 --min-hostgroup=100 --min-parallelism=100 $SUBNET -oA $PWD/$FILE1"
+export LC_TIME="en_US.UTF-8"
+DATE=date
 echo
 
-# Depencency Check
-echo -e "\e[034mRunning Dependency-check\e[0m"
+# Dependency Check
+echo -e "\e[034mRunning Dependency check\e[0m"
 
-# pingsweep checker
-pingsweep=pingsweep.sh
-if [ -f $pingsweep ]
-then
-    echo "Found pingsweep.sh"
-
+# Check for GoWitness
+GOWIT=$PWD/gowitness
+if [ -f "$GOWIT" ]; then
+    echo -e "\e[031mFound GoWitness 3.0.5\e[0m"
 else
-
-    echo -e "\e[034mGetting pingsweep.sh from /opt/365e\e[0m"
-cp /opt/365/pingsweep.sh $PWD
+    echo -e "\e[031mCopying /opt/365/gowitness to $PWD\e[0m"
+    cp /opt/365/gowitness "$PWD"
+    chmod a+x $PWD/gowitness
+    chmod -R 777 "$PWD"
 fi
-
-echo "Found $NV"
-
-# Nmap bootstrap file checker
-NB=nmap-bootstrap.xsl
-if [ -f $NB ]
-then
-    echo "Found nmap-bootstrap.xsl"
-
+# Check for pingsweep.sh
+pingsweep=pingsweep.sh
+if [ -f "$pingsweep" ]; then
+    echo "Found pingsweep.sh"
 else
-
+    echo -e "\e[034mGetting pingsweep.sh from /opt/365\e[0m"
+    cp /opt/365/pingsweep.sh "$PWD"
+fi
+# Check for nmap-bootstrap
+NB=nmap-bootstrap.xsl
+if [ -f "$NB" ]; then
+    echo "Found nmap-bootstrap.xsl"
+else
     echo -e "\e[034mCopying Missing $BOOTSTRAP File\e[0m"
     cp /opt/365/nmap-bootstrap.xsl /home/kali/Desktop/testing/nmapscans/
-
 fi
+echo
 
-# http-screenshot Checker
-N=/usr/share/nmap/scripts/http-screenshot.nse
-if [ -f $N ]
-then
-    echo "Found http-screenshot.nse"
+# Network Information
+EXT=$(curl -s https://api64.ipify.org || curl -s https://ifconfig.me || curl -s https://checkip.amazonaws.com)
+EXT=${EXT:-"Unavailable"}
+LOCATION=$(curl -s ipinfo.io/json)
+COUNTRY=$(echo "$LOCATION" | jq -r '.country')
+REGION=$(echo "$LOCATION" | jq -r '.region')
+CITY=$(echo "$LOCATION" | jq -r '.city')
+KALI=$(hostname -I | awk '{print $1}')
+SUBNET=$(ip r | awk 'FNR == 2 {print $1}')
 
-else
+echo "---------------------------------"
+printf "| %-12s | %-20s |\n" "Label" "Value"
+echo "---------------------------------"
+printf "| %-12s | %-20s |\n" "Public IP" "$EXT"
+printf "| %-12s | %-20s |\n" "Country" "$COUNTRY"
+printf "| %-12s | %-20s |\n" "State" "$REGION"
+printf "| %-12s | %-20s |\n" "City" "$CITY"
+printf "| %-12s | %-20s |\n" "Kali IP" "$KALI"
+echo "---------------------------------"
+echo
+
+#!/bin/bash
+
+echo "Scan using TOR?"
+echo
+echo "1) Yes"
+echo "2) No"
+echo
+read -p "Enter your choice (1 or 2): " TORCHOICE
+echo
+
+# Install dependencies
+echo "Checking Dark Web Requirements..."
+sudo apt-get install -y jq tor torbrowser-launcher python3-stem > /dev/null 2>&1
+echo "This may take a couple of minutes, please wait..."
+echo
+
+if [[ "$TORCHOICE" == "1" ]]; then
+    # Simulated Progress Bar
+    echo -ne '#####                     (33%)\r'
+    sleep 1
+    echo -ne '#############             (66%)\r'
+    sleep 1
+    echo -ne '#######################   (100%)\r'
+    echo -ne '\n'
+
+    # Verify TorGhostNG is installed
+    TORNG="/usr/bin/torghostng"
+    if [ -f "$TORNG" ]; then
+        echo -e "\e[31mFound TorghostNG\e[0m"
+        echo
+    else
+        echo "Installing TorghostNG..."
+        sudo git clone https://github.com/aryanguenthner/torghostng /opt/torghostng
+        cd /opt/torghostng || { echo "Failed to access /opt/torghostng"; exit 1; }
+        sudo touch /etc/sysctl.conf
+        sudo python3 install.py
+        echo "TorghostNG is Installed"
+        sleep 2
+    fi
+    echo
+
+    # Start TOR Service
+    echo "Starting Tor service..."
+    sudo systemctl start tor
+    sudo systemctl enable tor
+    echo "Tor service started successfully"
+
+    # Starting Tor in the Netherlands
+    echo "Using TorGhostNG to connect to the Dark Web..."
+    sudo torghostng -id nl
+    echo
+    echo -e "\e[31mEstablishing a Connection to the Dark Web...\e[0m"
+
+    # Simulated Progress Bar
+    echo -ne '#####                     (33%)\r'
+    sleep 1
+    echo -ne '#############             (66%)\r'
+    sleep 1
+    echo -ne '#######################   (100%)\r'
+    sleep 1
+    echo -ne '\n'
+    echo
+    echo -e "\e[31mConnection Established. You can now scan and access .onion sites.\e[0m"
+
+elif [[ "$TORCHOICE" == "2" ]]; then
+    echo -e "\033[1;32m[✔] Not using TOR\033[0m"
     
-    echo "Copying missing file http-screenshot.nse"
-    cp -r /opt/365/http-screenshot.nse /usr/share/nmap/scripts
-    nmap --script-updatedb > /dev/null 2>&1
+    # Fetch Public IP Info
+    echo "Fetching network details..."
+    IPINFO=$(curl -s ipinfo.io)
+    EXT=$(echo "$IPINFO" | jq -r '.ip')
+    COUNTRY=$(echo "$IPINFO" | jq -r '.country')
+    REGION=$(echo "$IPINFO" | jq -r '.region')
+    CITY=$(echo "$IPINFO" | jq -r '.city')
+    KALI=$(hostname -I | awk '{print $1}')
 
+    # Print Network Info in Table Format
+    echo "---------------------------------"
+    printf "| %-12s | %-20s |\n" "Label" "Value"
+    echo "---------------------------------"
+    printf "| %-12s | %-20s |\n" "Public IP" "$EXT"
+    printf "| %-12s | %-20s |\n" "Country" "$COUNTRY"
+    printf "| %-12s | %-20s |\n" "State" "$REGION"
+    printf "| %-12s | %-20s |\n" "City" "$CITY"
+    printf "| %-12s | %-20s |\n" "Kali IP" "$KALI"
+    echo "---------------------------------"
+    echo
+    sleep 2
+else
+    echo "Invalid choice. Try Harder."
+    exit 1
 fi
 echo
 
-# Todays Date
-echo -e "\e[034mToday is\e[0m"
-date
+# User Input
+echo "Choose Nmap Input file or Subnet?"
+echo
+echo "1) Input File"
+echo "2) Subnet"
+echo
+read -p "Enter your choice (1 or 2): " NMAPCHOICE
 echo
 
-# Screenshots
-echo -e "\e[034mScreenshots Saved to --> $PWD/\e[0m"
+if [[ "$NMAPCHOICE" == "1" ]]; then
+    read -p "Path to nmap input file: " INPUTFILE
+    echo -e "\nNmap Input File: $INPUTFILE"
+sleep 2
 
-# Networking
-echo
-echo -e "\e[034mGetting Network Information\e[0m"
-echo
-echo -e "\e[034mPublic IP\e[0m"
-echo $CITY
-echo $EXT
-echo
-echo -e "\e[034mKali IP\e[0m"
-echo $KALI | awk '{print $1}'
-echo
-echo -e "\e[034mThe Target Subnet\e[0m"
-echo $SUBNET
-sleep 5
-echo
-
-echo -e "\e[034mGenerating a Target List\e[0m"
-
-# First Lets do a Ping Sweep
-echo
-nmap $SUBNET -vvvv --stats-every=1m -sn -n --exclude $KALI -oG $FILE0 && cat $FILE0 | grep --color=always "hosts up"
-echo
-echo -e "\e[034mTarget List File -> targets.txt\e[0m"
-echo
-echo
-echo -e "\e[034mPing Sweep Completed\e[0m"
-echo
-cat $FILE0 | grep "Up" | awk '{print $2}' 2>&1 | tee targets.txt
-echo
-echo -e "\e[034mUsing nmap to enumerate more info on your targets\e[0m"
-echo
-sleep 5
-echo -e "\e[034mHack The Planet\e[0m"
-echo "$SYNTAX"
+elif [[ "$NMAPCHOICE" == "2" ]]; then
+    read -p "Using detected subnet ($SUBNET)? [y/n]: " CONFIRM_SUBNET
+    if [[ "$CONFIRM_SUBNET" =~ ^[Yy]$ ]]; then
+        echo -e "\nUsing detected subnet: $SUBNET"
+    else
+        read -p "Enter Subnet: " SUBNET
+        echo -e "\nSubnet set to: $SUBNET"
+    fi
+sleep 2
+else
+    echo "Invalid choice. Try Harder."
+    exit 1
+fi
 echo
 
-# Finally Lets Run the Nmap Scan
-nmap --script http-screenshot --exclude $KALI -T4 -sV -Pn -sC -p- --open -vvvv --stats-every=1m --max-retries=0 --min-hostgroup=100 --min-parallelism=100 -iL $TARGETS -oA $PWD/$FILE1
-echo
+# Nmap Scan Enumeration# Ensure Output Directory Exists
+OUTPUT_DIR=$PWD
+sudo mkdir -p "$OUTPUT_DIR"
+chmod -R 777 "$PWD"
+
+echo -e "\033[1;32m[✔] Nmap Output: $OUTPUT_DIR/$FILE1\033[0m"
+sleep 1
+# Run Nmap Enumeration
+echo -e "\n\033[1;34m[~] Running Nmap Scan...\033[0m"
+
+if [[ -n "$SUBNET" ]]; then
+    echo -e "\n\033[1;36m[*] Scanning Subnet: $SUBNET\033[0m"
+    echo
+    nmap --exclude "$KALI" -T4 -Pn -sV -sC -p- --open -vvvv --stats-every=1m --max-retries=0 --min-hostgroup=100 --min-parallelism=100 "$SUBNET" -oA "$OUTPUT_DIR/$FILE1"
+    echo
+    echo -e "\n\033[1;32m[✔] Nmap scan completed on Subnet: $SUBNET\033[0m"
+
+elif [[ -n "$INPUTFILE" && -f "$INPUTFILE" ]]; then
+    echo -e "\n\033[1;36m[*] Scanning from Input File: $INPUTFILE\033[0m"
+    nmap --exclude "$KALI" -T4 -Pn -sV -sC -p- --open -vvvv --stats-every=1m --max-retries=0 --min-hostgroup=100 --min-parallelism=100 -iL "$INPUTFILE" -oA "$OUTPUT_DIR/$FILE1"
+    echo
+    echo -e "\n\033[1;32m[✔] Nmap scan completed on Input File: $INPUTFILE\033[0m"
+else
+    echo -e "\n\033[1;31m[✘] Invalid choice or missing input file. Try Harder.\033[0m"
+    exit 1
+fi
+echo -e "\n\033[1;32m[✔] Scan results saved to: $OUTPUT_DIR/$FILE1\033[0m\n"
+
+# Bonus Feature
 echo -e "\e[034mMetasploit\e[0m"
 echo "service postgresql start"
 echo "msfdb init"
 echo "msfconsole -q"
-echo "db_import $FILE1.xml"
+echo "db_import $OUTPUT_DIR/$FILE1.xml"
 echo
 echo -e "\e[034mCreate HTML Nmap Report\e[0m"
-echo "xsltproc -o $FILE1.html $BOOTSTRAP $FILE1.xml"
-echo
-xsltproc -o $FILE1.html $BOOTSTRAP $FILE1.xml
+echo "xsltproc -o $OUTPUT_DIR/$FILE1.html $BOOTSTRAP $OUTPUT_DIR/$FILE1.xml"
+sudo xsltproc -o $OUTPUT_DIR/$FILE1.html $BOOTSTRAP $OUTPUT_DIR/$FILE1.xml
+
 echo
 echo -e "\e[034mFinished - Nmap scan complete\e[0m"
+sudo su -c "firefox $FILE1.html" kali > /dev/null 2>&1 & disown
 echo
 
-# Pay me later
-updatedb
-chmod -R 777 .
+# GoWitness Screenshots
+echo "Getting Screenshots using GoWitness...be patient"
+sudo qterminal -e ./gowitness scan nmap -f "$OUTPUT_DIR/$FILE1.xml" --open-only --service-contains http --threads 25 --write-db > /dev/null 2>&1 & disown
+PID=$!  # Capture the PID of the GoWitness Screenshots process
+echo "Waiting for GoWitness screenshot process (PID: $PID) to finish..."
+wait $PID  # Wait for the process to complete
 
-sudo su -c "firefox $FILE1.html" kali
-
-: '
-
-TARGETS=targets.txt
-BOOTSTRAP=nmap-bootstrap.xsl
-RANDOM=$$
-SCAN=$(date +%Y%m%d).nmapscan_$RANDOM
-PWD=$(pwd)
-
-
-nmap -iL subnets.txt --excludefile excludefile.txt -T4 -sV -Pn -p 21,22,23,25,53,80,443,135,137,139,445,389,554,587,902,990,992,1023,3389,3940,8000,8080,8081,8443,1433,3606,5060,5061,5900,27017 --open -vvvv --stats-every=1m --min-rtt-timeout=30ms --max-rtt-timeout=90ms --max-retries=0 --max-scan-delay=0 --min-rate=100 --min-hostgroup=100 --osscan-limit --max-os-tries=1 --script=ssl-cert,ssl-enum-ciphers,ssl-heartbleed,sip-enum-users,sip-brute,sip-methods,rtsp-screenshot,rtsp-screenshot,rpcinfo,vnc-screenshot,x11-access,x11-screenshot,nfs-showmount,nfs-ls,smb-security-mode,smb2-security-mode,smb-enum-shares,smb-ls,http-screenshot,http-sql-injection,smtp-open-relay,ftp-anon,ftp-bounce,ms-sql-config,ms-sql-info,ms-sql-empty-password,mysql-info,mysql-empty-password,vnc-brute,vnc-screenshot,vmware-version,http-shellshock,http-default-accounts,smb-vuln-ms08-067,smb-vuln-ms17-010,rdp-vuln-ms12-020,vuln,mainframe-banner,mainframe-screenshot,ssh-auth-methods,http-vuln-cve2017-5638 -oA nmap-scanname-date- && ./txt-alert.sh
-
-xsltproc -o $FILE1.html $BOOTSTRAP $SCAN.xml
-'
+# Start GoWitness Server
+sleep 2  # Give the server a moment to initialize
+echo -e "\e[034mStarting GoWitness Server at http://127.0.0.1:7171/\e[0m"
+sudo qterminal -e ./gowitness report server > /dev/null 2>&1 & disown
+sudo -u kali firefox http://127.0.0.1:7171 > /dev/null 2>&1 & disown
+chmod -R 777 "$PWD"
+echo
