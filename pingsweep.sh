@@ -2,7 +2,7 @@
 
 #######################################################
 # Enumerate open ports and services
-# Added feature to scan on Dark Web
+# Added feature to scan using TOR
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
 # Tested on Kali 2024.2
@@ -82,8 +82,7 @@ printf "| %-12s | %-20s |\n" "Kali IP" "$KALI"
 echo "---------------------------------"
 echo
 
-#!/bin/bash
-
+# User Dark Web Input
 echo "Scan using TOR?"
 echo
 echo "1) Yes"
@@ -92,48 +91,45 @@ echo
 read -p "Enter your choice (1 or 2): " TORCHOICE
 echo
 
-# Install dependencies
+# Check if TOR is installed
 echo "Checking Dark Web Requirements..."
-sudo apt-get install -y jq tor torbrowser-launcher python3-stem > /dev/null 2>&1
-echo "This may take a couple of minutes, please wait..."
 echo
+echo "Checking dependencies, please wait..."
+sudo apt-get install -y jq tor torbrowser-launcher python3-stem > /dev/null 2>&1
+echo
+# Simulated Progress Bar
+echo -ne '#####                     (33%)\r'
+sleep 1
+echo -ne '#############             (66%)\r'
+sleep 1
+echo -ne '#######################   (100%)\r'
+echo -ne '\n'
 
-if [[ "$TORCHOICE" == "1" ]]; then
-    # Simulated Progress Bar
-    echo -ne '#####                     (33%)\r'
-    sleep 1
-    echo -ne '#############             (66%)\r'
-    sleep 1
-    echo -ne '#######################   (100%)\r'
-    echo -ne '\n'
-
-    # Verify TorGhostNG is installed
-    TORNG="/usr/bin/torghostng"
+if [[ "$TORCHOICE" =~ ^(1|[Yy])$ ]]; then
+    # Verify if TorGhostNG is installed
+    TORNG=/usr/bin/torghostng
     if [ -f "$TORNG" ]; then
-        echo -e "\e[31mFound TorghostNG\e[0m"
+        echo -e "\e[031mFound TorghostNG\e[0m"
         echo
     else
-        echo "Installing TorghostNG..."
+        echo "TorghostNG not found, installing..."
         sudo git clone https://github.com/aryanguenthner/torghostng /opt/torghostng
-        cd /opt/torghostng || { echo "Failed to access /opt/torghostng"; exit 1; }
+        cd /opt/torghostng || exit
         sudo touch /etc/sysctl.conf
         sudo python3 install.py
-        echo "TorghostNG is Installed"
-        sleep 2
+        echo "TorghostNG is installed"
     fi
-    echo
 
-    # Start TOR Service
+    # Start Tor Service
     echo "Starting Tor service..."
     sudo systemctl start tor
-    sudo systemctl enable tor
-    echo "Tor service started successfully"
+    echo
 
-    # Starting Tor in the Netherlands
-    echo "Using TorGhostNG to connect to the Dark Web..."
+    # Connect via TorGhostNG (Netherlands)
+    echo -e "\033[1;32m[✔] Using TorGhostNG to connect to the Dark Web...\033[0m"
     sudo torghostng -id nl
     echo
-    echo -e "\e[31mEstablishing a Connection to the Dark Web...\e[0m"
+    echo -e "\e[031mEstablishing a Connection to the Dark Web\e[0m"
 
     # Simulated Progress Bar
     echo -ne '#####                     (33%)\r'
@@ -141,35 +137,13 @@ if [[ "$TORCHOICE" == "1" ]]; then
     echo -ne '#############             (66%)\r'
     sleep 1
     echo -ne '#######################   (100%)\r'
-    sleep 1
     echo -ne '\n'
-    echo
-    echo -e "\e[31mConnection Established. You can now scan and access .onion sites.\e[0m"
 
-elif [[ "$TORCHOICE" == "2" ]]; then
-    echo -e "\033[1;32m[✔] Not using TOR\033[0m"
-    
-    # Fetch Public IP Info
-    echo "Fetching network details..."
-    IPINFO=$(curl -s ipinfo.io)
-    EXT=$(echo "$IPINFO" | jq -r '.ip')
-    COUNTRY=$(echo "$IPINFO" | jq -r '.country')
-    REGION=$(echo "$IPINFO" | jq -r '.region')
-    CITY=$(echo "$IPINFO" | jq -r '.city')
-    KALI=$(hostname -I | awk '{print $1}')
-
-    # Print Network Info in Table Format
-    echo "---------------------------------"
-    printf "| %-12s | %-20s |\n" "Label" "Value"
-    echo "---------------------------------"
-    printf "| %-12s | %-20s |\n" "Public IP" "$EXT"
-    printf "| %-12s | %-20s |\n" "Country" "$COUNTRY"
-    printf "| %-12s | %-20s |\n" "State" "$REGION"
-    printf "| %-12s | %-20s |\n" "City" "$CITY"
-    printf "| %-12s | %-20s |\n" "Kali IP" "$KALI"
-    echo "---------------------------------"
-    echo
+    echo -e "\e[31mConnection Established. You can now Scan and access .onion sites.\e[0m"
     sleep 2
+
+elif [[ "$TORCHOICE" =~ ^(2|[Nn])$ ]]; then
+    echo -e "\033[1;32m[✔] Confirmed Not using TOR\033[0m"
 else
     echo "Invalid choice. Try Harder."
     exit 1
@@ -205,16 +179,18 @@ else
 fi
 echo
 
-# Nmap Scan Enumeration# Ensure Output Directory Exists
-OUTPUT_DIR=$PWD
-sudo mkdir -p "$OUTPUT_DIR"
-chmod -R 777 "$PWD"
+# Nmap Scan Enumeration
+# Ensure Output Directory Exists (Organized by Date)
+DATE=$(date +"%Y-%m-%d")
+OUTPUT_DIR="$PWD/$DATE"
+mkdir -p "$OUTPUT_DIR"
+chmod -R 777 "$OUTPUT_DIR"
 
 echo -e "\033[1;32m[✔] Nmap Output: $OUTPUT_DIR/$FILE1\033[0m"
 sleep 1
-# Run Nmap Enumeration
-echo -e "\n\033[1;34m[~] Running Nmap Scan...\033[0m"
 
+# Run Nmap Enumeration
+echo -e "\033[1;32m[✔] Running Nmap Scan...\033[0m"
 if [[ -n "$SUBNET" ]]; then
     echo -e "\n\033[1;36m[*] Scanning Subnet: $SUBNET\033[0m"
     echo
@@ -246,18 +222,15 @@ sudo xsltproc -o $OUTPUT_DIR/$FILE1.html $BOOTSTRAP $OUTPUT_DIR/$FILE1.xml
 
 echo
 echo -e "\e[034mFinished - Nmap scan complete\e[0m"
-sudo su -c "firefox $FILE1.html" kali > /dev/null 2>&1 & disown
+sudo su -c "firefox $OUTPUT_DIR/$FILE1.html" kali > /dev/null 2>&1 & disown
 echo
 
 # GoWitness Screenshots
 echo "Getting Screenshots using GoWitness...be patient"
 sudo qterminal -e ./gowitness scan nmap -f "$OUTPUT_DIR/$FILE1.xml" --open-only --service-contains http --threads 25 --write-db > /dev/null 2>&1 & disown
-PID=$!  # Capture the PID of the GoWitness Screenshots process
-echo "Waiting for GoWitness screenshot process (PID: $PID) to finish..."
-wait $PID  # Wait for the process to complete
+echo
 
 # Start GoWitness Server
-sleep 2  # Give the server a moment to initialize
 echo -e "\e[034mStarting GoWitness Server at http://127.0.0.1:7171/\e[0m"
 sudo qterminal -e ./gowitness report server > /dev/null 2>&1 & disown
 sudo -u kali firefox http://127.0.0.1:7171 > /dev/null 2>&1 & disown
