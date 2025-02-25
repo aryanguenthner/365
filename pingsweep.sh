@@ -5,12 +5,13 @@
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
 # Tested on Kali 2024.2
-# Last minor updated 02/24/2025
+# Last minor updated 02/23/2025
 # The future is now
 # Edit this script to fit your system
 # Got Nmap?
 ######################################################
 # MOBILE=TODO enable mobile alerts to be sent when scan is completed
+
 echo -e "\e[031mHack The Planet\e[0m"
 # Setting Variables
 BLUE=034m
@@ -37,7 +38,6 @@ LOCATION=$(curl -s ipinfo.io/json)
 if ! echo "$LOCATION" | jq empty 2>/dev/null; then
     LOCATION='{"country":"DarkWeb","region":"DarkWeb","city":"DarkWeb"}'
 fi
-
 COUNTRY=$(echo "$LOCATION" | jq -r '.country')
 REGION=$(echo "$LOCATION" | jq -r '.region')
 CITY=$(echo "$LOCATION" | jq -r '.city')
@@ -157,7 +157,7 @@ fi
 echo
 
 # User Input
-echo "Choose Nmap Input file or Subnet?"
+echo "Choose Nmap Input file or Target: IP, Subnet or Domain"
 echo
 echo "1) Input File"
 echo "2) Target: IP, Subnet or Domain"
@@ -196,7 +196,7 @@ echo -e "\033[1;32m[✔] Nmap Output: $OUTPUT_DIR/$FILE1\033[0m"
 sleep 1
 echo
 # Ping Sweep
-nmap $SUBNET -vvvv --stats-every=1m -sn -n --exclude $KALI -oG $OUTPUT_DIR/$FILE0 && cat $OUTPUT_DIR/$FILE0 | grep --color=always "hosts up"
+sudo nmap $SUBNET -vvvv --stats-every=1m -sn -n --exclude $KALI -oG $OUTPUT_DIR/$FILE0 && cat $OUTPUT_DIR/$FILE0 | grep --color=always "hosts up"
 echo
 echo -e "\e[034mPing Sweep Completed\e[0m"
 echo -e "\e[034mPing Sweep Target List File -> targets.txt\e[0m"
@@ -205,13 +205,13 @@ cat $OUTPUT_DIR/$FILE0 | grep "Up" | awk '{print $2}' 2>&1 | tee $OUTPUT_DIR/tar
 if [[ -n "$SUBNET" ]]; then
     echo -e "\n\033[1;36m[*] Scanning: $SUBNET\033[0m"
     echo
-    nmap --exclude "$KALI" -T4 -Pn -sV -sC -p- --open -vvvv --stats-every=1m --max-retries=0 --min-hostgroup=100 --min-parallelism=100 "$SUBNET" -oA "$OUTPUT_DIR/$FILE1"
+    sudo nmap --exclude "$KALI" -T4 -Pn -sV -sC -p- --open -vvvv --stats-every=1m --max-retries=0 --min-hostgroup=100 --min-parallelism=100 "$SUBNET" -oA "$OUTPUT_DIR/$FILE1"
     echo
     echo -e "\n\033[1;32m[✔] Nmap scan completed: $SUBNET\033[0m"
 
 elif [[ -n "$INPUTFILE" && -f "$INPUTFILE" ]]; then
     echo -e "\n\033[1;36m[*] Scanning from Input File: $INPUTFILE\033[0m"
-    nmap --exclude "$KALI" -T4 -Pn -sV -sC -p- --open -vvvv --stats-every=1m --max-retries=0 --min-hostgroup=100 --min-parallelism=100 -iL "$INPUTFILE" -oA "$OUTPUT_DIR/$FILE1"
+    sudo nmap --exclude "$KALI" -T4 -Pn -sV -sC -p- --open -vvvv --stats-every=1m --max-retries=0 --min-hostgroup=100 --min-parallelism=100 -iL "$INPUTFILE" -oA "$OUTPUT_DIR/$FILE1"
     echo
     echo -e "\n\033[1;32m[✔] Nmap scan completed on Input File: $INPUTFILE\033[0m"
 else
@@ -230,17 +230,15 @@ echo
 echo -e "\e[034mCreate HTML Nmap Report\e[0m"
 echo "xsltproc -o $OUTPUT_DIR/$FILE1.html $BOOTSTRAP $OUTPUT_DIR/$FILE1.xml"
 sudo xsltproc -o $OUTPUT_DIR/$FILE1.html $BOOTSTRAP $OUTPUT_DIR/$FILE1.xml
-
 echo
 echo -e "\e[034mFinished - Nmap scan complete\e[0m"
 sudo su -c "firefox $OUTPUT_DIR/$FILE1.html" kali > /dev/null 2>&1 & disown
-echo
+wait
 
 # GoWitness Screenshots
 echo "Getting Screenshots using GoWitness...be patient"
 sudo qterminal -e ./gowitness scan nmap -f "$OUTPUT_DIR/$FILE1.xml" --open-only --service-contains http --threads 25 --write-db > /dev/null 2>&1 & disown
-echo
-
+wait
 # Start GoWitness Server
 echo -e "\e[034mStarting GoWitness Server at http://127.0.0.1:7171/\e[0m"
 sudo qterminal -e ./gowitness report server > /dev/null 2>&1 & disown
