@@ -3,7 +3,7 @@
 # Made for OSINT CTI cyber security research on the Dark Deep Web
 # Intended to be used on Kali Linux
 # Updated for compatibility and better Tor handling
-# Hacked on 02/27/2025, pay me later
+# Hacked on 02/22/2025, pay me later
 # Great ideas
 # install_addon "https://addons.mozilla.org/firefox/downloads/file/4141345/noscript-11.4.26.xpi" "noscript"
 # install_addon "https://addons.mozilla.org/firefox/downloads/file/4125998/adblock_plus-3.17.1.xpi" "adblock_plus"
@@ -84,19 +84,6 @@ echo -ne '#############             (66%)\r'
 sleep 1
 echo -ne '#######################   (100%)\r'
 echo -ne '\n'
-
-# Verify Onion Verifier in $PWD
-OV=onion_verifier.py
-if [ -f "$OV" ]
-then
-    echo -e "\e[031mFound Onion Verifier 3.0.5\e[0m"
-else
-    echo -e "\e[031mDownloading Onion Verifier\e[0m"
-    wget --no-check-certificate -O $PWD/onion_verifier.py 'https://github.com/aryanguenthner/ds/raw/refs/heads/main/onion_verifier.py'
-    chmod a+x $PWD/onion_verifier.py
-    chmod -R 777 $PWD/onion_verifier.py
-fi
-echo
 
 # Verify gowitness 3.0.5 is in /opt/365
 GOWIT=/opt/365/gowitness
