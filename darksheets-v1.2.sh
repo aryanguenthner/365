@@ -3,7 +3,7 @@
 # Made for OSINT CTI cyber security research on the Dark Deep Web
 # Intended to be used on Kali Linux
 # Updated for compatibility and better Tor handling
-# Hacked on 02/22/2025, pay me later
+# Hacked on 02/27/2025, pay me later
 # Great ideas
 # install_addon "https://addons.mozilla.org/firefox/downloads/file/4141345/noscript-11.4.26.xpi" "noscript"
 # install_addon "https://addons.mozilla.org/firefox/downloads/file/4125998/adblock_plus-3.17.1.xpi" "adblock_plus"
@@ -65,10 +65,10 @@ KALI=$(hostname -I | awk '{print $1}')
 echo "---------------------------------"
 printf "| %-12s | %-20s |\n" "Label" "Value"
 echo "---------------------------------"
-#printf "| %-12s | %-20s |\n" "Public IP" "$EXT"
+printf "| %-12s | %-20s |\n" "Public IP" "$EXT"
 printf "| %-12s | %-20s |\n" "Country" "$COUNTRY"
 printf "| %-12s | %-20s |\n" "State" "$REGION"
-#printf "| %-12s | %-20s |\n" "City" "$CITY"
+printf "| %-12s | %-20s |\n" "City" "$CITY"
 printf "| %-12s | %-20s |\n" "Kali IP" "$KALI"
 echo "---------------------------------"
 echo
@@ -85,16 +85,30 @@ sleep 1
 echo -ne '#######################   (100%)\r'
 echo -ne '\n'
 
-# Verify gowitness 3.0.5 is in /opt/365
-GOWIT=/opt/365/gowitness
+# Verify Onion Verifier in $PWD
+OV=onion_verifier.py
+if [ -f "$OV" ]
+then
+    echo -e "\e[031mFound Onion Verifier\e[0m"
+else
+    echo -e "\e[031mDownloading Onion Verifier\e[0m"
+    wget --no-check-certificate -O $PWD/onion_verifier.py 'https://github.com/aryanguenthner/ds/raw/refs/heads/main/onion_verifier.py'
+    chmod a+x $PWD/onion_verifier.py
+    chmod -R 777 $PWD/onion_verifier.py
+fi
+echo
+
+# Verify gowitness 3.0.5 is in $PWD/gowitness
+GOWIT=gowitness
 if [ -f "$GOWIT" ]
 then
     echo -e "\e[031mFound GoWitness 3.0.5\e[0m"
 else
     echo -e "\e[031mDownloading Missing GoWitness 3.0.5\e[0m"
-    wget --no-check-certificate -O /opt/365/gowitness 'https://drive.google.com/uc?export=download&id=1C-FpaGQA288dM5y40X1tpiNiN8EyNJKS' # gowitness 3.0.5
-    chmod a+x /opt/365/gowitness
-    chmod -R 777 /opt/365
+    wget --no-check-certificate -O $PWD/gowitness 'https://drive.google.com/uc?export=download&id=1C-FpaGQA288dM5y40X1tpiNiN8EyNJKS' # gowitness 3.0.5
+    chmod a+x $PWD/gowitness
+    chmod -R 777 $PWD/gowitness
+    ./gowitness version
 fi
 echo
 
