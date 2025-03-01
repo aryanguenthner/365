@@ -5,13 +5,12 @@
 # Hosts that responded to ICMP are output to targets.txt 
 # Learn More @ https://github.com/aryanguenthner/
 # Tested on Kali 2024.2
-# Last minor updated 02/23/2025
+# Last minor updated 02/28/2025
 # The future is now
 # Edit this script to fit your system
 # Got Nmap?
 ######################################################
 # MOBILE=TODO enable mobile alerts to be sent when scan is completed
-
 echo -e "\e[031mHack The Planet\e[0m"
 # Setting Variables
 BLUE=034m
@@ -25,10 +24,12 @@ NV=$(nmap -V | awk 'FNR == 1 {print $1,$2,$3}')
 RANDOM=$$
 PWD=$(pwd)
 #SCRIPTS=""
-SYNTAX="nmap --exclude $KALI -T4 -Pn -sV -sC -p- --open -vvvv --stats-every=1m --max-retries=0 --min-hostgroup=100 --min-parallelism=100 $SUBNET -oA $PWD/$FILE1"
+#PORTS
+SYNTAX="nmap --exclude $KALI -T4 -Pn -n -sTV -sC -p- --open -vvvv --stats-every=1m --max-retries=0 --min-hostgroup=100 --min-parallelism=100 $SUBNET -oA $PWD/$FILE1"
 export LC_TIME="en_US.UTF-8"
 DATE=date
 echo
+
 # Network Information
 EXT=$(curl -s https://api64.ipify.org || curl -s https://ifconfig.me || curl -s https://checkip.amazonaws.com)
 EXT=${EXT:-"DarkWeb"}
@@ -38,6 +39,7 @@ LOCATION=$(curl -s ipinfo.io/json)
 if ! echo "$LOCATION" | jq empty 2>/dev/null; then
     LOCATION='{"country":"DarkWeb","region":"DarkWeb","city":"DarkWeb"}'
 fi
+
 COUNTRY=$(echo "$LOCATION" | jq -r '.country')
 REGION=$(echo "$LOCATION" | jq -r '.region')
 CITY=$(echo "$LOCATION" | jq -r '.city')
@@ -52,7 +54,7 @@ printf "| %-12s | %-20s |\n" "Country" "$COUNTRY"
 printf "| %-12s | %-20s |\n" "State" "$REGION"
 printf "| %-12s | %-20s |\n" "City" "$CITY"
 printf "| %-12s | %-20s |\n" "Kali IP" "$KALI"
-printf "| %-12s | %-20s |\n" "Kali Subnet" "$SUBNET"
+printf "| %-12s | %-20s |\n" "Kali IP" "$SUBNET"
 echo "---------------------------------"
 echo
 
@@ -122,13 +124,11 @@ if [[ "$TORCHOICE" =~ ^(1|[Yy])$ ]]; then
     echo "Starting Tor service..."
     sudo systemctl start tor
     echo
-
     # Connect via TorGhostNG (Netherlands)
     echo -e "\033[1;32m[✔] Using TorGhostNG to connect to the Dark Web...\033[0m"
     sudo torghostng -id nl
     echo
     echo -e "\e[031mEstablishing a Connection to the Dark Web\e[0m"
-
     # Simulated Progress Bar
     echo -ne '#####                     (33%)\r'
     sleep 1
@@ -136,49 +136,40 @@ if [[ "$TORCHOICE" =~ ^(1|[Yy])$ ]]; then
     sleep 1
     echo -ne '#######################   (100%)\r'
     echo -ne '\n'
-
     echo -e "\e[31mConnection Established. You can now Scan and access .onion sites.\e[0m"
     sleep 2
 
 elif [[ "$TORCHOICE" =~ ^(2|[Nn])$ ]]; then
-    # Check if Tor is already running
-    if pgrep -x "tor" > /dev/null; then
-echo -e "\033[1;33m[!] Warning: Tor is already running!\033[0m"
-printf "| %-12s | %-20s |\n" "Public IP" "$EXT"
-printf "| %-12s | %-20s |\n" "Country" "$COUNTRY"
-printf "| %-12s | %-20s |\n" "State" "$REGION"
-printf "| %-12s | %-20s |\n" "City" "$CITY"
-echo -e "\033[1;33m[!] If you intended to disconnect: torghost -x\033[0m"
-    fi
+    echo -e "\033[1;32m[✔] Confirmed Not using TOR\033[0m"
 else
     echo "Invalid choice. Try Harder."
     exit 1
 fi
 echo
 
-# User Input
-echo "Choose Nmap Input file or Target: IP, Subnet or Domain"
+# User Nmap Input
+echo "Target Selection?"
 echo
 echo "1) Input File"
-echo "2) Target: IP, Subnet or Domain"
+echo "2) Domain, IP, Subnet"
 echo
 read -p "Enter your choice (1 or 2): " NMAPCHOICE
-echo
 
 if [[ "$NMAPCHOICE" == "1" ]]; then
-    read -p "Path to nmap input file: " INPUTFILE
+    read -p "Path to Nmap input file: " INPUTFILE
     echo -e "\nNmap Input File: $INPUTFILE"
-sleep 2
+    sleep 2
 
 elif [[ "$NMAPCHOICE" == "2" ]]; then
-    read -p "Scan Detected Subnet ($SUBNET)? [y/n]: " CONFIRM_SUBNET
+    read -p "Use Dtected Subnet ($SUBNET)? [y/n]: " CONFIRM_SUBNET
     if [[ "$CONFIRM_SUBNET" =~ ^[Yy]$ ]]; then
-        echo -e "\nUsing detected subnet: $SUBNET"
+        echo -e "\nUsing: $SUBNET"
     else
-        read -p "Enter Target: IP, Subnet or Domain: " SUBNET
-        echo -e "\nNmap Scanning Set to: $SUBNET"
+        read -p "Enter Domain, IP, Subnet: " SUBNET
+        echo -e "\nNmap Scanning: $SUBNET"
     fi
-sleep 2
+    sleep 2
+
 else
     echo "Invalid choice. Try Harder."
     exit 1
@@ -194,26 +185,38 @@ chmod -R 777 "$OUTPUT_DIR"
 
 echo -e "\033[1;32m[✔] Nmap Output: $OUTPUT_DIR/$FILE1\033[0m"
 sleep 1
-echo
+
 # Ping Sweep
-sudo nmap $SUBNET -vvvv --stats-every=1m -sn -n --exclude $KALI -oG $OUTPUT_DIR/$FILE0 && cat $OUTPUT_DIR/$FILE0 | grep --color=always "hosts up"
+echo
+nmap $SUBNET -vvvv --stats-every=1m -sn -n --exclude $KALI -oG $OUTPUT_DIR/$FILE0 && cat $OUTPUT_DIR/$FILE0 | grep --color=always "hosts up"
+echo -e "\e[034mPingsweep Completed, Target List File -> targets.txt\e[0m"
 echo
 echo -e "\e[034mPing Sweep Completed\e[0m"
-echo -e "\e[034mPing Sweep Target List File -> targets.txt\e[0m"
-cat $OUTPUT_DIR/$FILE0 | grep "Up" | awk '{print $2}' 2>&1 | tee $OUTPUT_DIR/targets.txt
+cat $OUTPUT_DIR/$FILE0 | grep "Up" | awk '{print $2}' 2>&1 | tee targets.txt
+echo
 # Run Nmap Enumeration
+echo -e "\033[1;32m[✔] Running Nmap Scan...\033[0m"
+
 if [[ -n "$SUBNET" ]]; then
     echo -e "\n\033[1;36m[*] Scanning: $SUBNET\033[0m"
     echo
-    sudo nmap --exclude "$KALI" -T4 -Pn -sV -sC -p- --open -vvvv --stats-every=1m --max-retries=0 --min-hostgroup=100 --min-parallelism=100 "$SUBNET" -oA "$OUTPUT_DIR/$FILE1"
+    nmap --exclude "$KALI" -T4 -Pn -sTV -sC -p- --open -vvvv --stats-every=1m --max-retries=0 --min-hostgroup=100 --min-parallelism=100 "$SUBNET" -oA "$OUTPUT_DIR/$FILE1"
     echo
-    echo -e "\n\033[1;32m[✔] Nmap scan completed: $SUBNET\033[0m"
+    echo -e "\n\033[1;32m[✔] Nmap scan completed on: $SUBNET\033[0m"
+
+elif [[ -n "$SUBNET" && -n "$PORTCHOICE" ]]; then
+    echo -e "\n\033[1;36m[*] Scanning: $SUBNET on ports: $PORTS\033[0m"
+    echo
+    nmap --exclude "$KALI" -T4 -Pn -sTV -sC -p "$PORTS" --open -vvvv --stats-every=1m --max-retries=0 --min-hostgroup=100 --min-parallelism=100 "$SUBNET" -oA "$OUTPUT_DIR/$FILE1"
+    echo
+    echo -e "\n\033[1;32m[✔] Nmap scan completed on: $SUBNET\033[0m"
 
 elif [[ -n "$INPUTFILE" && -f "$INPUTFILE" ]]; then
     echo -e "\n\033[1;36m[*] Scanning from Input File: $INPUTFILE\033[0m"
-    sudo nmap --exclude "$KALI" -T4 -Pn -sV -sC -p- --open -vvvv --stats-every=1m --max-retries=0 --min-hostgroup=100 --min-parallelism=100 -iL "$INPUTFILE" -oA "$OUTPUT_DIR/$FILE1"
+    nmap --exclude "$KALI" -T4 -Pn -sTV -sC -p- --open -vvvv --stats-every=1m --max-retries=0 --min-hostgroup=100 --min-parallelism=100 -iL "$INPUTFILE" -oA "$OUTPUT_DIR/$FILE1"
     echo
-    echo -e "\n\033[1;32m[✔] Nmap scan completed on Input File: $INPUTFILE\033[0m"
+    echo -e "\n\033[1;32m[✔] Nmap scan completed on: $INPUTFILE\033[0m"
+
 else
     echo -e "\n\033[1;31m[✘] Invalid choice or missing input file. Try Harder.\033[0m"
     exit 1
@@ -230,19 +233,21 @@ echo
 echo -e "\e[034mCreate HTML Nmap Report\e[0m"
 echo "xsltproc -o $OUTPUT_DIR/$FILE1.html $BOOTSTRAP $OUTPUT_DIR/$FILE1.xml"
 sudo xsltproc -o $OUTPUT_DIR/$FILE1.html $BOOTSTRAP $OUTPUT_DIR/$FILE1.xml
+
 echo
 echo -e "\e[034mFinished - Nmap scan complete\e[0m"
 sudo su -c "firefox $OUTPUT_DIR/$FILE1.html" kali > /dev/null 2>&1 & disown
-wait
+echo
 
-# GoWitness Screenshots
+# Start Getting GoWitness Screenshots
 echo "Getting Screenshots using GoWitness...be patient"
 sudo qterminal -e ./gowitness scan nmap -f "$OUTPUT_DIR/$FILE1.xml" --open-only --service-contains http --threads 25 --write-db > /dev/null 2>&1 & disown
 wait
-# Start GoWitness Server
+# Start the GoWitness Server
 echo -e "\e[034mStarting GoWitness Server at http://127.0.0.1:7171/\e[0m"
 sudo qterminal -e ./gowitness report server > /dev/null 2>&1 & disown
 wait
-sudo -u kali firefox http://127.0.0.1:7171/gallery > /dev/null 2>&1 & disown
+# Open Firefox to view GoWitness Results
+sudo -u kali firefox http://127.0.0.1:7171/galery > /dev/null 2>&1 & disown
 chmod -R 777 "$PWD"
 echo
