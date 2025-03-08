@@ -4,7 +4,7 @@
 # Made for OSINT CTI cyber security research on the Dark Deep Web
 # Intended to be used on Kali Linux
 # Updated for compatibility and better Tor handling
-# Hacked on 03/07/2025, pay me later
+# Hacked on 03/08/2025, pay me later
 # Great ideas
 # install_addon "https://addons.mozilla.org/firefox/downloads/file/4141345/noscript-11.4.26.xpi" "noscript"
 # install_addon "https://addons.mozilla.org/firefox/downloads/file/4125998/adblock_plus-3.17.1.xpi" "adblock_plus"
@@ -86,6 +86,8 @@ sleep 1
 echo -ne '#######################   (100%)\r'
 echo -ne '\n'
 
+# Download Apps
+cd /home/kali/Downloads || exit 1
 # Google Chrome Installer
 GC="/usr/bin/google-chrome-stable"
 if [ -f "$GC" ]; then
@@ -120,8 +122,10 @@ else
     echo
 fi
 
-# Verify gowitness 3.0.5 is in /opt/365
-GOWIT=/opt/365/gowitness
+# DarkSheets /opt/ds
+cd /opt/365 || exit 1
+# Verify gowitness 3.0.5 is in /opt/ds
+GOWIT=/opt/ds/gowitness
 if [ -f "$GOWIT" ]
 then
     echo -e "\e[031mFound GoWitness 3.0.5\e[0m"
@@ -129,8 +133,6 @@ else
     echo -e "\e[031mDownloading Missing GoWitness 3.0.5\e[0m"
     wget --no-check-certificate -O /opt/365/gowitness 'https://drive.google.com/uc?export=download&id=1C-FpaGQA288dM5y40X1tpiNiN8EyNJKS' # gowitness 3.0.5
     chmod -R 777 /opt/365
-    chmod a+x /opt/365/gowitness
-
 fi
 echo
 
@@ -141,9 +143,8 @@ then
     echo -e "\e[031mFound Onion Verifier\e[0m"
 else
     echo -e "\e[031mDownloading Onion Verifier\e[0m"
-    wget --no-check-certificate -O $PWD/onion_verifier.py 'https://github.com/aryanguenthner/365/raw/refs/heads/main/onion_verifier.py'
-    chmod a+x $PWD/onion_verifier.py
-    chmod -R 777 $PWD/onion_verifier.py
+    wget --no-check-certificate -O onion_verifier.py 'https://github.com/aryanguenthner/ds/raw/refs/heads/main/onion_verifier.py'
+    chmod -R 777 onion_verifier.py
 fi
 echo
 
@@ -181,12 +182,16 @@ then
     echo -e "\e[031mFound The Devil\e[0m"
 else
     echo -e "\e[031mGetting the Devil\e[0m"
-    sudo pipx install thedevilseye==2022.1.4.0 > /dev/null 2>&1
+    pipx install thedevilseye==2022.1.4.0 > /dev/null 2>&1
     echo
     echo "The Devil's in your computer"
 fi
 echo -ne '#######################\r'
 echo
+
+
+# Quick Firefox check open/close
+sudo -u kali firefox & sleep 3 && pkill firefox > /dev/null
 
 # Editing Firefox about:config this allows DarkWeb .onion links to be opened with Firefox
 #echo 'user_pref("network.dns.blockDotOnion", false);' > user.js
@@ -205,6 +210,9 @@ echo
 
 echo "Config Looks Good So Far"
 echo -ne '\n'
+
+# Create OSINT Folder
+mkdir -p $(pwd)/osint-notes
 
 # What are you researching?
 read -p "What are you researching: " SEARCH
@@ -295,6 +303,7 @@ COUNT=$(wc -l < "$RESULTS_FILE")
 echo -e "\e[31mGetting More Info on $COUNT Onions\e[0m"
 echo "---------------------------------"
 echo
+cd /opt/ds || exit 1
 sudo python3 onion_verifier.py | tee onion_verifier.log
 echo
 
