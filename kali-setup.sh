@@ -300,32 +300,81 @@ else
 fi
 echo
 
-# Setting up Go environment variables
-echo "Configuring Go environment..."
-echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.zshrc
-echo 'export GOPATH=$HOME/go' >> ~/.zshrc
-echo 'export PATH=$PATH:$GOPATH/bin' >> ~/.zshrc
-source /etc/profile
-source ~/.zshrc  # Reload shell configuration
-echo
+#!/bin/bash
 
-# IP Address# 
-echo "Check if hostname -I is already in /root/.zshrc"
-if ! grep -q "hostname -I" /root/.zshrc; then
-    echo "Adding 'hostname -I' to /root/.zshrc..."
-    echo 'hostname -I' | sudo tee -a /root/.zshrc > /dev/null
-else
-    echo "'hostname -I' is already in /root/.zshrc. Skipping..."
+echo "Configuring Go environment for all shells..."
+
+# Define the Go environment variables
+GO_EXPORTS="
+export PATH=\$PATH:/usr/local/go/bin
+export GOPATH=\$HOME/go
+export PATH=\$PATH:\$GOPATH/bin
+"
+
+# List of shell config files to update
+SHELL_CONFIGS=(
+    "$HOME/.zshrc"
+    "$HOME/.bashrc"
+    "$HOME/.bash_profile"
+    "$HOME/.profile"
+    "/etc/profile"
+    "/etc/zsh/zshrc"
+    "/etc/bash.bashrc"
+)
+
+# Function to check and update config files
+update_shell_config() {
+    local FILE="$1"
+
+    if [[ -f "$FILE" ]]; then
+        if grep -q "/usr/local/go/bin" "$FILE"; then
+            echo -e "\e[33mGo environment already set in $FILE. Skipping...\e[0m"
+        else
+            echo -e "\e[32mUpdating $FILE...\e[0m"
+            echo "$GO_EXPORTS" | sudo tee -a "$FILE" > /dev/null
+        fi
+    fi
+}
+
+# Loop through each shell config file and update if needed
+for FILE in "${SHELL_CONFIGS[@]}"; do
+    update_shell_config "$FILE"
+done
+
+# Apply changes immediately if running in an interactive shell
+if [[ $- == *i* ]]; then
+    source ~/.zshrc 2>/dev/null
+    source ~/.bashrc 2>/dev/null
+    source /etc/profile 2>/dev/null
 fi
+echo -e "\e[32mGo environment variables updated for all shells!\e[0m"
+
+# IP Address - Ensure it's added to all shell configs
+echo "Ensuring 'hostname -I' is in all shell configs..."
+for FILE in "${SHELL_CONFIGS[@]}"; do
+    if [[ -f "$FILE" ]] && ! grep -q "hostname -I" "$FILE"; then
+        echo -e "\e[32mAdding 'hostname -I' to $FILE...\e[0m"
+        echo 'hostname -I' | sudo tee -a "$FILE" > /dev/null
+    else
+        echo -e "\e[33m'hostname -I' already exists in $FILE. Skipping...\e[0m"
+    fi
+done
 echo
 
-cd /opt || exit 1
-# Function to check if a Go tool is installed
+# Ensure /opt exists before navigating
+if [[ ! -d "/opt" ]]; then
+    echo -e "\e[31mDirectory /opt does not exist. Creating it now...\e[0m"
+    sudo mkdir -p /opt
+fi
+
+cd /opt || { echo -e "\e[31mFailed to change directory to /opt. Exiting...\e[0m"; exit 1; }
+
+# Function to check if a Go tool is installed and install it if missing
 check_and_install() {
     local tool_name=$1
     local go_path="$HOME/go/bin/$tool_name"
 
-    if command -v "$go_path" &>/dev/null || [[ -f "$go_path" ]]; then
+    if [[ -f "$go_path" ]]; then
         echo -e "\e[32m$tool_name is already installed. Skipping...\e[0m"
     else
         echo -e "\e[33mInstalling $tool_name...\e[0m"
@@ -334,7 +383,7 @@ check_and_install() {
     echo
 }
 
-# Check and install tools
+# Install necessary Go tools
 echo
 check_and_install "nuclei" "github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest"
 check_and_install "httpx" "github.com/projectdiscovery/httpx/cmd/httpx@latest"
