@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
+
 #######################################################
 # Made for OSINT CTI cyber security research on the Dark Deep Web
 # Intended to be used on Kali Linux
 # Updated for compatibility and better Tor handling
-# Hacked on 02/27/2025, pay me later
+# Hacked on 03/07/2025, pay me later
 # Great ideas
 # install_addon "https://addons.mozilla.org/firefox/downloads/file/4141345/noscript-11.4.26.xpi" "noscript"
 # install_addon "https://addons.mozilla.org/firefox/downloads/file/4125998/adblock_plus-3.17.1.xpi" "adblock_plus"
 # install_addon "https://addons.mozilla.org/firefox/downloads/file/4151024/sponsorblock-5.4.15.xpi" "sponsorblock"
+# install_addon "https://addons.mozilla.org/firefox/downloads/file/4329214/easy_auto_refresh-5.6.xpi" "easy auto refresh"
+
 ######################################################
 
 # Banner
@@ -21,21 +24,19 @@ cat <<'EOF'
 EOF
 echo "OSINT CTI Cyber Threat intelligence v1.2"
 # Darksheets is meant for researchers and educational purposes only. This was developed to speed the investigation, enable clear documentation without pain and suffering. Pay me later.
-# Consider using spiderfoot,redtiger
+# Consider using spiderfoot
+# Find something good let me know
 # https://github.com/smicallef/spiderfoot
 
 echo
 # Todays Date
 sudo timedatectl set-timezone America/Los_Angeles
 echo -e "\e[034mToday is\e[0m"
-export LC_TIME="en_US.UTF-8"
-date | tee darksheets.run.date
-
+date '+%Y-%m-%d %r' | tee darksheets.run.date
 # Setting Variables
 CITY=$(curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2)
 PWD=$(pwd)
 RED='\033[31m'
-#RANDOM=$$
 echo
 
 # Network Information
@@ -85,7 +86,55 @@ sleep 1
 echo -ne '#######################   (100%)\r'
 echo -ne '\n'
 
-# Verify Onion Verifier in $PWD
+# Google Chrome Installer
+GC="/usr/bin/google-chrome-stable"
+if [ -f "$GC" ]; then
+    echo -e "\e[031mFound Google Chrome\e[0m"
+    echo
+else
+    echo "Google Chrome not found. Installing..."
+    # Remove unnecessary packages and update database (optional)
+    sudo apt-get autoremove -y
+
+    # Variables
+    CHROME_DEB_URL="https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+    DEB_FILE="google-chrome-stable_current_amd64.deb"
+
+    # Download the latest Google Chrome Debian package
+    echo "Downloading and Installing Google Chrome..."
+    wget -O "$DEB_FILE" "$CHROME_DEB_URL"
+
+    # Install the downloaded package
+    echo "Installing Google Chrome..."
+    sudo dpkg -i "$DEB_FILE"
+
+    # Fix any dependency issues
+    echo "Fixing dependencies..."
+    sudo apt-get install -f -y
+
+    # Clean up
+    echo "Cleaning up..."
+    rm "$DEB_FILE"
+
+    echo "Google Chrome installation complete!"
+    echo
+fi
+
+# Verify gowitness 3.0.5 is in /opt/ds
+GOWIT=/opt/ds/gowitness
+if [ -f "$GOWIT" ]
+then
+    echo -e "\e[031mFound GoWitness 3.0.5\e[0m"
+else
+    echo -e "\e[031mDownloading Missing GoWitness 3.0.5\e[0m"
+    wget --no-check-certificate -O /opt/ds/gowitness 'https://drive.google.com/uc?export=download&id=1C-FpaGQA288dM5y40X1tpiNiN8EyNJKS' # gowitness 3.0.5
+    chmod -R 777 /opt/ds
+    chmod a+x /opt/ds/gowitness
+
+fi
+echo
+
+# Onion Verifier
 OV=onion_verifier.py
 if [ -f "$OV" ]
 then
@@ -95,20 +144,6 @@ else
     wget --no-check-certificate -O $PWD/onion_verifier.py 'https://github.com/aryanguenthner/ds/raw/refs/heads/main/onion_verifier.py'
     chmod a+x $PWD/onion_verifier.py
     chmod -R 777 $PWD/onion_verifier.py
-fi
-echo
-
-# Verify gowitness 3.0.5 is in $PWD/gowitness
-GOWIT=gowitness
-if [ -f "$GOWIT" ]
-then
-    echo -e "\e[031mFound GoWitness 3.0.5\e[0m"
-else
-    echo -e "\e[031mDownloading Missing GoWitness 3.0.5\e[0m"
-    wget --no-check-certificate -O $PWD/gowitness 'https://drive.google.com/uc?export=download&id=1C-FpaGQA288dM5y40X1tpiNiN8EyNJKS' # gowitness 3.0.5
-    chmod a+x $PWD/gowitness
-    chmod -R 777 $PWD/gowitness
-    ./gowitness version
 fi
 echo
 
@@ -197,7 +232,7 @@ echo
 # Display 10 Results
 head "$RESULTS_FILE"
 echo
-echo "Saved results to "$PWD"/"$RESULTS_FILE""
+echo "Saved results to ""$PWD""/"$RESULTS_FILE""
 echo
 # Check for TOR Connection
 echo "Starting Tor service"
@@ -260,7 +295,7 @@ COUNT=$(wc -l < "$RESULTS_FILE")
 echo -e "\e[31mGetting More Info on $COUNT Onions\e[0m"
 echo "---------------------------------"
 echo
-python3 onion_verifier.py | tee onion_verifier.log
+sudo python3 onion_verifier.py | tee onion_verifier.log
 echo
 
 # Get Screenshot, Save results to db
@@ -271,9 +306,9 @@ echo
 # Open spreadsheet with all results
 echo -e "\e[031mOpening DarkSheets results with LibreOffice\e[0m"
 ONIONS=onion_page_titles.csv
-sudo libreoffice --calc "$PWD"/$ONIONS --infilter=”CSV:44,34,0,1,4/2/1” --norestore > /dev/null 2>&1 & disown
+sudo libreoffice --calc "$ONIONS" --infilter=”CSV:44,34,0,1,4/2/1” --norestore > /dev/null 2>&1 & disown
 echo
-echo "The Onions have been saved to: "$PWD"/"$ONIONS""
+echo "The Onions have been saved to: ""$PWD""/"$ONIONS""
 echo
 # Open Firefox
 echo -e "\e[031mPro Tip: Use NoScript on the Dark Web! Block Javascript!\e[0m"
@@ -309,9 +344,10 @@ readarray -t HITS < <(awk -v search="$SEARCH" '
 # Assign extracted values (fallback to empty string if fewer than 3)
 HITS=("${HITS[@]:0:3}")  # Keep only the first 3 elements
 echo "Opening Dark Web Sites in Firefox"
+echo
 for HIT in "${HITS[@]}"; do
     [ -n "$HIT" ] && 
-    sudo -u kali firefox $HIT > /dev/null 2>&1 & disown
+    sudo -u kali firefox "$HIT" > /dev/null 2>&1 & disown
 done
 
 # Debugging (optional)
@@ -321,14 +357,13 @@ echo
 # After results have been saved to db, Start Web Server
 echo "Starting GoWitness Server, Open http://127.0.0.1:7171/ when the screenshots are ready"
 sudo qterminal -e ./gowitness report server > /dev/null 2>&1 & disown
-wait
+echo
 
 # After the web server has started, Open Firefox to see the results
 echo "Opening GoWitness Results in Firefox"
 echo
-GOSERVER=http://127.0.0.1:7171/gallery
+GOSERVER="http://127.0.0.1:7171/gallery"
 sudo -u kali firefox $GOSERVER > /dev/null 2>&1 & disown
-wait
 
 # Ask the user if they want to disconnect from the dark web
 echo "Friendly reminder to exit the Dark Web type: torghostng -x"
