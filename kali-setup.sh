@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
 
 ################################################
-# Kali Linux Red Team Setup Automation Script
-# Last Updated 02/23/2025, minor evil updates, pay me later
-# Tested on Kali 2024.4 XFCE
-# Usage: sudo git clone https://github.com/aryanguenthner/365 /opt/
-# cd 365 && sudo chmod a+x *.sh
+# Kali Linux Blue Team, Red Team, OSINT CTI Setup Automation Script
+# Last Updated 03/08/2025, minor evil updates, pay me later
+# Tested on Kali 2025.1 XFCE
+# Usage: sudo git clone https://github.com/aryanguenthner/365 /opt/365
 # chmod -R 777 /home/kali/ /opt/365
-# sudo time ./kali-setup.sh 2>&1 | tee kali.log
+# sudo time ./kali-setup.sh
 ################################################
 echo
+
+# Exit on error
+set -e
+
 # TODO: Create a splash screen with menu options
 # Menu options: 1 = Update Kali, 2 = Install kali Setup, 3 Install Kali Extra's, 4 Give me it all
 
@@ -18,11 +21,13 @@ if sudo grep -q "^kali ALL=(ALL) NOPASSWD:ALL" /etc/sudoers.d/kali 2>/dev/null; 
     echo "'kali' is already in sudoers. Skipping addition."
 else
     echo "Adding 'kali' to sudoers..."
+    echo
     echo "kali ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/kali > /dev/null
     echo "'kali' added to sudoers."
 fi
 
 # Setting Variables
+GREEN=032m
 YELLOW=033m
 BLUE=034m
 PWD=$(pwd)
@@ -99,7 +104,7 @@ echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
 echo "Enabling SSH"
 echo
 sudo sed -i '40s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config > /dev/null 2>&1
-sudo systemctl enable ssh && sudo service ssh restart
+sudo systemctl enable ssh > /dev/null && sudo service ssh restart > /dev/null
 echo
 
 # Kali Updates
@@ -113,107 +118,78 @@ echo
 # sudo xfce4-panel > /dev/null 2>&1
 
 # Prepare Kali installs
-sudo apt-get update && apt-get -y upgrade && apt-get -y full-upgrade
+sudo apt-get update && apt-get -y full-upgrade
 echo
-sudo apt-get install -y mono-devel printer-driver-escpr pipx python3-distutils-extra torbrowser-launcher shellcheck yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2t64 libkrb5-dev metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m cups system-config-printer gobuster libreoffice
+sudo apt-get -y install mono-devel printer-driver-escpr pipx python3-distutils-extra torbrowser-launcher shellcheck yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2t64 libkrb5-dev metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m cups system-config-printer gobuster libreoffice gcc
 echo
-
-# Some dependencies, might fix vbox issues
-sudo apt-get install -y gcc make linux-headers-$(uname -r)
 
 sudo apt-get autoremove -y && updatedb
-# Variables
-CHROME_DEB_URL="https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
-DEB_FILE="google-chrome-stable_current_amd64.deb"
 
-# Download the latest Google Chrome Debian package
-echo "Downloading and Installing Google Chrome..."
-wget -O "$DEB_FILE" "$CHROME_DEB_URL"
+# Setting Variables
+GREEN=032m
+YELLOW=033m
+BLUE=034m
 
-# Install the downloaded package
-echo "Installing Google Chrome..."
-sudo dpkg -i "$DEB_FILE"
+# Change directory to Kali Downloads
+cd /home/kali/Downloads || exit 1
+echo "Switched to /home/kali/Downloads"
 
-# Fix any dependency issues
-echo "Fixing dependencies..."
-sudo apt-get install -f -y
+# Function to check installation status
+check_install() {
+    if command -v "$1" &>/dev/null; then
+        echo -e "\e[32m$1 is installed successfully!\e[0m"
+    else
+        echo -e "\e[31m$1 installation failed!\e[0m"
+    fi
+}
 
-# Clean up
-echo "Cleaning up..."
-rm "$DEB_FILE"
-
-echo "Google Chrome installation complete!"
+# === Google Chrome Install ===
+GC="/usr/bin/google-chrome-stable"
+if [ -f "$GC" ]; then
+    echo -e "\e[32mGoogle Chrome is already installed!\e[0m"
+else
+    echo "Installing Google Chrome..."
+    CHROME_DEB="google-chrome-stable_current_amd64.deb"
+    wget -O "$CHROME_DEB" "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+    sudo dpkg -i "$CHROME_DEB" || sudo apt --fix-broken install -y
+    rm "$CHROME_DEB"
+    check_install "google-chrome-stable"
+fi
 echo
 
-# Signal Install
-# Step 1: Install the official public software signing key
-echo "Installing the Signal Desktop public software signing key..."
-wget --no-check-certificate -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
-sudo mv signal-desktop-keyring.gpg /usr/share/keyrings/
+# === Signal Install ===
+# echo "Installing Signal Desktop..."
+# wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor | sudo tee /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
+# echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt bookworm main' | sudo tee /etc/apt/sources.list.d/signal.list
+# sudo apt update && sudo apt install -y signal-desktop
+#check_install "signal-desktop"
+# echo
 
-# Step 2: Add the Signal repository to the list of repositories
-echo "Adding Signal Desktop repository..."
-echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' | sudo tee /etc/apt/sources.list.d/signal-xenial.list
-
-# Step 3: Update the package database and install Signal
-echo "Updating package database and installing Signal Desktop..."
-sudo apt update && sudo apt install -y signal-desktop
-echo
-echo "Signal Desktop installation complete."
-echo
-
-# Download and Install Zoom
-# Define Zoom download URL and filename
-ZOOM_URL="https://zoom.us/client/latest/zoom_amd64.deb"
-ZOOM_DEB="zoom_amd64.deb"
-
-# Download Zoom .deb package
-echo "Downloading Zoom for Linux..."
-wget --no-check-certificate -O $ZOOM_DEB $ZOOM_URL
-
-# Install Zoom
+# === Zoom Install ===
 echo "Installing Zoom..."
-sudo apt install -y ./$ZOOM_DEB
-
-# Remove the downloaded .deb file
-echo "Cleaning up..."
-rm $ZOOM_DEB
-echo "Zoom installation complete."
+ZOOM_DEB="zoom_amd64.deb"
+wget -O "$ZOOM_DEB" "https://zoom.us/client/latest/zoom_amd64.deb"
+sudo apt install -y ./"$ZOOM_DEB" || sudo apt --fix-broken install -y
+rm "$ZOOM_DEB"
+check_install "zoom"
 echo
 
-# Download and Install Discord
-# Define Discord download URL and filename
-DISCORD_URL="https://discord.com/api/download?platform=linux&format=deb"
-DISCORD_DEB="discord.deb"
-
-# Download Discord .deb package
-echo "Downloading Discord for Linux..."
-wget --no-check-certificate -O $DISCORD_DEB $DISCORD_URL
-
-# Install Discord
+# === Discord Install ===
 echo "Installing Discord..."
-sudo apt install -y ./$DISCORD_DEB
+DISCORD_DEB="discord.deb"
+wget -O "$DISCORD_DEB" "https://discord.com/api/download?platform=linux&format=deb"
+sudo apt install -y ./"$DISCORD_DEB" || sudo apt --fix-broken install -y
+rm "$DISCORD_DEB"
+check_install "discord"
 echo
 
-# Remove the downloaded .deb file
-echo "Cleaning up..."
-rm $DISCORD_DEB
-echo "Discord installation complete."
-echo
-
-# Define the Slack download URL
-SLACK_URL="https://downloads.slack-edge.com/releases/linux/4.33.90/prod/x64/slack-desktop-4.33.90-amd64.deb"
-echo
-
-# Download the latest Slack .deb package
-echo "Downloading the latest Slack .deb package..."
-wget --no-check-certificate -O slack-desktop.deb $SLACK_URL
-
-# Install the Slack .deb package
+# === Slack Install ===
 echo "Installing Slack..."
-sudo dpkg -i slack-desktop.deb
-echo
-echo "Hey Slacker- Slack installation complete!"
+SLACK_DEB="slack-desktop.deb"
+wget -O "$SLACK_DEB" "https://downloads.slack-edge.com/releases/linux/4.33.90/prod/x64/slack-desktop-4.33.90-amd64.deb"
+sudo dpkg -i "$SLACK_DEB" || sudo apt --fix-broken install -y
+rm "$SLACK_DEB"
+check_install "slack"
 echo
 
 # Variables
@@ -245,23 +221,31 @@ chmod +x ~/.docker/cli-plugins/docker-compose
 echo "Installing NetExec"
 # TODO: Add NetExec Examples, add automation script
 # Enhanced CME
-sudo pipx install git+https://github.com/Pennyw0rth/NetExec
-sudo pipx ensurepath --prepend
+pipx install git+https://github.com/Pennyw0rth/NetExec
+pipx ensurepath --prepend
 echo
 
-# Updog
+# Updog Install
 # Create a virtual environment
-python3 -m venv myenv
-# Activate the virtual environment
-source myenv/bin/activate
-# Now install updog
-pip install updog
+DOG=/root/.local/share/pipx/venvs/updog/bin/updog
+if [ -f "$DOG" ]
+then
+    echo -e "\e[031mFound The Dog\e[0m"
+else
+    echo -e "\e[031mGetting the Dog\e[0m"
+pipx install updog
+pipx ensurepath
+export PATH=/root/.local/bin:$PATH
+echo 'export PATH=/root/.local/bin:$PATH' >> ~/.zshrc
+source ~/.zshrc
+    echo
+fi
 echo
 
 # Keep Nmap scans Organized
 sudo mkdir -p /home/kali/Desktop/testing/nmapscans/
 
-# Upgrade Nmap User agent
+# Upgrade Nmap User agent, Make Nmap Great Again
 echo "Current Nmap User Agent"
 sed -n '160p' /usr/share/nmap/nselib/http.lua
 echo
@@ -281,23 +265,28 @@ if [ -f $NB ]
 then
 
     echo "Found nmap-bootstrap.xsl"
-
 else
-
     echo -e "\e[034mFetching Missing $BOOTSTRAP File\e[0m"
-wget --no-check-certificate -O /home/kali/Desktop/testing/nmapscans/nmap-bootstrap.xsl https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl > /dev/null 2>&1
+    wget --no-check-certificate -O /home/kali/Desktop/testing/nmapscans/nmap-bootstrap.xsl https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl > /dev/null 2>&1
 
 fi
 echo
 
-# Did you say Cloudflare Tunnel?
-# qterminal -e python3 -m http.server 80
-# qterminal -e cloudflared tunnel -url localhost:80
-sudo dpkg -i /opt/365/cloudflared-linux-amd64.deb
-
-# Updating /opt/365 permissions and file execution
-sudo chmod -R 777 /opt/365
-sudo chmod a+x /opt/365/*.sh /opt/365/*.py
+# Verify CloudFlare exists
+# python3 -m http.server 443
+# cloudflared tunnel -url localhost:443
+CF=/usr/local/bin/cloudflared
+if [ -f "$CF" ]
+then
+    echo -e "\e[031mFound The Cloud\e[0m"
+else
+    echo -e "\e[031mGetting the Cloud\e[0m"
+    wget --no-check-certificate -O cloudflared.deb https://github.com/aryanguenthner/365/raw/refs/heads/master/cloudflared-linux-amd64.deb
+    sudo dpkg -i cloudflared.deb > /dev/null 2>&1
+    echo
+    echo "The Cloud's in your computer"
+fi
+echo
 
 # Verify Go 1.23.0 installation
 if go version 2>/dev/null | grep -q "go1.23.0"; then
@@ -306,6 +295,7 @@ else
     echo -e "\e[34mDownloading and Installing Go\e[0m"
     wget --no-check-certificate https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
     sudo tar -xvzf go1.23.0.linux-amd64.tar.gz -C /usr/local
+    echo
     echo "Go installation complete."
 fi
 echo
@@ -317,6 +307,7 @@ echo 'export GOPATH=$HOME/go' >> ~/.zshrc
 echo 'export PATH=$PATH:$GOPATH/bin' >> ~/.zshrc
 source /etc/profile
 source ~/.zshrc  # Reload shell configuration
+echo
 
 # IP Address# 
 echo "Check if hostname -I is already in /root/.zshrc"
@@ -328,33 +319,28 @@ else
 fi
 echo
 
+cd /opt || exit 1
 # Project Discovery Nuclei
-cd /opt
 go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
 echo
 
 # Project Discovery httpx
-cd /opt
 go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
 echo
 
 # Install Katana - Web Crawler
-cd /opt
 go install -v github.com/projectdiscovery/katana/cmd/katana@latest
 echo
 
 # Install Project Discovery - Uncover
-cd /opt
 go install -v github.com/projectdiscovery/uncover/cmd/uncover@latest
 echo
 
 # Install gospider - Web Crawler
 # https://github.com/jaeles-project/gospider
-cd /opt
 go install github.com/jaeles-project/gospider@latest
-
+echo
 # Install gobuster - Directory Buster
-cd /opt
 go install github.com/OJ/gobuster/v3@latest
 echo
 
@@ -369,19 +355,19 @@ gem install spider
 echo
 
 # Verify gowitness 3.0.5 is in /opt/365
-GWIT=/opt/365/gowitness
-if [ -f "$GWIT" ]
+GOWIT=/opt/365/gowitness
+if [ -f "$GOWIT" ]
 then
     echo -e "\e[031mFound GoWitness 3.0.5\e[0m"
 else
     echo -e "\e[031mDownloading Missing GoWitness 3.0.5\e[0m"
+    chmod -R 777 /opt/365
     wget --no-check-certificate -O /opt/365/gowitness 'https://drive.google.com/uc?export=download&id=1C-FpaGQA288dM5y40X1tpiNiN8EyNJKS' # gowitness 3.0.5
-    chmod a+x /opt/365/gowitness
-    chmod -R 777 /opt/365/
 fi
 echo
 
 # Ask user if they want to install extra Git repositories
+cd /opt || exit 1
 read -t 30 -p "Would you like to install extra Git repositories? (yes/no): " response
 echo
 
@@ -394,106 +380,85 @@ if [[ "$response" == "yes" ]]; then
     echo
 
 echo "PWN AD"
-cd /opt
 git clone https://github.com/Wh04m1001/DFSCoerce
 echo
 
 echo "Malicious Macro Builder"
-cd /opt
 git clone https://github.com/infosecn1nja/MaliciousMacroMSBuild.git
 echo
 
 echo "Subbrute"
-cd /opt
 git clone https://github.com/TheRook/subbrute.git
 echo
 
 echo "BridgeKeeper - Employee OSINT"
-cd /opt
 git clone https://github.com/aryanguenthner/BridgeKeeper.git
 echo
 
 echo "AD Recon - My Fav"
-cd /opt
 git clone https://github.com/sense-of-security/ADRecon.git
 echo
 
 echo "enum4linux-ng"
-cd /opt
 git clone https://github.com/cddmp/enum4linux-ng.git
 echo
 
 echo "Daniel Miessler Security List Collection"
-cd /opt
 git clone https://github.com/danielmiessler/SecLists.git
 echo
 
 echo "Awesome Incident Response"
-cd /opt
 git clone https://github.com/meirwah/awesome-incident-response.git
 echo
 
 echo "Fuzzdb"
-cd /opt
 git clone https://github.com/fuzzdb-project/fuzzdb.git
 echo
 
 echo "Payloads All The Things"
-cd /opt
 git clone https://github.com/swisskyrepo/PayloadsAllTheThings.git
 echo
 
 echo "Awesome XSS"
-cd /opt
 git clone https://github.com/s0md3v/AwesomeXSS.git
 echo
 
 echo "XSS Payloads"
-cd /opt
 git clone https://github.com/payloadbox/xss-payload-list.git
 echo
 
 echo "Foospidy Payloads"
-cd /opt
 git clone https://github.com/foospidy/payloads.git
 echo
 
 echo "Java Deserialization Exploitation (jexboss)"
-cd /opt
 git clone https://github.com/joaomatosf/jexboss.git
 echo
 
 echo "theHarvester"
-cd /opt
 git clone https://github.com/laramies/theHarvester.git
 echo
 
 echo "OWASP Cheat Sheet"
-cd /opt
 git clone https://github.com/OWASP/CheatSheetSeries.git
 echo
 
 echo "Pulse VPN Exploit"
-cd /opt
 git clone https://github.com/projectzeroindia/CVE-2019-11510.git
 echo
 
 echo "hruffleHog - Git Enumeration"
-cd /opt
 git clone https://github.com/dxa4481/truffleHog.git
 echo
 
 echo "Git Secrets"
-cd /opt
 git clone https://github.com/awslabs/git-secrets.git
 echo
 
 echo "Git Leaks"
-cd /opt
 git clone https://github.com/zricethezav/gitleaks.git
 
 echo "Discover Admin Login Pages - Breacher"
-cd /opt
 git clone https://github.com/s0md3v/Breacher.git
 echo
 
@@ -520,17 +485,17 @@ echo
 sudo git clone https://github.com/bitsadmin/wesng.git /opt/wseng
 echo
 
-echo "SprayingToolKit"
+echo "Password SprayingToolKit"
 git clone https://github.com/byt3bl33d3r/SprayingToolkit.git /opt/SprayingToolkit
-: ' Nmap works dont forget --> nmap -iL smb-ips.txt --stats-every=1m -Pn -p 445 -script smb-brute --script-args='smbpassword=Summer2023,userdb=usernames.txt,smbdomain=xxx.com,smblockout=true' -oA nmap-smb-brute-2023-07-19'
-: ' Hydra works dont forget --> hydra -p Summer2019 -l Administrator smb://192.168.1.23
-Metasploit works dont forget --> 
-set smbpass Summer2019
-set smbuser Administrator
-set rhosts 192.168.1.251
-run '
+# Nmap works dont forget --> nmap -iL smb-ips.txt --stats-every=1m -Pn -p 445 -script smb-brute --script-args='smbpassword=Summer2023,userdb=usernames.txt,smbdomain=xxx.com,smblockout=true' -oA nmap-smb-brute-2023-07-19'
+# Hydra works dont forget --> hydra -p Summer2019 -l Administrator smb://192.168.1.23
+# Metasploit works dont forget --> 
+# set smbpass Summer2019
+# set smbuser Administrator
+# set rhosts 192.168.1.251
+# run
 echo
-echo "Extra installations complete."
+echo "Extra Tools Installed"
 else
     echo "Skipping extra Git repositories installation."
 fi
@@ -608,13 +573,6 @@ sudo systemctl stop docker
 sudo systemctl disable docker
 sudo ip link delete docker0
 
-updatedb
-echo "Hack The Planet"
-echo "Enable Kali Autologin"
-sed -i '120s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
-sed -i '121s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
-sudo service lightdm restart
-
 echo "Checking if you need Virtualbox installed"
 # Detect if running on VirtualBox or a physical machine
 VBOX=$(sudo dmidecode -s system-manufacturer)  # e.g., "LENOVO" for physical machine
@@ -649,6 +607,12 @@ echo "VirtualBox installation completed!"
 # Insurance
 # sudo modprobe vboxnetflt
 # Cross your fingers
+# Enable Kali Autologin
+
+echo "Hack The Planet"
+sed -i '120s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
+sed -i '121s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
+sudo service lightdm restart
 
 # Kali Setup Finish Time
 date | tee kali-setup-finish-date.txt
@@ -657,3 +621,4 @@ reboot
 # Just in case DNS issues: nano -c /etc/resolvconf/resolv.conf.d/head
 # Gucci Mang
 # Pay me later
+# https://sites.google.com/site/gdocs2direct/
