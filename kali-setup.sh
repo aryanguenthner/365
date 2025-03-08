@@ -574,6 +574,7 @@ sudo systemctl disable docker
 sudo ip link delete docker0
 
 echo "Checking if you need Virtualbox installed"
+cd /home/kali/Downloads || exit 1
 # Detect if running on VirtualBox or a physical machine
 VBOX=$(sudo dmidecode -s system-manufacturer)  # e.g., "LENOVO" for physical machine
 VBOX1=$(sudo dmidecode -s bios-version)  # "VirtualBox" if running inside a VM
@@ -584,7 +585,6 @@ if [[ "$VBOX1" == "VirtualBox" ]]; then
     exit 0
 else
     echo "Running on a physical machine. Proceeding with installation."
-fi
 
 # Add Oracle VirtualBox GPG key (alternative for apt-key deprecation)
 echo "Adding Oracle VirtualBox GPG key..."
@@ -603,6 +603,8 @@ sudo apt-get install -y virtualbox virtualbox-dkms virtualbox-ext-pack virtualbo
 echo "Adding user to vboxusers group..."
 sudo usermod -a -G vboxusers $USER
 echo "VirtualBox installation completed!"
+fi
+echo
 
 # Insurance
 # sudo modprobe vboxnetflt
@@ -612,7 +614,6 @@ echo "VirtualBox installation completed!"
 echo "Hack The Planet"
 sed -i '120s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
 sed -i '121s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
-sudo service lightdm restart
 
 # Kali Setup Finish Time
 date | tee kali-setup-finish-date.txt
