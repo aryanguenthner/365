@@ -189,10 +189,6 @@ fi
 echo -ne '#######################\r'
 echo
 
-
-# Quick Firefox check open/close
-sudo -u kali firefox & sleep 3 && pkill firefox > /dev/null
-
 # Editing Firefox about:config this allows DarkWeb .onion links to be opened with Firefox
 #echo 'user_pref("network.dns.blockDotOnion", false);' > user.js
 #sudo mv user.js /home/kali/.mozilla/firefox/*default-esr/
