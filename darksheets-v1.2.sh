@@ -120,16 +120,16 @@ else
     echo
 fi
 
-# Verify gowitness 3.0.5 is in /opt/ds
-GOWIT=/opt/ds/gowitness
+# Verify gowitness 3.0.5 is in /opt/365
+GOWIT=/opt/365/gowitness
 if [ -f "$GOWIT" ]
 then
     echo -e "\e[031mFound GoWitness 3.0.5\e[0m"
 else
     echo -e "\e[031mDownloading Missing GoWitness 3.0.5\e[0m"
-    wget --no-check-certificate -O /opt/ds/gowitness 'https://drive.google.com/uc?export=download&id=1C-FpaGQA288dM5y40X1tpiNiN8EyNJKS' # gowitness 3.0.5
-    chmod -R 777 /opt/ds
-    chmod a+x /opt/ds/gowitness
+    wget --no-check-certificate -O /opt/365/gowitness 'https://drive.google.com/uc?export=download&id=1C-FpaGQA288dM5y40X1tpiNiN8EyNJKS' # gowitness 3.0.5
+    chmod -R 777 /opt/365
+    chmod a+x /opt/365/gowitness
 
 fi
 echo
@@ -141,7 +141,7 @@ then
     echo -e "\e[031mFound Onion Verifier\e[0m"
 else
     echo -e "\e[031mDownloading Onion Verifier\e[0m"
-    wget --no-check-certificate -O $PWD/onion_verifier.py 'https://github.com/aryanguenthner/ds/raw/refs/heads/main/onion_verifier.py'
+    wget --no-check-certificate -O $PWD/onion_verifier.py 'https://github.com/aryanguenthner/365/raw/refs/heads/main/onion_verifier.py'
     chmod a+x $PWD/onion_verifier.py
     chmod -R 777 $PWD/onion_verifier.py
 fi
@@ -224,7 +224,7 @@ echo
 # Perform Devils Eye Search
 RESULTS_FILE=results.onion.csv
 sudo /root/.local/share/pipx/venvs/thedevilseye/bin/eye -q "$SEARCH" | grep ".onion" > "$RESULTS_FILE"
-sed '/^invest/d; /^222/d; /^porn/d; /\.onion$/!d' "$RESULTS_FILE" > "$RESULTS_FILE.tmp" && mv "$RESULTS_FILE.tmp" "$RESULTS_FILE"
+sed '/^invest/d; /^222/d; /^drug/d; /^porn/d; /\.onion$/!d' "$RESULTS_FILE" > "$RESULTS_FILE.tmp" && mv "$RESULTS_FILE.tmp" "$RESULTS_FILE"
 sort -u "$RESULTS_FILE" -o "$RESULTS_FILE"
 echo -e "\e[31mOnions Found:\e[0m $(wc -l < "$RESULTS_FILE")"
 echo
