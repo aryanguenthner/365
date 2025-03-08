@@ -221,8 +221,8 @@ chmod +x ~/.docker/cli-plugins/docker-compose
 echo "Installing NetExec"
 # TODO: Add NetExec Examples, add automation script
 # Enhanced CME
-pipx install git+https://github.com/Pennyw0rth/NetExec
-pipx ensurepath --prepend
+sudo pipx install git+https://github.com/Pennyw0rth/NetExec
+sudo pipx ensurepath --prepend
 echo
 
 # Updog Install
@@ -233,8 +233,8 @@ then
     echo -e "\e[031mFound The Dog\e[0m"
 else
     echo -e "\e[031mGetting the Dog\e[0m"
-pipx install updog
-pipx ensurepath
+sudo pipx install updog
+sudo pipx ensurepath
 export PATH=/root/.local/bin:$PATH
 echo 'export PATH=/root/.local/bin:$PATH' >> ~/.zshrc
 source ~/.zshrc
@@ -320,28 +320,28 @@ fi
 echo
 
 cd /opt || exit 1
-# Project Discovery Nuclei
-go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
-echo
+# Function to check if a Go tool is installed
+check_and_install() {
+    local tool_name=$1
+    local go_path="$HOME/go/bin/$tool_name"
 
-# Project Discovery httpx
-go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
-echo
+    if command -v "$go_path" &>/dev/null || [[ -f "$go_path" ]]; then
+        echo -e "\e[32m$tool_name is already installed. Skipping...\e[0m"
+    else
+        echo -e "\e[33mInstalling $tool_name...\e[0m"
+        go install -v "$2"
+    fi
+    echo
+}
 
-# Install Katana - Web Crawler
-go install -v github.com/projectdiscovery/katana/cmd/katana@latest
+# Check and install tools
 echo
-
-# Install Project Discovery - Uncover
-go install -v github.com/projectdiscovery/uncover/cmd/uncover@latest
-echo
-
-# Install gospider - Web Crawler
-# https://github.com/jaeles-project/gospider
-go install github.com/jaeles-project/gospider@latest
-echo
-# Install gobuster - Directory Buster
-go install github.com/OJ/gobuster/v3@latest
+check_and_install "nuclei" "github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest"
+check_and_install "httpx" "github.com/projectdiscovery/httpx/cmd/httpx@latest"
+check_and_install "katana" "github.com/projectdiscovery/katana/cmd/katana@latest"
+check_and_install "uncover" "github.com/projectdiscovery/uncover/cmd/uncover@latest"
+check_and_install "gospider" "github.com/jaeles-project/gospider@latest"
+check_and_install "gobuster" "github.com/OJ/gobuster/v3@latest"
 echo
 
 echo "Cewl Password Lists"
