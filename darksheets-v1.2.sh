@@ -4,8 +4,9 @@
 # Made for OSINT CTI cyber security research on the Dark Deep Web
 # Intended to be used on Kali Linux
 # Updated for compatibility and better Tor handling
-# Hacked on 03/08/2025, pay me later
+# Hacked on 03/09/2025, pay me later
 # Great ideas
+# Go here --> https://addons.mozilla.org/en-US/firefox/addon/noscript/
 # install_addon "https://addons.mozilla.org/firefox/downloads/file/4141345/noscript-11.4.26.xpi" "noscript"
 # install_addon "https://addons.mozilla.org/firefox/downloads/file/4125998/adblock_plus-3.17.1.xpi" "adblock_plus"
 # install_addon "https://addons.mozilla.org/firefox/downloads/file/4151024/sponsorblock-5.4.15.xpi" "sponsorblock"
@@ -305,7 +306,7 @@ echo
 
 # Get Screenshot, Save results to db
 echo "GoWitness Getting Screenshots, Be patient and let it run"
-sudo qterminal -e ./gowitness scan file -f "$RESULTS_FILE" --threads 25 --write-db --chrome-proxy socks5://127.0.0.1:9050 > /dev/null 2>&1 & disown
+sudo qterminal -e ./gowitness scan file -f "$RESULTS_FILE" --threads 10 --write-db --chrome-proxy socks5://127.0.0.1:9050 > /dev/null 2>&1 & disown
 echo
 
 # Open spreadsheet with all results
