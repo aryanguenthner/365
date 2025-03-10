@@ -374,7 +374,7 @@ sudo -u kali firefox $GOSERVER > /dev/null 2>&1 & disown
 # Ask the user if they want to disconnect from the dark web
 echo "Friendly reminder to exit the Dark Web type: torghostng -x"
 echo
-read -p "Do you want to disconnect from dark web? (y/n): " DISCONNECT 
+read -p "Do you want to disconnect from the dark web? (y/n): " DISCONNECT 
 echo
 if [[ "$DISCONNECT" == "y" || "$DISCONNECT" == "Y" ]]; then
 echo
