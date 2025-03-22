@@ -1,17 +1,14 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 ################################################
 # Kali Linux Blue Team, Red Team, OSINT CTI Setup Automation Script
-# Last Updated 03/08/2025, minor evil updates, pay me later
+# Last Updated 03/22/2025, minor evil updates, pay me later
 # Tested on Kali 2025.1 XFCE
 # Usage: sudo git clone https://github.com/aryanguenthner/365 /opt/365
 # chmod -R 777 /home/kali/ /opt/365
 # sudo time ./kali-setup.sh
 ################################################
 echo
-
-# Exit on error
-set -e
 
 # TODO: Create a splash screen with menu options
 # Menu options: 1 = Update Kali, 2 = Install kali Setup, 3 Install Kali Extra's, 4 Give me it all
@@ -95,10 +92,16 @@ echo "---------------------------------"
 echo
 sleep 2
 
-# Disable IPv6
-echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
-echo "net.ipv6.conf.default.disable_ipv6 = 1"  >> /etc/sysctl.conf
-echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
+# Disable IPv6cat <<-EOF >> /etc/sysctl.conf
+cat <<-EOF >> /etc/sysctl.conf
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+net.ipv6.conf.eth0.disable_ipv6 = 1
+net.ipv6.conf.eth1.disable_ipv6 = 1
+net.ipv6.conf.ppp0.disable_ipv6 = 1
+net.ipv6.conf.tun0.disable_ipv6 = 1
+EOF
 
 # Hackers like SSH
 echo "Enabling SSH"
@@ -120,7 +123,7 @@ echo
 # Prepare Kali installs
 sudo apt-get update && apt-get -y full-upgrade
 echo
-sudo apt-get -y install mono-devel printer-driver-escpr pipx python3-distutils-extra torbrowser-launcher shellcheck yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2t64 libkrb5-dev metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m cups system-config-printer gobuster libreoffice gcc
+sudo apt-get -y install netexec mono-devel printer-driver-escpr pipx python3-distutils-extra torbrowser-launcher shellcheck yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2t64 libkrb5-dev metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m cups system-config-printer gobuster libreoffice gcc
 echo
 
 sudo apt-get autoremove -y && updatedb
@@ -144,9 +147,9 @@ check_install() {
 }
 
 # === Google Chrome Install ===
-GC="/usr/bin/google-chrome-stable"
-if [ -f "$GC" ]; then
-    echo -e "\e[32mGoogle Chrome is already installed!\e[0m"
+if command -v google-chrome-stable &>/dev/null; then
+    echo -e "\033[1;32m[✓] Found Google Chrome\033[0m"
+    echo
 else
     echo "Installing Google Chrome..."
     CHROME_DEB="google-chrome-stable_current_amd64.deb"
@@ -218,13 +221,6 @@ curl -sSL https://github.com/docker/compose/releases/download/v2.0.1/docker-comp
 # Make the CLI executable
 chmod +x ~/.docker/cli-plugins/docker-compose
 
-echo "Installing NetExec"
-# TODO: Add NetExec Examples, add automation script
-# Enhanced CME
-sudo pipx install git+https://github.com/Pennyw0rth/NetExec
-sudo pipx ensurepath --prepend
-echo
-
 # Updog Install
 # Create a virtual environment
 DOG=/root/.local/share/pipx/venvs/updog/bin/updog
@@ -263,7 +259,6 @@ echo
 NB=/opt/365/nmap-bootstrap.xsl
 if [ -f $NB ]
 then
-
     echo "Found nmap-bootstrap.xsl"
 else
     echo -e "\e[034mFetching Missing $BOOTSTRAP File\e[0m"
@@ -407,7 +402,7 @@ echo
 GOWIT=/opt/365/gowitness
 if [ -f "$GOWIT" ]
 then
-    echo -e "\e[031mFound GoWitness 3.0.5\e[0m"
+    echo -e "\033[1;32m[✓] Found GoWitness 3.0.5\033[0m"
 else
     echo -e "\e[031mDownloading Missing GoWitness 3.0.5\e[0m"
     chmod -R 777 /opt/365
