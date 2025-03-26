@@ -283,6 +283,18 @@ else
 fi
 echo
 
+# Set up Go environment before installing tools
+echo "Configuring Go environment..."
+export PATH=$PATH:/usr/local/go/bin
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
+
+# Ensure the environment is persisted
+echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.zshrc
+echo 'export GOPATH=$HOME/go' >> ~/.zshrc
+echo 'export PATH=$PATH:$GOPATH/bin' >> ~/.zshrc
+source ~/.zshrc
+
 # Verify Go 1.23.0 installation
 if go version 2>/dev/null | grep -q "go1.23.0"; then
     echo "Go is version 1.23.0 installed"
@@ -295,53 +307,6 @@ else
 fi
 echo
 
-#!/bin/bash
-
-echo "Configuring Go environment for all shells..."
-
-# Define the Go environment variables
-GO_EXPORTS="
-export PATH=\$PATH:/usr/local/go/bin
-export GOPATH=\$HOME/go
-export PATH=\$PATH:\$GOPATH/bin
-"
-
-# List of shell config files to update
-SHELL_CONFIGS=(
-    "$HOME/.zshrc"
-    "$HOME/.bashrc"
-    "$HOME/.bash_profile"
-    "$HOME/.profile"
-    "/etc/profile"
-    "/etc/zsh/zshrc"
-    "/etc/bash.bashrc"
-)
-
-# Function to check and update config files
-update_shell_config() {
-    local FILE="$1"
-
-    if [[ -f "$FILE" ]]; then
-        if grep -q "/usr/local/go/bin" "$FILE"; then
-            echo -e "\e[33mGo environment already set in $FILE. Skipping...\e[0m"
-        else
-            echo -e "\e[32mUpdating $FILE...\e[0m"
-            echo "$GO_EXPORTS" | sudo tee -a "$FILE" > /dev/null
-        fi
-    fi
-}
-
-# Loop through each shell config file and update if needed
-for FILE in "${SHELL_CONFIGS[@]}"; do
-    update_shell_config "$FILE"
-done
-
-# Apply changes immediately if running in an interactive shell
-if [[ $- == *i* ]]; then
-    source ~/.zshrc 2>/dev/null
-    source ~/.bashrc 2>/dev/null
-    source /etc/profile 2>/dev/null
-fi
 echo -e "\e[32mGo environment variables updated for all shells!\e[0m"
 
 # IP Address - Ensure it's added to all shell configs
