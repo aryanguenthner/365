@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=TorGhost Start
+Comment=Start TorGhost service
+Exec=sudo /home/kali/Downloads/torghost-start.sh
+Icon=security-high
+Terminal=true
+StartupNotify=true
+Path=

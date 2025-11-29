@@ -1,17 +1,73 @@
 #!/usr/bin/env zsh
 
 ################################################
-# Kali Linux Blue Team, Red Team, OSINT CTI Setup Automation Script
-# Last Updated 03/22/2025, minor evil updates, pay me later
-# Tested on Kali 2025.1 XFCE
+# Kali Linux Blue Team, Red Team, OSINT CTI, Setup Automation Script
+# Last Updated 11/28/2025, minor evil updates, pay me later
+# Tested on Kali 2025.4 XFCE
 # Usage: sudo git clone https://github.com/aryanguenthner/365 /opt/365
 # chmod -R 777 /home/kali/ /opt/365
-# sudo time ./kali-setup.sh
+# chmod a+x *.py *.sh /home/kali/ /opt/365
+# Run it: sudo time ./kali-setup.sh
 ################################################
 echo
 
 # TODO: Create a splash screen with menu options
-# Menu options: 1 = Update Kali, 2 = Install kali Setup, 3 Install Kali Extra's, 4 Give me it all
+# Menu options: 1 = Update Kali, 2 = Install kali Setup, 3 Install Kali Extra's, 4 Give me it all, the kitchen sink
+
+# Kali Internet Optimizer, Attempt to make the download/upload speed faster
+# Ensure /etc/sysctl.d/99-disable-ipv6.conf exists; create and apply it only if missing.
+set -euo pipefail
+
+# escalate to root if not already
+if [ "${EUID:-$(id -u)}" -ne 0 ]; then
+  exec sudo bash "$0" "$@"
+fi
+
+#!/bin/bash
+
+# Script to disable IPv6 on Debian-based systems
+# Run with sudo/root privileges
+
+set -e
+
+CONF=/etc/sysctl.d/99-disable-ipv6.conf
+
+echo "Checking IPv6 configuration..."
+if [ -f "$CONF" ]; then
+  echo "$CONF already exists, skipping creation..."
+else
+  echo "Creating $CONF..."
+  cat >"$CONF" <<'EOF'
+# Disable IPv6 (managed by installer)
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+EOF
+  
+  chmod 0644 "$CONF"
+  echo "Configuration file created successfully"
+  
+  echo "Applying sysctl settings..."
+  if sysctl -p "$CONF" >/dev/null 2>&1; then
+    echo "IPv6 disabled successfully"
+  else
+    echo "Warning: Failed to apply settings immediately"
+    echo "Settings will be applied on next boot"
+  fi
+fi
+
+# Verify IPv6 status
+echo ""
+echo "Current IPv6 status:"
+if [ "$(cat /proc/sys/net/ipv6/conf/all/disable_ipv6)" = "1" ]; then
+  echo "✓ IPv6 is DISABLED"
+else
+  echo "✗ IPv6 is still ENABLED (reboot may be required)"
+fi
+
+echo ""
+echo "Done!"
+echo
 
 # Add kali to sudoers# Check if 'kali' is already in the sudoers file
 if sudo grep -q "^kali ALL=(ALL) NOPASSWD:ALL" /etc/sudoers.d/kali 2>/dev/null; then
@@ -22,10 +78,12 @@ else
     echo "kali ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/kali > /dev/null
     echo "'kali' added to sudoers."
 fi
+echo
 
 # Setting Variables
 GREEN=032m
 YELLOW=033m
+RED=031m
 BLUE=034m
 PWD=$(pwd)
 export LC_TIME="en_US.UTF-8"
@@ -48,28 +106,29 @@ echo
 # Today's Date
 timedatectl set-timezone America/Los_Angeles
 timedatectl set-ntp true
-echo -e "\e[034mToday is\e[0m"
+echo -e "\e[034mToday is:\e[0m"
 date | tee kali-setup-date.txt
 echo
 
-echo "Getting BIOS Info"
+echo -e "\e[034mGetting BIOS Info\e[0m"
 sudo dmidecode -s bios-version | tee /home/kali/Desktop/bios-information.txt
+echo
+echo -e "\e[031mGetting Network Information\e[0m"
+sudo apt-get update && apt-get -y install jq > /dev/null 2>&1
 echo
 # Network Information
 # Get location details using ipinfo.io
 # Fetch Public IP using multiple sources (fallback if one fails)
-EXT=$(curl -s https://api64.ipify.org || curl -s https://ifconfig.me || curl -s https://checkip.amazonaws.com)
+# Fetch Public IP with timeouts. 
+# Added "|| echo Unavailable" to prevent script crash due to 'set -e' if offline.
+EXT=$(curl -s --connect-timeout 5 https://api64.ipify.org || \
+      curl -s --connect-timeout 5 https://ifconfig.me || \
+      curl -s --connect-timeout 5 https://checkip.amazonaws.com || \
+      echo "Unavailable")
 
-# If IP is still empty, set a default message
-if [[ -z "$EXT" ]]; then
-    EXT="Unavailable"
-fi
-
-sudo apt-get update && apt-get -y install jq > /dev/null 2>&1
-echo
-echo -e "\e[031mGetting Network Information\e[0m"
 # Get location details using ipinfo.io
-LOCATION=$(curl -s ipinfo.io/json)
+LOCATION=$(curl -s --connect-timeout 5 ipinfo.io/json)
+#LOCATION=$(curl -s ipinfo.io/json)
 COUNTRY=$(echo "$LOCATION" | jq -r '.country')
 REGION=$(echo "$LOCATION" | jq -r '.region')
 CITY=$(echo "$LOCATION" | jq -r '.city')
@@ -92,17 +151,6 @@ echo "---------------------------------"
 echo
 sleep 2
 
-# Disable IPv6cat <<-EOF >> /etc/sysctl.conf
-cat <<-EOF >> /etc/sysctl.conf
-net.ipv6.conf.all.disable_ipv6 = 1
-net.ipv6.conf.default.disable_ipv6 = 1
-net.ipv6.conf.lo.disable_ipv6 = 1
-net.ipv6.conf.eth0.disable_ipv6 = 1
-net.ipv6.conf.eth1.disable_ipv6 = 1
-net.ipv6.conf.ppp0.disable_ipv6 = 1
-net.ipv6.conf.tun0.disable_ipv6 = 1
-EOF
-
 # Hackers like SSH
 echo "Enabling SSH"
 echo
@@ -123,7 +171,47 @@ echo
 # Prepare Kali installs
 sudo apt-get update && apt-get -y full-upgrade
 echo
-sudo apt-get -y install netexec mono-devel printer-driver-escpr pipx python3-distutils-extra torbrowser-launcher shellcheck yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io docker-compose freefilesync libfuse2t64 libkrb5-dev metagoofil pandoc python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle python3-cryptography python3-dbus python3-matplotlib python3-mysqldb python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m cups system-config-printer gobuster libreoffice gcc
+LOGFILE="/var/log/kali_apt_install_errors.log"
+PACKAGES=(
+golang-go netexec mono-devel printer-driver-escpr pipx python3-distutils-extra
+torbrowser-launcher shellcheck yt-dlp libxcb-cursor0 libxcb-xtest0 docker.io
+docker-compose freefilesync libfuse2t64 libkrb5-dev metagoofil pandoc
+python3-docxtpl cmseek neo4j libu2f-udev freefilesync hcxdumptool hcxtools
+assetfinder colorized-logs xfce4-weather-plugin npm ncat shotwell obfs4proxy
+libc++1 sendmail ibus feroxbuster virtualenv mailutils mpack ndiff
+python3-pyinstaller python3-notify2 python3-dev python3-pip python3-bottle
+python3-cryptography python3-dbus python3-matplotlib python3-mysqldb
+python3-openssl python3-pil python3-psycopg2 python3-pymongo python3-sqlalchemy
+python3-tinydb python3-py2neo at bloodhound ipcalc nload crackmapexec hostapd
+dnsmasq gedit cupp nautilus dsniff build-essential cifs-utils cmake curl ffmpeg
+gimp git graphviz imagemagick libapache2-mod-php php-xml libmbim-utils
+nfs-common openssl tesseract-ocr vlc xsltproc xutils-dev driftnet websploit
+apt-transport-https openresolv screenfetch baobab speedtest-cli libffi-dev
+libssl-dev libxml2-dev libxslt1-dev zlib1g-dev awscli sublist3r w3m cups
+system-config-printer gobuster libreoffice gcc
+)
+
+echo "Starting installs..."
+echo "Errors will be logged to: $LOGFILE"
+echo "" > "$LOGFILE"
+
+for pkg in "${PACKAGES[@]}"; do
+    # Check if the package is already installed
+    if dpkg -s "$pkg" >/dev/null 2>&1; then
+        echo -e "\e[33m[SKIP]\e[0m $pkg is already installed."
+    else
+        echo -e "\e[32m[INSTALLING]\e[0m $pkg..."
+        
+        # Try to install
+        if ! apt-get -y install "$pkg"; then
+            echo "[ERROR] Failed to install: $pkg" | tee -a "$LOGFILE"
+            echo -e "\e[31m[FAILED]\e[0m Could not install $pkg"
+        fi
+    fi
+done
+
+echo
+echo "Done! Check $LOGFILE for anything that failed."
 echo
 
 sudo apt-get autoremove -y && updatedb
@@ -131,7 +219,10 @@ sudo apt-get autoremove -y && updatedb
 # Setting Variables
 GREEN=032m
 YELLOW=033m
+RED=031m
 BLUE=034m
+PWD=$(pwd)
+export LC_TIME="en_US.UTF-8"
 
 # Change directory to Kali Downloads
 cd /home/kali/Downloads || exit 1
@@ -140,9 +231,9 @@ echo "Switched to /home/kali/Downloads"
 # Function to check installation status
 check_install() {
     if command -v "$1" &>/dev/null; then
-        echo -e "\e[32m$1 is installed successfully!\e[0m"
+        echo -e "\e[32m$1 is installed successfully\!\e[0m"
     else
-        echo -e "\e[31m$1 installation failed!\e[0m"
+        echo -e "\e[31m$1 installation failed\!\e[0m"
     fi
 }
 
@@ -151,7 +242,7 @@ if command -v google-chrome-stable &>/dev/null; then
     echo -e "\033[1;32m[✓] Found Google Chrome\033[0m"
     echo
 else
-    echo "Installing Google Chrome..."
+    echo "Installing Google Chrome Web Browser..."
     CHROME_DEB="google-chrome-stable_current_amd64.deb"
     wget -O "$CHROME_DEB" "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
     sudo dpkg -i "$CHROME_DEB" || sudo apt --fix-broken install -y
@@ -187,12 +278,23 @@ check_install "discord"
 echo
 
 # === Slack Install ===
-echo "Installing Slack..."
-SLACK_DEB="slack-desktop.deb"
-wget -O "$SLACK_DEB" "https://downloads.slack-edge.com/releases/linux/4.33.90/prod/x64/slack-desktop-4.33.90-amd64.deb"
-sudo dpkg -i "$SLACK_DEB" || sudo apt --fix-broken install -y
-rm "$SLACK_DEB"
-check_install "slack"
+echo "[*] Checking if Slack is installed..."
+
+# Check if Slack exists
+if ! command -v slack &> /dev/null; then
+    echo "[!] Slack not found. Installing Slack Desktop..."
+
+    SLACK_DEB="slack-desktop.deb"
+    wget -O "$SLACK_DEB" "https://downloads.slack-edge.com/releases/linux/4.33.90/prod/x64/slack-desktop-4.33.90-amd64.deb"
+
+    sudo dpkg -i "$SLACK_DEB" || sudo apt --fix-broken install -y
+
+    rm "$SLACK_DEB"
+
+    echo "[+] Slack installed."
+else
+    echo "[*] Slack is already installed."
+fi
 echo
 
 # Variables
@@ -207,6 +309,7 @@ chmod -R 777 $WKHTMLTOX_DEB_FILE
 # Install the wkhtmltox downloaded package
 echo "Installing wkhtmltox..."
 sudo dpkg -i "$WKHTMLTOX_DEB_FILE"
+echo
 
 echo "Downloading and installing Shodan Nrich"
 # Get your Shodan API Key
@@ -238,32 +341,95 @@ source ~/.zshrc
 fi
 echo
 
-# Keep Nmap scans Organized
+# 1. Keep Nmap scans Organized
+# -----------------------------------
 sudo mkdir -p /home/kali/Desktop/testing/nmapscans/
+echo '[+] Scan directory created.'
 
-# Upgrade Nmap User agent, Make Nmap Great Again
-echo "Current Nmap User Agent"
-sed -n '160p' /usr/share/nmap/nselib/http.lua
-echo
-echo "Upgrading Nmap User Agent"
-echo "Before"
-sed -n '160p' /usr/share/nmap/nselib/http.lua
-# Works sed -i '160c\local USER_AGENT = stdnse.get_script_args('\'http.useragent\'') or "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko)"' /usr/share/nmap/nselib/http.lua
-sed -i '160c\local USER_AGENT = stdnse.get_script_args('\'http.useragent\'') or "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"' /usr/share/nmap/nselib/http.lua
-echo
-echo "After"
-sed -n '160p' /usr/share/nmap/nselib/http.lua
-echo
+# 2. Define Variables
+# -----------------------------------
+NMAP_LUA="/usr/share/nmap/nselib/http.lua"
+NEW_UA='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
 
-# Nmap bootstrap file checker, creates beautiful nmap reports
-NB=/opt/365/nmap-bootstrap.xsl
-if [ -f $NB ]
-then
-    echo "Found nmap-bootstrap.xsl"
+# 3. Upgrade Nmap User Agent
+# -----------------------------------
+echo 'Checking Nmap User Agent status...'
+
+if grep -Fq "Chrome/119.0.0.0" "$NMAP_LUA"; then
+    echo '[-] User Agent is already upgraded. Skipping modification.'
 else
-    echo -e "\e[034mFetching Missing $BOOTSTRAP File\e[0m"
-    wget --no-check-certificate -O /home/kali/Desktop/testing/nmapscans/nmap-bootstrap.xsl https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl > /dev/null 2>&1
+    echo '[!] Standard User Agent detected. Upgrading...'
+    
+    echo '--- Before ---'
+    sed -n '160p' "$NMAP_LUA"
+    echo
+    # We use double quotes here to allow the $NEW_UA variable to expand
+    sudo sed -i "160c\\local USER_AGENT = stdnse.get_script_args('http.useragent') or \"$NEW_UA\"" "$NMAP_LUA"
+    echo
+    echo '--- After ---'
+    sed -n '160p' "$NMAP_LUA"
+    echo '[+] Upgrade Complete: Nmap is now Great Again.'
+fi
+echo
 
+# ==========================================
+# Organize and Upgrade Nmap
+# ==========================================
+
+# 1. Create Directory
+sudo mkdir -p /home/kali/Desktop/testing/nmapscans/
+echo '[+] Scan directory created.'
+
+# 2. Define Nmap Variables
+NMAP_LUA="/usr/share/nmap/nselib/http.lua"
+NEW_UA='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
+
+# 3. Upgrade Logic
+echo 'Checking Nmap User Agent status...'
+
+if grep -Fq "Chrome/119.0.0.0" "$NMAP_LUA"; then
+    echo '[-] User Agent is already upgraded. Skipping modification.'
+else
+    echo '[!] Standard User Agent detected. Upgrading...'
+    
+    echo '--- Before ---'
+    sed -n '160p' "$NMAP_LUA"
+
+    # sudo sed command
+    sudo sed -i "160c\\local USER_AGENT = stdnse.get_script_args('http.useragent') or \"$NEW_UA\"" "$NMAP_LUA"
+    
+    echo '--- After ---'
+    sed -n '160p' "$NMAP_LUA"
+    echo '[+] Upgrade Complete: Nmap is now Great Again.'
+fi
+
+echo # Empty line for spacing
+
+# ==========================================
+# Nmap Bootstrap File Checker
+# ==========================================
+
+# 1. Define Bootstrap Variables
+# Note: We point FILE to the same place we download it to avoid loops
+SCAN_DIR="/home/kali/Desktop/testing/nmapscans"
+XSL_FILE="$SCAN_DIR/nmap-bootstrap.xsl"
+XSL_URL="https://raw.githubusercontent.com/aryanguenthner/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl"
+
+# 2. Download Logic
+if [ -f "$XSL_FILE" ]; then
+    echo '[+] Found nmap-bootstrap.xsl'
+else
+    # printf is safer than echo -e for colors across different shells
+    # \033[34m = Blue, \033[0m = Reset
+    printf '\033[34m[!] Fetching Missing Bootstrap File...\033[0m\n'
+    
+    wget --no-check-certificate -q -O "$XSL_FILE" "$XSL_URL"
+
+    if [ -f "$XSL_FILE" ]; then
+        echo '[+] Download successful.'
+    else
+        printf '\033[31m[!] Download failed. Check internet connection.\033[0m\n'
+    fi
 fi
 echo
 
@@ -283,34 +449,60 @@ else
 fi
 echo
 
-# Set up Go environment before installing tools
-echo "Configuring Go environment..."
+# 1. Configure Current Session (So script works immediately)
+echo 'Configuring Go environment...'
 export PATH=$PATH:/usr/local/go/bin
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 
-# Ensure the environment is persisted
-echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.zshrc
-echo 'export GOPATH=$HOME/go' >> ~/.zshrc
-echo 'export PATH=$PATH:$GOPATH/bin' >> ~/.zshrc
-source ~/.zshrc
+# 2. Persist to ZSHRC (Only if not already there)
+# We check if the line exists using grep before appending
+RC_FILE="$HOME/.zshrc"
 
-# Verify Go 1.23.0 installation
-if go version 2>/dev/null | grep -q "go1.23.0"; then
-    echo "Go is version 1.23.0 installed"
+if ! grep -q "export PATH=\$PATH:/usr/local/go/bin" "$RC_FILE"; then
+    echo 'export PATH=$PATH:/usr/local/go/bin' >> "$RC_FILE"
+fi
+
+if ! grep -q "export GOPATH=\$HOME/go" "$RC_FILE"; then
+    echo 'export GOPATH=$HOME/go' >> "$RC_FILE"
+fi
+
+# 3. Check and Install Go
+if command -v go >/dev/null 2>&1; then
+    echo -e "\e[33m[SKIP]\e[0m Go is already installed."
 else
-    echo -e "\e[34mDownloading and Installing Go\e[0m"
-    wget --no-check-certificate https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
-    sudo tar -xvzf go1.23.0.linux-amd64.tar.gz -C /usr/local
-    echo
-    echo "Go installation complete."
+    # Blue text using printf
+    printf '\033[34m[!] Go is missing. Downloading and Installing Go 1.23.0...\033[0m\n'
+    
+    # Download to /tmp to keep folder clean
+    wget --no-check-certificate -q -O /tmp/go1.23.0.linux-amd64.tar.gz https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
+    
+    # Remove old Go installation to prevent conflicts
+    if [ -d "/usr/local/go" ]; then
+        echo "[-] Cleaning up old /usr/local/go directory..."
+        sudo rm -rf /usr/local/go
+    fi
+
+    # Extract
+    sudo tar -xzf /tmp/go1.23.0.linux-amd64.tar.gz -C /usr/local
+    
+    # Cleanup downloaded file
+    rm /tmp/go1.23.0.linux-amd64.tar.gz
+    
+    echo -e "\e[32m[+] Go installation complete.\e[0m"
 fi
 echo
 
-echo -e "\e[32mGo environment variables updated for all shells!\e[0m"
-
+# Green text using printf (Single quotes prevent ! history expansion error)
+printf '\033[32m[+] Go environment variables updated for all shells!\033[0m\n'
+echo
 # IP Address - Ensure it's added to all shell configs
 echo "Ensuring 'hostname -I' is in all shell configs..."
+
+# --- Shellz Hellz ---
+SHELL_CONFIGS=("$HOME/.zshrc" "$HOME/.bashrc")
+# --------------------------
+
 for FILE in "${SHELL_CONFIGS[@]}"; do
     if [[ -f "$FILE" ]] && ! grep -q "hostname -I" "$FILE"; then
         echo -e "\e[32mAdding 'hostname -I' to $FILE...\e[0m"
@@ -343,25 +535,130 @@ check_and_install() {
     echo
 }
 
-# Install necessary Go tools
-echo
-check_and_install "nuclei" "github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest"
-check_and_install "httpx" "github.com/projectdiscovery/httpx/cmd/httpx@latest"
-check_and_install "katana" "github.com/projectdiscovery/katana/cmd/katana@latest"
-check_and_install "uncover" "github.com/projectdiscovery/uncover/cmd/uncover@latest"
-check_and_install "gospider" "github.com/jaeles-project/gospider@latest"
-check_and_install "gobuster" "github.com/OJ/gobuster/v3@latest"
+# 1. Ensure Go is in the path for this script execution
+export GOPATH=$HOME/go
+export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+
+# 2. Define the "Check and Install" Function
+check_and_install() {
+    local TOOL_NAME="$1"
+    local INSTALL_URL="$2"
+
+    # Check if tool exists in PATH or GOPATH
+    if command -v "$TOOL_NAME" >/dev/null 2>&1 || [ -f "$GOPATH/bin/$TOOL_NAME" ]; then
+        echo "[-] $TOOL_NAME is already installed. Skipping."
+    else
+        # FIX: We use single quotes for the text format to protect [!] from Zsh
+        # We use %s to safely insert the $TOOL_NAME variable
+        printf '\033[34m[!] Installing %s...\033[0m\n' "$TOOL_NAME"
+        
+        # Run the install
+        go install "$INSTALL_URL"
+
+        # Verify if it worked
+        if [ -f "$GOPATH/bin/$TOOL_NAME" ]; then
+             echo "[+] $TOOL_NAME installed successfully."
+        else
+             printf '\033[31m[!] Failed to install %s. Check network/Go version.\033[0m\n' "$TOOL_NAME"
+        fi
+    fi
+}
+
+echo "Starting Tool Checks..."
 echo
 
-echo "Cewl Password Lists"
-# cewl -m 8 https://www.bobandalice.com -c -e --with-numbers -w example-cewl.txt
-git clone https://github.com/digininja/CeWL.git /opt/cewl
-cd cewl
-gem install mime-types
-gem install mini_exiftool
-gem install rubyzip
-gem install spider
+# 3. Run the Checks
+# -------------------------------------------
+check_and_install "nuclei"   "github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest"
+check_and_install "httpx"    "github.com/projectdiscovery/httpx/cmd/httpx@latest"
+check_and_install "katana"   "github.com/projectdiscovery/katana/cmd/katana@latest"
+check_and_install "uncover"  "github.com/projectdiscovery/uncover/cmd/uncover@latest"
+check_and_install "gospider" "github.com/jaeles-project/gospider@latest"
+check_and_install "gobuster" "github.com/OJ/gobuster/v3@latest"
+
 echo
+echo "[+] Cyber Tools check complete."
+echo
+
+# https://github.com/blacklanternsecurity/bbot
+# Install this one its awesome
+
+echo '--- Configuring CeWL Password Lists ---'
+
+# 1. Define Variables
+CEWL_DIR="/opt/cewl"
+REPO_URL="https://github.com/digininja/CeWL.git"
+
+# 2. Check if CeWL Directory Exists
+if [ -d "$CEWL_DIR" ]; then
+    echo '[-] CeWL repository already exists in /opt. Skipping clone.'
+else
+    # Single quotes here prevent the error
+    printf '\033[34m[!] Cloning CeWL repository...\033[0m\n'
+    sudo git clone "$REPO_URL" "$CEWL_DIR"
+fi
+
+# 3. Check and Install Ruby Gems
+GEMS=("mime-types" "mini_exiftool" "rubyzip" "spider")
+
+echo 'Checking Ruby dependencies...'
+
+for gem_name in "${GEMS[@]}"; do
+    if gem list -i "^${gem_name}$" > /dev/null 2>&1; then
+        echo "[-] Gem '$gem_name' is already installed."
+    else
+        # FIX: Single quotes around the format string '[!] ...'
+        printf '\033[34m[!] Installing missing gem: %s...\033[0m\n' "$gem_name"
+        sudo gem install "$gem_name"
+    fi
+done
+
+echo
+echo '[+] CeWL setup complete.'
+
+
+# --- ZSH/BASH COMPATIBILITY FIX ---
+# This line disables "History Expansion" so using "!" doesn't crash the script
+set +H 2>/dev/null || setopt no_banghist 2>/dev/null
+
+echo '--- Configuring Hacking APIs (Postman) ---'
+
+# 1. Define Variables
+POSTMAN_DIR="/opt/Postman"
+POSTMAN_BIN="/usr/bin/postman"
+DOWNLOAD_URL="https://dl.pstmn.io/download/latest/linux64"
+TEMP_FILE="/tmp/postman-linux-x64.tar.gz"
+
+# 2. Check if Postman Directory Exists
+if [ -d "$POSTMAN_DIR" ]; then
+    echo "[-] Postman is already installed in /opt. Skipping download."
+else
+    # Single quotes ensure Zsh doesn't try to interpret [!]
+    printf '\033[34m[!] Downloading Postman...\033[0m\n'
+    
+    # Download to /tmp to keep your current folder clean
+    # -q = quiet, --show-progress = shows a nice bar
+    wget -q --show-progress -O "$TEMP_FILE" "$DOWNLOAD_URL"
+    
+    printf '\033[34m[!] Extracting to /opt...\033[0m\n'
+    sudo tar -xzf "$TEMP_FILE" -C /opt
+    
+    # Clean up the downloaded file
+    rm "$TEMP_FILE"
+    echo "[+] Extraction complete."
+fi
+
+# 3. Check and Create Symlink
+# We check if the 'postman' command is already linked
+if [ -L "$POSTMAN_BIN" ] || [ -f "$POSTMAN_BIN" ]; then
+    echo "[-] Postman symlink already exists."
+else
+    printf '\033[34m[!] Creating /usr/bin/postman symlink...\033[0m\n'
+    sudo ln -s /opt/Postman/Postman "$POSTMAN_BIN"
+    echo "[+] Symlink created."
+fi
+echo
+
 
 # Verify gowitness 3.0.5 is in /opt/365
 GOWIT=/opt/365/gowitness
@@ -375,140 +672,135 @@ else
 fi
 echo
 
-# Ask user if they want to install extra Git repositories
-cd /opt || exit 1
-read -t 30 -p "Would you like to install extra Git repositories? (yes/no): " response
+#!/bin/bash
+
+# === Function to clone repos safely ===
+clone_if_missing() {
+    local repo_url="$1"
+    local folder_name="$2"
+
+    if [ -d "$folder_name" ]; then
+        echo "[SKIP] $folder_name already exists."
+    else
+        echo "[CLONE] $repo_url → $folder_name"
+        git clone "$repo_url" "$folder_name" || echo "[ERROR] Failed to clone $folder_name"
+    fi
+
+    echo
+}
+
+# === Ask user if they want to install extra Git repositories ===
+cd /opt || { echo "Failed to enter /opt"; exit 1; }
+
+echo
+echo "Would you like to install extra Git repositories? (yes/no)"
+echo "(Defaults to NO after 30 seconds)"
+echo -n "> "
+
+# Handle interactive and non-interactive sessions
+if [ -t 0 ]; then
+    read -r -t 30 response || response=""
+else
+    response=""
+fi
+
+# Normalize and default to no
+response=${response,,}     # lowercase
+response=${response:-no}   # default no
+
 echo
 
-# Default to "no" if no input is provided within 30 seconds
-response=${response:-no}
-
-if [[ "$response" == "yes" ]]; then
+if [[ "$response" == "yes" || "$response" == "y" ]]; then
     echo "Proceeding with extra installations..."
-    echo "This is going to take a minute hold my root-beer"
+    echo "This is going to take a minute — hold my root beer."
     echo
 
-echo "PWN AD"
-git clone https://github.com/Wh04m1001/DFSCoerce
+    # Define the function INSIDE the block so it's ready to use
+    clone_if_missing() {
+        local repo_url="$1"
+        local folder_name="$2"
+
+        # If no folder name provided, extract it from URL
+        if [ -z "$folder_name" ]; then
+            folder_name=$(basename "$repo_url" .git)
+        fi
+
+        if [ -d "$folder_name" ]; then
+            echo -e "\e[33m[SKIP]\e[0m $folder_name already exists."
+        else
+            echo -e "\e[32m[CLONE]\e[0m $folder_name..."
+            git clone "$repo_url" "$folder_name" || echo "[ERROR] Failed to clone $folder_name"
+        fi
+    }
+
+    # --- Tool Installations ---
+
+    echo "--- Installing Git Repos ---"
+    clone_if_missing "https://github.com/Wh04m1001/DFSCoerce" "DFSCoerce"
+    clone_if_missing "https://github.com/infosecn1nja/MaliciousMacroMSBuild.git" "MaliciousMacroMSBuild"
+    clone_if_missing "https://github.com/TheRook/subbrute.git" "subbrute"
+    clone_if_missing "https://github.com/aryanguenthner/BridgeKeeper.git" "BridgeKeeper"
+    clone_if_missing "https://github.com/sense-of-security/ADRecon.git" "ADRecon"
+    clone_if_missing "https://github.com/cddmp/enum4linux-ng.git" "enum4linux-ng"
+    clone_if_missing "https://github.com/danielmiessler/SecLists.git" "SecLists"
+    clone_if_missing "https://github.com/meirwah/awesome-incident-response.git" "awesome-incident-response"
+    clone_if_missing "https://github.com/fuzzdb-project/fuzzdb.git" "fuzzdb"
+    clone_if_missing "https://github.com/swisskyrepo/PayloadsAllTheThings.git" "PayloadsAllTheThings"
+    clone_if_missing "https://github.com/s0md3v/AwesomeXSS.git" "AwesomeXSS"
+    clone_if_missing "https://github.com/payloadbox/xss-payload-list.git" "xss-payload-list"
+    clone_if_missing "https://github.com/foospidy/payloads.git" "payloads-foospidy"
+    clone_if_missing "https://github.com/joaomatosf/jexboss.git" "jexboss"
+    clone_if_missing "https://github.com/laramies/theHarvester.git" "theHarvester"
+    clone_if_missing "https://github.com/OWASP/CheatSheetSeries.git" "OWASP-CheatSheet"
+    clone_if_missing "https://github.com/projectzeroindia/CVE-2019-11510.git" "Pulse-Exploit"
+    clone_if_missing "https://github.com/dxa4481/truffleHog.git" "truffleHog"
+    clone_if_missing "https://github.com/awslabs/git-secrets.git" "git-secrets"
+    clone_if_missing "https://github.com/zricethezav/gitleaks.git" "gitleaks"
+    clone_if_missing "https://github.com/s0md3v/Breacher.git" "Breacher"
+
+    echo
+    # --- Special Case: PhoneInfoga ---
+    if [ ! -d "PhoneInfoga" ]; then
+        echo "Cloning and Installing PhoneInfoga..."
+        git clone https://github.com/sundowndev/PhoneInfoga.git
+        
+        # Enter directory
+        cd PhoneInfoga || echo "Failed to enter PhoneInfoga dir"
+        
+        # Install
+        curl -sSL https://raw.githubusercontent.com/sundowndev/PhoneInfoga/master/support/scripts/install | bash
+        sudo mv ./phoneinfoga /usr/local/bin/phoneinfoga
+        
+        # Scan test (Optional, might want to remove this if you don't want to scan immediately)
+        # sudo phoneinfoga scan -n 8085551212 
+        # IMPORTANT: Go back to /opt
+        cd /opt
+    else
+        echo -e "\e[33m[SKIP]\e[0m PhoneInfoga already exists."
+    fi
+
+    # --- Custom Folders ---
+    clone_if_missing "https://github.com/bitsadmin/wesng.git" "wesng"
+    clone_if_missing "https://github.com/byt3bl33d3r/SprayingToolkit.git" "SprayingToolkit"
+
+    echo
+    echo "Extra Tools Installed Successfully."
+
+else
+    # This runs if user types anything other than yes/y
+    echo -e "\e[33mSkipping Kali extra repos. Continuing...\e[0m"
+fi
 echo
 
-echo "Malicious Macro Builder"
-git clone https://github.com/infosecn1nja/MaliciousMacroMSBuild.git
-echo
 
-echo "Subbrute"
-git clone https://github.com/TheRook/subbrute.git
-echo
-
-echo "BridgeKeeper - Employee OSINT"
-git clone https://github.com/aryanguenthner/BridgeKeeper.git
-echo
-
-echo "AD Recon - My Fav"
-git clone https://github.com/sense-of-security/ADRecon.git
-echo
-
-echo "enum4linux-ng"
-git clone https://github.com/cddmp/enum4linux-ng.git
-echo
-
-echo "Daniel Miessler Security List Collection"
-git clone https://github.com/danielmiessler/SecLists.git
-echo
-
-echo "Awesome Incident Response"
-git clone https://github.com/meirwah/awesome-incident-response.git
-echo
-
-echo "Fuzzdb"
-git clone https://github.com/fuzzdb-project/fuzzdb.git
-echo
-
-echo "Payloads All The Things"
-git clone https://github.com/swisskyrepo/PayloadsAllTheThings.git
-echo
-
-echo "Awesome XSS"
-git clone https://github.com/s0md3v/AwesomeXSS.git
-echo
-
-echo "XSS Payloads"
-git clone https://github.com/payloadbox/xss-payload-list.git
-echo
-
-echo "Foospidy Payloads"
-git clone https://github.com/foospidy/payloads.git
-echo
-
-echo "Java Deserialization Exploitation (jexboss)"
-git clone https://github.com/joaomatosf/jexboss.git
-echo
-
-echo "theHarvester"
-git clone https://github.com/laramies/theHarvester.git
-echo
-
-echo "OWASP Cheat Sheet"
-git clone https://github.com/OWASP/CheatSheetSeries.git
-echo
-
-echo "Pulse VPN Exploit"
-git clone https://github.com/projectzeroindia/CVE-2019-11510.git
-echo
-
-echo "hruffleHog - Git Enumeration"
-git clone https://github.com/dxa4481/truffleHog.git
-echo
-
-echo "Git Secrets"
-git clone https://github.com/awslabs/git-secrets.git
-echo
-
-echo "Git Leaks"
-git clone https://github.com/zricethezav/gitleaks.git
-
-echo "Discover Admin Login Pages - Breacher"
-git clone https://github.com/s0md3v/Breacher.git
-echo
-
-# Clone the PhoneInfoga repository
-# You will need API to get most of this tool
-echo "Cloning the PhoneInfoga repository..."
-sudo git clone https://github.com/sundowndev/PhoneInfoga.git
-
-# Change directory to the PhoneInfoga folder
-echo "Changing directory to PhoneInfoga..."
-cd PhoneInfoga || { echo "Failed to change directory to PhoneInfoga. Exiting."; exit 1; }
-
-# Run the install script
-echo "Running the PhoneInfoga install script..."
-sudo curl -sSL https://raw.githubusercontent.com/sundowndev/PhoneInfoga/master/support/scripts/install | sudo bash
-
-# Run PhoneInfoga
-sudo mv ./phoneinfoga /usr/local/bin/phoneinfoga
-echo "Running PhoneInfoga..."
-sudo phoneinfoga scan -n 8085551212
-
-# Windows Exploit Suggester Next Gen
-echo
-sudo git clone https://github.com/bitsadmin/wesng.git /opt/wseng
-echo
-
-echo "Password SprayingToolKit"
-git clone https://github.com/byt3bl33d3r/SprayingToolkit.git /opt/SprayingToolkit
-# Nmap works dont forget --> nmap -iL smb-ips.txt --stats-every=1m -Pn -p 445 -script smb-brute --script-args='smbpassword=Summer2023,userdb=usernames.txt,smbdomain=xxx.com,smblockout=true' -oA nmap-smb-brute-2023-07-19'
+/* # Nmap works dont forget --> nmap -iL smb-ips.txt --stats-every=1m -Pn -p 445 -script smb-brute --script-args='smbpassword=Summer2023,userdb=usernames.txt,smbdomain=xxx.com,smblockout=true' -oA nmap-smb-brute-2023-07-19'
 # Hydra works dont forget --> hydra -p Summer2019 -l Administrator smb://192.168.1.23
 # Metasploit works dont forget --> 
 # set smbpass Summer2019
 # set smbuser Administrator
 # set rhosts 192.168.1.251
 # run
-echo
-echo "Extra Tools Installed"
-else
-    echo "Skipping extra Git repositories installation."
-fi
-echo
+
 
 # Fix annoying apt-key
 # If Needed
@@ -574,6 +866,7 @@ echo
 # ssmtp <--works good, just doesnt play with sendmail.
 # did not install > openjdk-13-jdk libc++1-13 libc++abi1-13 libindicator3-7 libunwind-13 python3.8-venv libappindicator3-1
 # sendmail
+*/
 echo
 
 # Stop Docker
@@ -583,6 +876,7 @@ sudo systemctl disable docker
 sudo ip link delete docker0
 
 echo "Checking if you need Virtualbox installed"
+echo
 cd /home/kali/Downloads || exit 1
 # Detect if running on VirtualBox or a physical machine
 VBOX=$(sudo dmidecode -s system-manufacturer)  # e.g., "LENOVO" for physical machine
@@ -591,10 +885,11 @@ VBOX1=$(sudo dmidecode -s bios-version)  # "VirtualBox" if running inside a VM
 # Check if running in VirtualBox
 if [[ "$VBOX1" == "VirtualBox" ]]; then
     echo "Running inside VirtualBox. Skipping installation."
-    exit 0
+    echo
+    echo
 else
     echo "Running on a physical machine. Proceeding with installation."
-
+    echo
 # Add Oracle VirtualBox GPG key (alternative for apt-key deprecation)
 echo "Adding Oracle VirtualBox GPG key..."
 wget -qO- https://www.virtualbox.org/download/oracle_vbox_2016.asc | sudo tee /etc/apt/trusted.gpg.d/oracle_vbox_2016.asc > /dev/null
@@ -611,7 +906,7 @@ sudo apt-get install -y virtualbox virtualbox-dkms virtualbox-ext-pack virtualbo
 # Add current user to vboxusers group
 echo "Adding user to vboxusers group..."
 sudo usermod -a -G vboxusers $USER
-echo "VirtualBox installation completed!"
+echo "VirtualBox installation completed"
 fi
 echo
 
@@ -624,11 +919,89 @@ echo "Hack The Planet"
 sed -i '120s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
 sed -i '121s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
 
+# Get ready for Ai Integrations
+
+# --- Part 1: Install Claude Desktop (if missing) ---
+
+# Define the specific version based on your link
+# Release: v1.1.10+claude0.14.10
+DOWNLOAD_URL="https://github.com/aaddrick/claude-desktop-debian/releases/download/v1.1.10%2Bclaude0.14.10/claude-desktop_1.1.10+claude0.14.10_amd64.deb"
+DEB_FILE="/tmp/claude-desktop.deb"
+
+# Check if claude-desktop is installed via dpkg
+if ! dpkg -s claude-desktop >/dev/null 2>&1; then
+    echo "Claude Desktop is NOT installed. Initiating download..."
+    echo
+    # Download the file
+    wget -O "$DEB_FILE" "$DOWNLOAD_URL"
+    
+    if [ $? -eq 0 ]; then
+        echo "Download complete. Installing..."
+        echo
+        # Install with sudo
+        sudo dpkg -i "$DEB_FILE"
+        
+        # Fix any missing dependencies just in case
+        sudo apt-get install -f -y
+        
+        echo "Claude Desktop installation complete."
+        echo
+        rm "$DEB_FILE"
+    else
+        echo "Error: Failed to download Claude Desktop."
+        echo
+        exit 1
+    fi
+else
+    echo "Claude Desktop is already installed. Skipping installation."
+    echo
+fi
+echo
+# --- Part 2: Configure MCP ---
+
+# Define the target file path
+CONFIG_FILE="$HOME/.config/Claude/claude_desktop_config.json"
+
+# Logic: Check if file exists, create path if not
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "Configuration file not found. Creating directory and file..."
+    # install -D creates the target directory automatically if missing
+    install -D /dev/null "$CONFIG_FILE"
+else 
+    echo "Configuration file already exists. Overwriting with new config..."
+fi
+
+# Write the JSON content to the file
+cat << 'EOF' > "$CONFIG_FILE"
+{
+    "mcpServers": {
+        "kali_mcp": {
+            "command": "python3",
+            "args": [
+                "/opt/MCP-Kali-Server/mcp_server.py",
+                "--server",
+                "http://localhost:5000/"
+            ]
+        }
+    }
+}
+EOF
+
+# Verify the output
+echo "--------------------------------"
+echo "Current Configuration:"
+cat "$CONFIG_FILE"
+echo
+
 # Kali Setup Finish Time
 date | tee kali-setup-finish-date.txt
 echo
+
 reboot
 # Just in case DNS issues: nano -c /etc/resolvconf/resolv.conf.d/head
 # Gucci Mang
 # Pay me later
 # https://sites.google.com/site/gdocs2direct/
+# Printer Hacks
+# sudo usermod -aG lpadmin kali      
+# sudo /etc/init.d/cups restart
