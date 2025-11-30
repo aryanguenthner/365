@@ -167,6 +167,12 @@ sudo sed -i '40s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/
 sudo systemctl enable ssh > /dev/null && sudo service ssh restart > /dev/null
 echo
 
+# === INSERT THIS FIX ===
+echo "Fixing broken apt installs and removing conflicting ptunnel..."
+sudo dpkg --configure -a
+sudo apt-get -y --fix-broken install
+sudo apt-get -y remove ptunnel || echo "ptunnel not found, skipping removal"
+
 # Kali Updates
 echo "It's a good idea to update and upgrade Kali first before running kali-setup.sh"
 echo
