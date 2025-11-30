@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Blue Team, Red Team, OSINT CTI, Setup Automation Script
-# Last Updated 11/28/2025, minor evil updates, pay me later
+# Last Updated 11/30/2025, minor evil updates, pay me later
 # Tested on Kali 2025.4 XFCE
 # Usage: sudo git clone https://github.com/aryanguenthner/365 /opt/365
 # chmod -R 777 /home/kali/ /opt/365
@@ -76,7 +76,7 @@ echo "Done!"
 echo
 
 # Kali Internet Speed Optimizer
-bash /opt/365/kali-internet-optimizer.sh
+bash /opt/365/kali-internet-optimizer.sh >/dev/null 2>&1 || true &
 
 # Add kali to sudoers# Check if 'kali' is already in the sudoers file
 if sudo grep -q "^kali ALL=(ALL) NOPASSWD:ALL" /etc/sudoers.d/kali 2>/dev/null; then
