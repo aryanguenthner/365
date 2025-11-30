@@ -11,6 +11,15 @@
 ################################################
 echo
 
+# Prevent interactive prompts
+export DEBIAN_FRONTEND=noninteractive
+
+# --- Handle service restarts automatically ---
+if [ "${EUID:-$(id -u)}" -eq 0 ]; then
+    echo "Configuring apt to restart services without asking..."
+    echo '* libraries/restart-without-asking boolean true' | debconf-set-selections
+fi
+
 # TODO: Create a splash screen with menu options
 # Menu options: 1 = Update Kali, 2 = Install kali Setup, 3 Install Kali Extra's, 4 Give me it all, the kitchen sink
 
@@ -23,15 +32,12 @@ if [ "${EUID:-$(id -u)}" -ne 0 ]; then
   exec sudo bash "$0" "$@"
 fi
 
-#!/bin/bash
-
 # Script to disable IPv6 on Debian-based systems
 # Run with sudo/root privileges
 
 set -e
 
 CONF=/etc/sysctl.d/99-disable-ipv6.conf
-
 echo "Checking IPv6 configuration..."
 if [ -f "$CONF" ]; then
   echo "$CONF already exists, skipping creation..."
@@ -68,6 +74,9 @@ fi
 echo ""
 echo "Done!"
 echo
+
+# Kali Internet Speed Optimizer
+bash /opt/365/kali-internet-optimizer.sh
 
 # Add kali to sudoers# Check if 'kali' is already in the sudoers file
 if sudo grep -q "^kali ALL=(ALL) NOPASSWD:ALL" /etc/sudoers.d/kali 2>/dev/null; then
