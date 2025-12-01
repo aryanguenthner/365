@@ -164,7 +164,7 @@ sleep 2
 echo "Enabling SSH"
 echo
 sudo sed -i '40s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config > /dev/null 2>&1
-sudo systemctl enable ssh > /dev/null && sudo service ssh restart > /dev/null
+sudo systemctl enable ssh > /dev/null && sudo service ssh restart >/dev/null 2>&1
 echo
 
 echo "Fixing broken apt installs and removing conflicting ptunnel..."
@@ -993,9 +993,6 @@ fi
 
 echo "Hack The Planet"
 echo
-sed -i '120s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
-sed -i '121s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
-
 # Get ready for Ai Integrations
 
 # --- Part 1: Install Claude Desktop (Latest Version) ---
@@ -1081,6 +1078,15 @@ echo "--------------------------------"
 echo "Current Configuration:"
 cat "$CONFIG_FILE"
 echo
+
+echo "Enabling Autologin..."
+# Find the line starting with #autologin-user= and replace it, regardless of line number
+sudo sed -i 's/^#autologin-user=.*/autologin-user=kali/' /etc/lightdm/lightdm.conf
+sudo sed -i 's/^#autologin-user-timeout=.*/autologin-user-timeout=0/' /etc/lightdm/lightdm.conf
+echo
+# Create the autologin group if it doesn't exist and add kali (Best Practice)
+sudo groupadd -r autologin 2>/dev/null || true
+sudo gpasswd -a kali autologin
 
 # Kali Setup Finish Time
 date | tee kali-setup-finish-date.txt
