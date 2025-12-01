@@ -1080,18 +1080,21 @@ cat "$CONFIG_FILE"
 echo
 
 echo "Enabling Autologin..."
-# Find the line starting with #autologin-user= and replace it, regardless of line number
-sudo sed -i 's/^#autologin-user=.*/autologin-user=kali/' /etc/lightdm/lightdm.conf
-sudo sed -i 's/^#autologin-user-timeout=.*/autologin-user-timeout=0/' /etc/lightdm/lightdm.conf
-echo
-# Create the autologin group if it doesn't exist and add kali (Best Practice)
-sudo groupadd -r autologin 2>/dev/null || true
+# Use sed to replace the value regardless of whether it's commented or not
+sudo sed -i 's/^#*autologin-user=.*/autologin-user=kali/' /etc/lightdm/lightdm.conf
+sudo sed -i 's/^#*autologin-user-timeout=.*/autologin-user-timeout=0/' /etc/lightdm/lightdm.conf
+
+# Create the autologin group if it doesn't exist and add kali
+sudo groupadd -r autologin 2> /dev/null
 sudo gpasswd -a kali autologin
+
+echo "Autologin configured successfully"
+echo
 
 # Kali Setup Finish Time
 date | tee kali-setup-finish-date.txt
 echo
-
+echo "Buy me a coffee"
 reboot
 # Just in case DNS issues: nano -c /etc/resolvconf/resolv.conf.d/head
 # Gucci Mang
