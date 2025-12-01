@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Blue Team, Red Team, OSINT CTI, Setup Automation Script
-# Last Updated 11/30/2025, minor evil updates, pay me later
+# Last Updated 12/01/2025, minor evil updates, pay me later
 # Tested on Kali 2025.4 XFCE
 # Usage: sudo git clone https://github.com/aryanguenthner/365 /opt/365
 # chmod -R 777 /home/kali/ /opt/365
@@ -167,7 +167,6 @@ sudo sed -i '40s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/
 sudo systemctl enable ssh > /dev/null && sudo service ssh restart > /dev/null
 echo
 
-# === INSERT THIS FIX ===
 echo "Fixing broken apt installs and removing conflicting ptunnel..."
 sudo dpkg --configure -a
 sudo apt-get -y --fix-broken install
@@ -312,32 +311,74 @@ else
 fi
 echo
 
-# Variables
+# --- Configuration ---
 WKHTMLTOX_DEB_URL="https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bookworm_amd64.deb"
-WKHTMLTOX_DEB_FILE=wkhtmltox_0.12.6.1-3.bookworm_amd64.deb
+WKHTMLTOX_DEB_FILE="wkhtmltox_0.12.6.1-3.bookworm_amd64.deb"
+NRICH_DEB_URL="https://gitlab.com/api/v4/projects/33695681/packages/generic/nrich/latest/nrich_latest_x86_64.deb"
+NRICH_DEB_FILE="nrich_latest_x86_64.deb"
 
-# Download the wkhtmltox Debian package
-echo "Downloading wkhtmltox..."
-wget --no-check-certificate -O "$WKHTMLTOX_DEB_FILE" "$WKHTMLTOX_DEB_URL"
-chmod -R 777 $WKHTMLTOX_DEB_FILE
+# --- 1. WKHTMLTOX Logic ---
+# Check if wkhtmltopdf binary exists
+if command -v wkhtmltopdf &> /dev/null; then
+    echo "[INFO] wkhtmltox is already installed. Skipping."
+else
+    echo "[INFO] wkhtmltox not found. Downloading..."
+    wget --no-check-certificate -O "$WKHTMLTOX_DEB_FILE" "$WKHTMLTOX_DEB_URL"
+    
+    echo "[INFO] Installing wkhtmltox..."
+    sudo dpkg -i "$WKHTMLTOX_DEB_FILE"
+    
+    # Run install -f to fix missing dependencies (common with wkhtmltox)
+    sudo apt-get install -f -y
+    
+    # Cleanup
+    rm "$WKHTMLTOX_DEB_FILE"
+fi
 
-# Install the wkhtmltox downloaded package
-echo "Installing wkhtmltox..."
-sudo dpkg -i "$WKHTMLTOX_DEB_FILE"
+echo "------------------------------------------------"
+
+# --- 2. Shodan Nrich Logic ---
+# Check if nrich binary exists
+if command -v nrich &> /dev/null; then
+    echo "[INFO] Shodan Nrich is already installed. Skipping."
+else
+    echo "[INFO] Shodan Nrich not found. Downloading..."
+    wget --no-check-certificate -O "$NRICH_DEB_FILE" "$NRICH_DEB_URL"
+    
+    echo "[INFO] Installing Shodan Nrich..."
+    sudo dpkg -i "$NRICH_DEB_FILE"
+    
+    # Cleanup
+    rm "$NRICH_DEB_FILE"
+fi
+
+echo
+echo "[SUCCESS] Checks complete."
 echo
 
-echo "Downloading and installing Shodan Nrich"
-# Get your Shodan API Key
-wget --no-check-certificate https://gitlab.com/api/v4/projects/33695681/packages/generic/nrich/latest/nrich_latest_x86_64.deb
-sudo dpkg -i nrich_latest_x86_64.deb
-echo
+# Define the target path
+COMPOSE_PLUGIN="$HOME/.docker/cli-plugins/docker-compose"
 
-# Create the docker plugins directory
-mkdir -p ~/.docker/cli-plugins
-# Download the CLI into the plugins directory
-curl -sSL https://github.com/docker/compose/releases/download/v2.0.1/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
-# Make the CLI executable
-chmod +x ~/.docker/cli-plugins/docker-compose
+# Check if the file exists
+if [ -f "$COMPOSE_PLUGIN" ]; then
+    echo "[INFO] Docker Compose plugin already exists at $COMPOSE_PLUGIN. Skipping."
+else
+    echo "[INFO] Docker Compose plugin not found. Installing..."
+    
+    # Create the docker plugins directory
+    mkdir -p ~/.docker/cli-plugins
+    
+    # Download the CLI into the plugins directory
+    # Note: v2.0.1 is hardcoded here per your snippet
+    curl -sSL https://github.com/docker/compose/releases/download/v2.0.1/docker-compose-linux-x86_64 -o "$COMPOSE_PLUGIN"
+    
+    # Make the CLI executable
+    chmod +x "$COMPOSE_PLUGIN"
+    
+    echo "[SUCCESS] Docker Compose plugin installed."
+    echo
+fi
+echo
 
 # Updog Install
 # Create a virtual environment
@@ -687,8 +728,6 @@ else
 fi
 echo
 
-#!/bin/bash
-
 # === Function to clone repos safely ===
 clone_if_missing() {
     local repo_url="$1"
@@ -712,22 +751,35 @@ echo "Would you like to install extra Git repositories? (yes/no)"
 echo "(Defaults to NO after 30 seconds)"
 echo -n "> "
 
+# Initialize response variable
+response=""
+
 # Handle interactive and non-interactive sessions
 if [ -t 0 ]; then
-    read -r -t 30 response || response=""
+    # Interactive mode - use timeout
+    if timeout 30 read -r response; then
+        # Got input, proceed
+        true
+    else
+        # Timeout occurred, use default
+        response="no"
+        echo "(timeout - defaulting to NO)"
+    fi
 else
-    response=""
+    # Non-interactive mode - skip entirely
+    response="no"
+    echo "(non-interactive mode - defaulting to NO)"
 fi
 
-# Normalize and default to no
-response=${response,,}     # lowercase
-response=${response:-no}   # default no
+# Normalize response (convert to lowercase using tr)
+response=$(echo "$response" | tr '[:upper:]' '[:lower:]' | xargs)
+response=${response:-no}   # default to no if empty
 
 echo
 
 if [[ "$response" == "yes" || "$response" == "y" ]]; then
     echo "Proceeding with extra installations..."
-    echo "This is going to take a minute — hold my root beer."
+    echo "This is going to take a minute – hold my root beer."
     echo
 
     # Define the function INSIDE the block so it's ready to use
@@ -772,29 +824,7 @@ if [[ "$response" == "yes" || "$response" == "y" ]]; then
     clone_if_missing "https://github.com/awslabs/git-secrets.git" "git-secrets"
     clone_if_missing "https://github.com/zricethezav/gitleaks.git" "gitleaks"
     clone_if_missing "https://github.com/s0md3v/Breacher.git" "Breacher"
-
-    echo
-    # --- Special Case: PhoneInfoga ---
-    if [ ! -d "PhoneInfoga" ]; then
-        echo "Cloning and Installing PhoneInfoga..."
-        git clone https://github.com/sundowndev/PhoneInfoga.git
-        
-        # Enter directory
-        cd PhoneInfoga || echo "Failed to enter PhoneInfoga dir"
-        
-        # Install
-        curl -sSL https://raw.githubusercontent.com/sundowndev/PhoneInfoga/master/support/scripts/install | bash
-        sudo mv ./phoneinfoga /usr/local/bin/phoneinfoga
-        
-        # Scan test (Optional, might want to remove this if you don't want to scan immediately)
-        # sudo phoneinfoga scan -n 8085551212 
-        # IMPORTANT: Go back to /opt
-        cd /opt
-    else
-        echo -e "\e[33m[SKIP]\e[0m PhoneInfoga already exists."
-    fi
-
-    # --- Custom Folders ---
+    clone_if_missing "https://github.com/sundowndev/PhoneInfoga.git" "PhoneInfoga" 
     clone_if_missing "https://github.com/bitsadmin/wesng.git" "wesng"
     clone_if_missing "https://github.com/byt3bl33d3r/SprayingToolkit.git" "SprayingToolkit"
 
@@ -802,13 +832,13 @@ if [[ "$response" == "yes" || "$response" == "y" ]]; then
     echo "Extra Tools Installed Successfully."
 
 else
-    # This runs if user types anything other than yes/y
+    # This runs if user types anything other than yes/y or on timeout
     echo -e "\e[33mSkipping Kali extra repos. Continuing...\e[0m"
 fi
 echo
 
 
-/* # Nmap works dont forget --> nmap -iL smb-ips.txt --stats-every=1m -Pn -p 445 -script smb-brute --script-args='smbpassword=Summer2023,userdb=usernames.txt,smbdomain=xxx.com,smblockout=true' -oA nmap-smb-brute-2023-07-19'
+# Nmap works dont forget --> nmap -iL smb-ips.txt --stats-every=1m -Pn -p 445 -script smb-brute --script-args='smbpassword=Summer2023,userdb=usernames.txt,smbdomain=xxx.com,smblockout=true' -oA nmap-smb-brute-2023-07-19'
 # Hydra works dont forget --> hydra -p Summer2019 -l Administrator smb://192.168.1.23
 # Metasploit works dont forget --> 
 # set smbpass Summer2019
@@ -881,49 +911,80 @@ echo
 # ssmtp <--works good, just doesnt play with sendmail.
 # did not install > openjdk-13-jdk libc++1-13 libc++abi1-13 libindicator3-7 libunwind-13 python3.8-venv libappindicator3-1
 # sendmail
-*/
 echo
 
-# Stop Docker
-# Remove Docker Interface until you need it
-sudo systemctl stop docker
-sudo systemctl disable docker
-sudo ip link delete docker0
+# === Docker Configuration ===
+echo "Configuring Docker..."
 
-echo "Checking if you need Virtualbox installed"
+# 1. Stop Docker Service AND Socket
+# We check if either is active to avoid unnecessary errors
+if systemctl is-active --quiet docker || systemctl is-active --quiet docker.socket; then
+    echo "Stopping Docker service and socket..."
+    # The socket must be stopped, or it will trigger the service again
+    sudo systemctl stop docker.socket docker.service
+else
+    echo "Docker is not currently running."
+fi
+
+# 2. Disable Docker on boot
+# We disable the socket too, otherwise it will wake up Docker when called
+echo "Disabling Docker startup..."
+sudo systemctl disable docker.socket docker.service > /dev/null 2>&1
+
+# 3. Safely remove docker0 interface
+# Check if the interface exists before trying to delete it to avoid "Cannot find device" errors
+if ip link show docker0 > /dev/null 2>&1; then
+    echo "Removing docker0 network interface..."
+    sudo ip link delete docker0
+else
+    echo "docker0 interface not found. Skipping removal."
+fi
 echo
-cd /home/kali/Downloads || exit 1
+
+echo "Checking if you need VirtualBox installed"
+echo
+
 # Detect if running on VirtualBox or a physical machine
-VBOX=$(sudo dmidecode -s system-manufacturer)  # e.g., "LENOVO" for physical machine
-VBOX1=$(sudo dmidecode -s bios-version)  # "VirtualBox" if running inside a VM
+VBOX=$(sudo dmidecode -s system-manufacturer 2>/dev/null)
+VBOX1=$(sudo dmidecode -s bios-version 2>/dev/null)
 
-# Check if running in VirtualBox
 if [[ "$VBOX1" == "VirtualBox" ]]; then
     echo "Running inside VirtualBox. Skipping installation."
-    echo
     echo
 else
     echo "Running on a physical machine. Proceeding with installation."
     echo
-# Add Oracle VirtualBox GPG key (alternative for apt-key deprecation)
-echo "Adding Oracle VirtualBox GPG key..."
-wget -qO- https://www.virtualbox.org/download/oracle_vbox_2016.asc | sudo tee /etc/apt/trusted.gpg.d/oracle_vbox_2016.asc > /dev/null
 
-# Install prerequisites
-echo "Installing VBox required packages..."
-wget http://ftp.us.debian.org/debian/pool/main/libv/libvpx/libvpx7_1.12.0-1+deb12u3_amd64.deb
-sudo dpkg -i ./libvpx7_1.12.0-1+deb12u3_amd64.deb
+    # Add Oracle VirtualBox GPG key
+    echo "Adding Oracle VirtualBox GPG key..."
+    wget -qO- https://www.virtualbox.org/download/oracle_vbox_2016.asc \
+        | sudo tee /etc/apt/trusted.gpg.d/oracle_vbox_2016.asc > /dev/null
 
-# Install VirtualBox and dependencies
-echo "Installing VirtualBox..."
-sudo apt-get install -y virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-utils virtualbox-qt virtualbox-guest-x11 linux-headers-$(uname -r)
+    # Install prerequisites
+    echo "Installing required libvpx7 package..."
+    wget -q http://ftp.us.debian.org/debian/pool/main/libv/libvpx/libvpx7_1.12.0-1+deb12u3_amd64.deb
+    sudo dpkg -i libvpx7_1.12.0-1+deb12u3_amd64.deb || sudo apt --fix-broken install -y
 
-# Add current user to vboxusers group
-echo "Adding user to vboxusers group..."
-sudo usermod -a -G vboxusers $USER
-echo "VirtualBox installation completed"
+    # Install VirtualBox
+    echo "Installing VirtualBox..."
+    sudo apt update
+    sudo apt install -y \
+        virtualbox \
+        virtualbox-dkms \
+        virtualbox-ext-pack \
+        virtualbox-qt \
+        virtualbox-guest-utils \
+        virtualbox-guest-x11 \
+        linux-headers-$(uname -r)
+
+    # Add user to vboxusers group
+    echo "Adding user to vboxusers group..."
+    sudo usermod -aG vboxusers "$USER"
+
+    echo "VirtualBox installation completed."
+    echo
 fi
-echo
+
 
 # Insurance
 # sudo modprobe vboxnetflt
@@ -931,22 +992,34 @@ echo
 # Enable Kali Autologin
 
 echo "Hack The Planet"
+echo
 sed -i '120s/#autologin-user=/autologin-user=kali/g' /etc/lightdm/lightdm.conf
 sed -i '121s/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
 
 # Get ready for Ai Integrations
 
-# --- Part 1: Install Claude Desktop (if missing) ---
+# --- Part 1: Install Claude Desktop (Latest Version) ---
 
-# Define the specific version based on your link
-# Release: v1.1.10+claude0.14.10
-DOWNLOAD_URL="https://github.com/aaddrick/claude-desktop-debian/releases/download/v1.1.10%2Bclaude0.14.10/claude-desktop_1.1.10+claude0.14.10_amd64.deb"
+# 1. Fetch the latest release URL dynamically from GitHub
+echo "Fetching latest version info..."
+DOWNLOAD_URL=$(curl -s https://api.github.com/repos/aaddrick/claude-desktop-debian/releases/latest \
+| grep -o 'https://[^"]*amd64.deb' \
+| head -n 1)
+
 DEB_FILE="/tmp/claude-desktop.deb"
 
-# Check if claude-desktop is installed via dpkg
+if [ -z "$DOWNLOAD_URL" ]; then
+    echo "Error: Could not retrieve latest download URL."
+    exit 1
+fi
+
+echo "Latest version found: $(basename "$DOWNLOAD_URL")"
+
+# 2. Check if claude-desktop is installed
 if ! dpkg -s claude-desktop >/dev/null 2>&1; then
     echo "Claude Desktop is NOT installed. Initiating download..."
     echo
+    
     # Download the file
     wget -O "$DEB_FILE" "$DOWNLOAD_URL"
     
@@ -972,6 +1045,7 @@ else
     echo
 fi
 echo
+
 # --- Part 2: Configure MCP ---
 
 # Define the target file path
