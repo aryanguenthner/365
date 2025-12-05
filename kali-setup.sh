@@ -14,6 +14,11 @@ echo
 # TODO: Create a splash screen with menu options
 # Menu options: 1 = Update Kali, 2 = Install kali Setup, 3 Install Kali Extra's, 4 Give me it all, the kitchen sink
 
+# Keep the screen on during install.
+xset s off            # Disable screensaver
+xset s noblank        # No screen blanking
+xset -dpms            # Disable DPMS power saving
+
 # Kali Internet Optimizer, Attempt to make the download/upload speed faster
 # Ensure /etc/sysctl.d/99-disable-ipv6.conf exists; create and apply it only if missing.
 set -euo pipefail
@@ -103,10 +108,21 @@ log_file="${script_dir}/kali.log"
 # Redirect all stdout and stderr to the log file
 exec > >(tee -a "$log_file") 2>&1
 
+sudo mkdir -p /etc/X11/xinit/xinitrc.d
+sudo bash -c 'cat <<EOF >/etc/X11/xinit/xinitrc.d/99-disable-blanking.sh
+#!/bin/sh
+xset s off
+xset -dpms
+xset s noblank
+EOF'
+sudo chmod +x /etc/X11/xinit/xinitrc.d/99-disable-blanking.sh
+
+
 # Start your script here
 echo "Running the kali-setup.sh script..."
 sleep 2
-echo "Script Running!"
+echo
+echo "Kali Script Running!"
 echo
 echo
 
