@@ -54,6 +54,34 @@ BLUE=034m
 
 echo
 
+# Dependencies Check
+# Must have LibreOffice,TheDevilsEye,Tor,TorGhost,OnionVerifier,FireFox,Chrome Brwoser, GoWitness
+echo "Checking Requirements, Chill for a sec"
+echo
+sudo apt-get update > /dev/null 2>&1
+LOGFILE="/var/log/kali_apt_install_errors.log"
+PACKAGES=( jq tor torbrowser-launcher python3-stem libreoffice )
+
+echo "Starting package installs..."
+echo
+echo "Errors will be logged to: $LOGFILE"
+echo "" > "$LOGFILE"
+
+for pkg in "${PACKAGES[@]}"; do
+    # Check if the package is already installed
+    if dpkg -s "$pkg" >/dev/null 2>&1; then
+        echo -e "\e[33m[SKIP]\e[0m $pkg is already installed."
+    else
+        echo -e "\e[32m[INSTALLING]\e[0m $pkg..."
+        
+        # Try to install
+        if ! apt-get -y install "$pkg"; then
+            echo "[ERROR] Failed to install: $pkg" | tee -a "$LOGFILE"
+            echo -e "\e[31m[FAILED]\e[0m Could not install $pkg"
+        fi
+    fi
+done
+
 # Network Information
 echo -e "\e[031mGetting Network Information\e[0m"
 # Get public IP, Before Connecting to Dark Web
@@ -87,35 +115,6 @@ printf "| %-12s | %-20s |\n" "Kali IP" "$KALI"
 echo "---------------------------------"
 echo
 
-# Dependencies Check
-# Must have LibreOffice,TheDevilsEye,Tor,TorGhost,OnionVerifier,FireFox,Chrome Brwoser, GoWitness
-echo "Checking Requirements, Chill for a sec"
-echo
-sudo apt-get update > /dev/null 2>&1
-LOGFILE="/var/log/kali_apt_install_errors.log"
-PACKAGES=( jq tor torbrowser-launcher python3-stem libreoffice )
-
-echo "Starting package installs..."
-echo
-echo "Errors will be logged to: $LOGFILE"
-echo "" > "$LOGFILE"
-
-for pkg in "${PACKAGES[@]}"; do
-    # Check if the package is already installed
-    if dpkg -s "$pkg" >/dev/null 2>&1; then
-        echo -e "\e[33m[SKIP]\e[0m $pkg is already installed."
-    else
-        echo -e "\e[32m[INSTALLING]\e[0m $pkg..."
-        
-        # Try to install
-        if ! apt-get -y install "$pkg"; then
-            echo "[ERROR] Failed to install: $pkg" | tee -a "$LOGFILE"
-            echo -e "\e[31m[FAILED]\e[0m Could not install $pkg"
-        fi
-    fi
-done
-
-
 echo
 echo "Done! Check $LOGFILE for anything that failed."
 echo
@@ -145,8 +144,7 @@ else
 fi
 echo
 
-DOWNLOADS="/home/kali/Downloads"
-cd "$DOWNLOADS" || exit 1
+cd /home/kali/Downloads || exit 1
 
 # Google Chrome Installer
 GC="/usr/bin/google-chrome-stable"
@@ -183,10 +181,9 @@ else
 fi
 echo
 
+mkdir -p /opt/darkfox
 DARKFOX_DIR="/opt/darkfox"
-mkdir -p "$DARKFOX_DIR"
-cd "$DARKFOX_DIR" || exit 1
-
+cd  $DARKFOX_DIR || exit 1
 # Verify gowitness 3.0.5 is in /opt/darkfox
 GOWIT="/opt/darkfox/gowitness"
 if [ -f "$GOWIT" ]
@@ -218,23 +215,29 @@ if [ -f "$TORNG" ]
 then
     echo -e "\e[031mFound TorghostNG\e[0m"
 else
-    echo
+
 sudo git clone https://github.com/aryanguenthner/torghostng /opt/torghostng
 cd /opt/torghostng
 sudo touch /etc/sysctl.conf
 sudo python3 install.py
     echo "TorghostNG is installed"
 fi
+echo
 
 # Editing Firefox about:config this allows DarkWeb .onion links to be opened with Firefox
 #echo 'user_pref("network.dns.blockDotOnion", false);' > user.js
 #sudo mv user.js /home/kali/.mozilla/firefox/*default-esr/
+# Create the files without having to run firefox for the first time.
+# Launch Firefox to auto-create the profile, then kill it
 USER_JS_PATH=$(find /home/kali/.mozilla/firefox/ -name "user.js" | head -n 1)
 if [[ -f "$USER_JS_PATH" ]]; then
     if ! grep -q 'user_pref("network.dns.blockDotOnion", false);' "$USER_JS_PATH"; then
         echo 'user_pref("network.dns.blockDotOnion", false);' >> "$USER_JS_PATH"
     fi
 else
+    sudo -u kali firefox >/dev/null 2>&1 &
+    sleep 2
+    sudo pkill firefox
     echo 'user_pref("network.dns.blockDotOnion", false);' > user.js
     sudo mv user.js /home/kali/.mozilla/firefox/*default-esr/
 fi
@@ -266,7 +269,7 @@ echo "Working directory: $(pwd)"
 echo -ne '\n'
 
 # User Input
-read -p "What are you researching: " SEARCH
+read -e -p "What are you researching: " SEARCH
 
 # Ahmia saves results to /root/pyahmia/{SEARCH}.csv
 AHMIA_CSV="/root/pyahmia/${SEARCH}.csv"
@@ -289,7 +292,7 @@ echo
 echo "Querying Ahmia..."
 
 # Run pyahmia - it will save to /root/pyahmia/{SEARCH}.csv
-ahmia -e "$SEARCH" > /dev/null 2>&1
+/root/.local/bin/pyahmia -e "$SEARCH" > /dev/null 2>&1
 
 # Check if the CSV file was created
 if [ -f "$AHMIA_CSV" ]; then
@@ -349,7 +352,7 @@ if [ "$COUNT" -eq 0 ]; then
         echo
         
         echo "Querying Ahmia..."
-        ahmia -e "$SEARCH" > /dev/null 2>&1
+        /root/.local/bin/pyahmia -e "$SEARCH" > /dev/null 2>&1
         
         if [ -f "$AHMIA_CSV" ]; then
             # Extract .onion URLs from CSV
@@ -437,7 +440,6 @@ if [ "$COUNT" -gt 0 ]; then
     COUNTRY=$(echo "$LOCATION" | jq -r '.country // "Unavailable"')
     REGION=$(echo "$LOCATION" | jq -r '.regionName // "Unavailable"')
     CITY=$(echo "$LOCATION" | jq -r '.city // "Unavailable"')
-    # Get local Kali IP
     KALI=$(hostname -I | awk '{print $1}')
 
     # Print in table format
@@ -586,7 +588,7 @@ sudo -u kali firefox $GOSERVER > /dev/null 2>&1 & disown
 sleep 2
 
 # Refresh Firefox tab
-xdotool search --onlyvisible --class firefox windowactivate --sync key Ctrl+r
+sudo xdotool search --onlyvisible --class firefox windowactivate --sync key Ctrl+r
 
 
 # Ask the user if they want to disconnect from the dark web

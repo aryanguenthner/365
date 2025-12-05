@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Blue Team, Red Team, OSINT CTI, Setup Automation Script
-# Last Updated 12/01/2025, minor evil updates, pay me later
+# Last Updated 12/04/2025, minor evil updates, pay me later
 # Tested on Kali 2025.4 XFCE
 # Usage: sudo git clone https://github.com/aryanguenthner/365 /opt/365
 # chmod -R 777 /home/kali/ /opt/365
@@ -239,8 +239,9 @@ PWD=$(pwd)
 export LC_TIME="en_US.UTF-8"
 
 # Change directory to Kali Downloads
-cd /home/kali/Downloads || exit 1
-echo "Switched to /home/kali/Downloads"
+DOWNLOADS="/home/kali/Downloads"
+cd $DOWNLOADS || exit 1
+echo "Switched to $DOWNLOADS"
 
 # Function to check installation status
 check_install() {
@@ -250,6 +251,26 @@ check_install() {
         echo -e "\e[31m$1 installation failed\!\e[0m"
     fi
 }
+
+# === Firefox Hack ===
+# Editing Firefox about:config this allows DarkWeb .onion links to be opened with Firefox
+#echo 'user_pref("network.dns.blockDotOnion", false);' > user.js
+#sudo mv user.js /home/kali/.mozilla/firefox/*default-esr/
+# Create the files without having to run firefox for the first time.
+# Launch Firefox to auto-create the profile, then kill it
+USER_JS_PATH=$(find /home/kali/.mozilla/firefox/ -name "user.js" | head -n 1)
+if [[ -f "$USER_JS_PATH" ]]; then
+    if ! grep -q 'user_pref("network.dns.blockDotOnion", false);' "$USER_JS_PATH"; then
+        echo 'user_pref("network.dns.blockDotOnion", false);' >> "$USER_JS_PATH"
+    fi
+else
+    sudo -u kali firefox >/dev/null 2>&1 &
+    sleep 2
+    sudo pkill firefox
+    echo 'user_pref("network.dns.blockDotOnion", false);' > user.js
+    sudo mv user.js /home/kali/.mozilla/firefox/*default-esr/
+fi
+echo
 
 # === Google Chrome Install ===
 if command -v google-chrome-stable &>/dev/null; then
