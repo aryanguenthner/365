@@ -96,6 +96,7 @@ RED=031m
 BLUE=034m
 PWD=$(pwd)
 export LC_TIME="en_US.UTF-8"
+sed -i '/LC_TIME/d' /etc/default/locale && echo 'LC_TIME=en_US.UTF-8' >> /etc/default/locale && locale-gen en_US.UTF-8 && update-locale && export LC_TIME=en_US.UTF-8
 
 # Get the directory where the kali-setup.sh is executed
 script_dir=$(pwd)
