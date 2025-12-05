@@ -51,8 +51,12 @@ YELLOW=033m
 RED=031m
 RED='\033[31m'
 BLUE=034m
-
 echo
+
+# Keep the screen on during investigations
+xset s off            # Disable screensaver
+xset s noblank        # No screen blanking
+xset -dpms            # Disable DPMS power saving
 
 # Dependencies Check
 # Must have LibreOffice,TheDevilsEye,Tor,TorGhost,OnionVerifier,FireFox,Chrome Brwoser, GoWitness
@@ -224,23 +228,29 @@ sudo python3 install.py
 fi
 echo
 
-# Editing Firefox about:config this allows DarkWeb .onion links to be opened with Firefox
-#echo 'user_pref("network.dns.blockDotOnion", false);' > user.js
-#sudo mv user.js /home/kali/.mozilla/firefox/*default-esr/
-# Create the files without having to run firefox for the first time.
-# Launch Firefox to auto-create the profile, then kill it
-USER_JS_PATH=$(find /home/kali/.mozilla/firefox/ -name "user.js" | head -n 1)
-if [[ -f "$USER_JS_PATH" ]]; then
-    if ! grep -q 'user_pref("network.dns.blockDotOnion", false);' "$USER_JS_PATH"; then
-        echo 'user_pref("network.dns.blockDotOnion", false);' >> "$USER_JS_PATH"
-    fi
-else
-    sudo -u kali firefox >/dev/null 2>&1 &
-    sleep 2
-    sudo pkill firefox
-    echo 'user_pref("network.dns.blockDotOnion", false);' > user.js
-    sudo mv user.js /home/kali/.mozilla/firefox/*default-esr/
-fi
+echo "=== Enabling .onion in Firefox (kali user) ==="
+
+KALI_HOME="/home/kali"
+PROFILE_BASE="$KALI_HOME/.mozilla/firefox"
+PREF='user_pref("network.dns.blockDotOnion", false);'
+
+# Create profile if missing
+mkdir -p "$PROFILE_BASE"
+sudo -u kali firefox >/dev/null 2>&1 &
+PID=$!
+sleep 2
+kill $PID >/dev/null 2>&1
+
+# Locate default-esr profile
+PROFILE=$(find "$PROFILE_BASE" -maxdepth 1 -type d -name "*default-esr*" | head -n 1)
+
+# Write user.js
+echo "$PREF" >> "$PROFILE/user.js"
+
+# Fix permissions
+chown -R kali:kali "$PROFILE"
+
+echo "[✓] .onion enabled for Firefox."
 echo
 
 # Check/Install pyahmia
