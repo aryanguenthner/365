@@ -4,7 +4,7 @@
 # Made for CTI OSINT cyber security research on the Dark Deep Web
 # Intended to be used on Kali Linux
 # Updated for compatibility and better Tor handling
-# Hacked on 12/03/2025, pay me later
+# Hacked on 12/04/2025, pay me later
 # Great ideas
 # Go here --> https://addons.mozilla.org/en-US/firefox/addon/noscript/
 # install_addon "https://addons.mozilla.org/firefox/downloads/file/4141345/noscript-11.4.26.xpi" "noscript"
@@ -46,7 +46,12 @@ date '+%Y-%m-%d %r' | tee darkfox.run.date
 # Setting Variables
 CITY=$(curl -s http://ip-api.com/line?fields=timezone | cut -d "/" -f 2)
 PWD=$(pwd)
+GREEN=032m
+YELLOW=033m
+RED=031m
 RED='\033[31m'
+BLUE=034m
+
 echo
 
 # Network Information
@@ -68,8 +73,6 @@ LOCATION=$(curl -s ipinfo.io/json)
 COUNTRY=$(echo "$LOCATION" | jq -r '.country')
 REGION=$(echo "$LOCATION" | jq -r '.region')
 CITY=$(echo "$LOCATION" | jq -r '.city')
-
-# Get local Kali IP
 KALI=$(hostname -I | awk '{print $1}')
 
 # Print in table format
@@ -86,8 +89,39 @@ echo
 
 # Dependencies Check
 # Must have LibreOffice,TheDevilsEye,Tor,TorGhost,OnionVerifier,FireFox,Chrome Brwoser, GoWitness
-echo "Checking Requirements"
-sudo apt-get install -y jq tor torbrowser-launcher python3-stem libreoffice > /dev/null 2>&1
+echo "Checking Requirements, Chill for a sec"
+echo
+sudo apt-get update > /dev/null 2>&1
+LOGFILE="/var/log/kali_apt_install_errors.log"
+PACKAGES=( jq tor torbrowser-launcher python3-stem libreoffice )
+
+echo "Starting package installs..."
+echo
+echo "Errors will be logged to: $LOGFILE"
+echo "" > "$LOGFILE"
+
+for pkg in "${PACKAGES[@]}"; do
+    # Check if the package is already installed
+    if dpkg -s "$pkg" >/dev/null 2>&1; then
+        echo -e "\e[33m[SKIP]\e[0m $pkg is already installed."
+    else
+        echo -e "\e[32m[INSTALLING]\e[0m $pkg..."
+        
+        # Try to install
+        if ! apt-get -y install "$pkg"; then
+            echo "[ERROR] Failed to install: $pkg" | tee -a "$LOGFILE"
+            echo -e "\e[31m[FAILED]\e[0m Could not install $pkg"
+        fi
+    fi
+done
+
+
+echo
+echo "Done! Check $LOGFILE for anything that failed."
+echo
+
+sudo apt-get autoremove -y && updatedb > /dev/null 2>&1
+
 # Simulated Progress Bar
 echo -ne '#####                     (33%)\r'
 sleep 1
@@ -95,14 +129,30 @@ echo -ne '#############             (66%)\r'
 sleep 1
 echo -ne '#######################   (100%)\r'
 echo -ne '\n'
+echo
 
-# Download Apps
-cd /home/kali/Downloads || exit 1
+# Create OSINT investigations folder
+mkdir -p $(pwd)/investigations
+
+# Verify LibreOffice is installed
+L="/usr/bin/libreoffice"
+if [ -f "$L" ]
+then
+    echo -e "\e[031mFound LibreOffice\e[0m"
+else
+    echo -e "\e[031mPlease wait while LibreOffice is installed\e[0m"
+    sudo apt-get install -y libreoffice
+fi
+echo
+
+DOWNLOADS="/home/kali/Downloads"
+cd "$DOWNLOADS" || exit 1
+
 # Google Chrome Installer
 GC="/usr/bin/google-chrome-stable"
 if [ -f "$GC" ]; then
     echo -e "\e[031mFound Google Chrome\e[0m"
-    echo
+
 else
     echo "Google Chrome not found. Installing..."
     # Remove unnecessary packages and update database (optional)
@@ -131,8 +181,8 @@ else
     echo "Google Chrome installation complete!"
     echo
 fi
+echo
 
-# Define working directory at the start
 DARKFOX_DIR="/opt/darkfox"
 mkdir -p "$DARKFOX_DIR"
 cd "$DARKFOX_DIR" || exit 1
@@ -144,8 +194,8 @@ then
     echo -e "\e[031mFound GoWitness 3.0.5\e[0m"
 else
     echo -e "\e[031mDownloading Missing GoWitness 3.0.5\e[0m"
-    wget --no-check-certificate -O /opt/darkfox/gowitness 'https://drive.google.com/uc?export=download&id=1C-FpaGQA288dM5y40X1tpiNiN8EyNJKS' # gowitness 3.0.5
-    chmod -R 777 /opt/darkfox
+    wget --no-check-certificate -O gowitness 'https://drive.google.com/uc?export=download&id=1C-FpaGQA288dM5y40X1tpiNiN8EyNJKS' # gowitness 3.0.5
+    chmod a+x gowitness
 fi
 echo
 
@@ -157,19 +207,8 @@ then
     echo -e "\e[031mFound Onion Verifier\e[0m"
 else
     echo -e "\e[031mDownloading Onion Verifier\e[0m"
-    wget --no-check-certificate -O /opt/darkfox/onion_verifier.py 'https://github.com/aryanguenthner/darkfox/raw/refs/heads/main/onion_verifier.py'
+    wget --no-check-certificate -O onion_verifier.py 'https://github.com/aryanguenthner/darkfox/raw/refs/heads/main/onion_verifier.py'
     chmod a+x onion_verifier.py
-fi
-echo
-
-# Verify LibreOffice is installed
-L="/usr/bin/libreoffice"
-if [ -f "$L" ]
-then
-    echo -e "\e[031mFound LibreOffice\e[0m"
-else
-    echo -e "\e[031mPlease wait while LibreOffice is installed\e[0m"
-    sudo apt-get install -y libreoffice
 fi
 echo
 
@@ -201,9 +240,6 @@ else
 fi
 echo
 
-# Create OSINT investigations folder
-mkdir -p $(pwd)/investigations
-
 # Check/Install pyahmia
 PYAHMIA_BIN="/root/.local/bin/pyahmia"
 if [ -x "$PYAHMIA_BIN" ] && "$PYAHMIA_BIN" -v &> /dev/null; then
@@ -214,7 +250,7 @@ else
     
     # Verify installation was successful
     if [ -x "$PYAHMIA_BIN" ]; then
-        echo -e "\e[32mConfirmed pyahmia installed successfully\e[0m"
+        echo -e "\e[31mConfirmed pyahmia installed successfully\e[0m"
     else
         echo -e "\e[31mWarning: pyahmia installation may have failed\e[0m"
         exit 1
@@ -227,10 +263,9 @@ echo
 echo "Config Looks Good So Far"
 echo
 echo "Working directory: $(pwd)"
-echo
 echo -ne '\n'
 
-# 3. User Input
+# User Input
 read -p "What are you researching: " SEARCH
 
 # Ahmia saves results to /root/pyahmia/{SEARCH}.csv
@@ -240,7 +275,7 @@ RESULTS_FILE="/root/pyahmia/${SEARCH}.txt"
 echo -e "\nSearching for: $SEARCH"
 echo
 
-# 4. Simulate Progress Bar
+# Progress Bar
 echo "Searching for DarkWeb Onions..."
 echo -ne '#####                     (33%)\r'
 sleep 1
@@ -250,7 +285,7 @@ echo -ne '#######################   (100%)\r'
 echo -ne '\n'
 echo
 
-# 5. Execution and Filtering
+# Execution and Filtering
 echo "Querying Ahmia..."
 
 # Run pyahmia - it will save to /root/pyahmia/{SEARCH}.csv
@@ -277,7 +312,7 @@ if [ -f "$AHMIA_CSV" ]; then
     sed -i '/invest/d; /222/d; /drug/d; /porn/d' "$RESULTS_FILE"
     
     COUNT=$(wc -l < "$RESULTS_FILE")
-    echo -e "\e[32mOnions Found:\e[0m $COUNT"
+    echo -e "\e[31mOnions Found:\e[0m $COUNT"
     echo "Results saved to: $RESULTS_FILE"
     echo "CSV source: $AHMIA_CSV"
 else
@@ -332,7 +367,7 @@ if [ "$COUNT" -eq 0 ]; then
             sed -i '/invest/d; /222/d; /drug/d; /porn/d' "$RESULTS_FILE"
             
             COUNT=$(wc -l < "$RESULTS_FILE")
-            echo -e "\e[32mOnions Found:\e[0m $COUNT"
+            echo -e "\e[31mOnions Found:\e[0m $COUNT"
             echo "Results saved to: $RESULTS_FILE"
         else
             echo -e "\e[31mNo CSV file created.\e[0m"
@@ -421,7 +456,6 @@ if [ "$COUNT" -gt 0 ]; then
     echo "---------------------------------"
     echo
     
-    # REST OF YOUR SCRIPT CONTINUES HERE...
 else
     echo -e "\e[31mNo onion links available. Cannot proceed.\e[0m"
     exit 1
@@ -450,16 +484,10 @@ VERIFY_COUNT=$(wc -l < "$DARKFOX_DIR/results.onion.csv")
 echo "File contains $VERIFY_COUNT lines"
 echo
 
-# Now run onion_verifier with the correct file
-echo "Verifying Onions..."
+# Now run onion_verifier
+echo -e "\e[031mVerifying Onions...\e[0m"
 cd "$DARKFOX_DIR" || exit 1
 sudo python3 "$DARKFOX_DIR/onion_verifier.py" "$DARKFOX_DIR/results.onion.csv" | tee "$DARKFOX_DIR/onion_verifier.log"
-echo
-
-# Get Screenshot, Save results to db
-echo "GoWitness Getting Screenshots, Be patient and let it run"
-cd "$DARKFOX_DIR" || exit 1
-sudo ./gowitness scan file -f "$DARKFOX_DIR/results.onion.csv" --screenshot-fullpage --threads 10 -T 4 --write-db --chrome-proxy socks5://127.0.0.1:9050
 echo
 
 # Open spreadsheet with all results
@@ -478,32 +506,42 @@ echo
 echo -e "\e[031mPro Tip: Use NoScript on the Dark Web! Block Javascript!\e[0m"
 echo
 
-# Extract top 3 unique .onion URLs matching the search query
-readarray -t HITS < <(awk -v search="$SEARCH" '
-    BEGIN { count = 0 }
-    NR > 1 && $1 ~ /\.onion/ {  # Skip header, process .onion URLs
-        url = $1;
-        sub(/\.onion.*/, ".onion", url);  # Keep only the .onion domain
-        
-        title = tolower($2);
-        search_lower = tolower(search);
+HITS=()
 
-        score = 0;
-        if (index(title, search_lower)) { score += 10 }  # Strong match in title
-        if (index(url, search_lower)) { score += 5 }      # Some match in URL
+if [ -f "$ONIONS" ]; then
+    # File exists: Extract top 3 based on Title relevance
+    readarray -t HITS < <(awk -v search="$SEARCH" '
+        BEGIN { count = 0 }
+        NR > 1 && $1 ~ /\.onion/ {
+            url = $1;
+            sub(/\.onion.*/, ".onion", url);
 
-        results[url] = score;
-    }
-    END {
-        # Sort results by score (descending) and print top 3 unique URLs
-        n = 0;
-        PROCINFO["sorted_in"] = "@val_num_desc"
-        for (url in results) {
-            print url
-            if (++n == 3) break
+            title = tolower($2);
+            search_lower = tolower(search);
+
+            score = 0;
+            if (index(title, search_lower)) { score += 10 }
+            if (index(url, search_lower)) { score += 5 }
+
+            results[url] = score;
         }
-    }
-' "$ONIONS")
+        END {
+            PROCINFO["sorted_in"] = "@val_num_desc"
+            for (url in results) {
+                print url
+                if (++n == 3) break
+            }
+        }
+    ' "$ONIONS")
+
+elif [ -f "$DARKFOX_DIR/results.onion.csv" ]; then
+    # File missing: Fallback to the raw list of URLs
+    echo -e "\e[33mWarning: Titles file not found. Falling back to raw URL list.\e[0m"
+    readarray -t HITS < <(head -n 3 "$DARKFOX_DIR/results.onion.csv")
+
+else
+    echo -e "\e[31mNo results files found to open.\e[0m"
+fi
 
 # Assign extracted values (fallback to empty string if fewer than 3)
 HITS=("${HITS[@]:0:3}")  # Keep only the first 3 elements
@@ -512,7 +550,22 @@ echo
 for HIT in "${HITS[@]}"; do
     [ -n "$HIT" ] && 
     sudo -u kali firefox "$HIT" > /dev/null 2>&1 & disown
+    sleep 2
 done
+
+# Run gowitness with optimized flags
+    echo -e "\e[31mGoWitness Getting Screenshots, Be patient and let it run.\e[0m"
+echo
+sudo ./gowitness scan file -f "$DARKFOX_DIR/results.onion.csv" \
+    --threads 16 \
+    --write-db \
+    --chrome-proxy socks5://127.0.0.1:9050 \
+    2>&1 | grep -Ev "ERROR|unknown IPAddressSpace value: Loopback"
+
+    
+echo
+echo -e "\e[31mScreenshot capture complete\e[0m"
+echo
 
 # Debugging (optional)
 printf "\n%s\n" "${HITS[@]}"
@@ -524,10 +577,17 @@ sudo qterminal -e ./gowitness report server > /dev/null 2>&1 & disown
 echo
 
 # After the web server has started, Open Firefox to see the results
-echo "Opening GoWitness Results in Firefox"
+    echo -e "\e[031mOpening GoWitness Results in Firefox\e[0m"
 echo
 GOSERVER="http://127.0.0.1:7171/gallery"
 sudo -u kali firefox $GOSERVER > /dev/null 2>&1 & disown
+
+# Give Firefox a moment to load the Gowitness Server
+sleep 2
+
+# Refresh Firefox tab
+xdotool search --onlyvisible --class firefox windowactivate --sync key Ctrl+r
+
 
 # Ask the user if they want to disconnect from the dark web
 echo "Friendly reminder to exit the Dark Web type: torghostng -x"
@@ -542,9 +602,9 @@ echo "Attempting to disconnect from the Dark Web..."
     echo
     echo -e "\e[031mBack to the real world\e[0m"
     echo
-    sudo torghostng -x
+    sudo torghostng -x --dns
 
 fi
 echo
 
-#Pay Me later
+# Pay Me later
