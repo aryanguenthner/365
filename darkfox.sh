@@ -219,7 +219,6 @@ if [ -f "$TORNG" ]
 then
     echo -e "\e[031mFound TorghostNG\e[0m"
 else
-
 sudo git clone https://github.com/aryanguenthner/torghostng /opt/torghostng
 cd /opt/torghostng
 sudo touch /etc/sysctl.conf
