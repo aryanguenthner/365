@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Blue Team, Red Team, OSINT CTI, Setup Automation Script
-# Last Updated 12/04/2025, minor evil updates, pay me later
+# Last Updated 12/05/2025, minor evil updates, pay me later
 # Tested on Kali 2025.4 XFCE
 # Usage: sudo git clone https://github.com/aryanguenthner/365 /opt/365
 # chmod -R 777 /home/kali/ /opt/365
@@ -10,15 +10,6 @@
 # Run it: sudo time ./kali-setup.sh
 ################################################
 echo
-
-# Prevent interactive prompts
-export DEBIAN_FRONTEND=noninteractive
-
-# --- Handle service restarts automatically ---
-if [ "${EUID:-$(id -u)}" -eq 0 ]; then
-    echo "Configuring apt to restart services without asking..."
-    echo '* libraries/restart-without-asking boolean true' | debconf-set-selections
-fi
 
 # TODO: Create a splash screen with menu options
 # Menu options: 1 = Update Kali, 2 = Install kali Setup, 3 Install Kali Extra's, 4 Give me it all, the kitchen sink
@@ -95,7 +86,12 @@ YELLOW=033m
 RED=031m
 BLUE=034m
 PWD=$(pwd)
-export LC_TIME="en_US.UTF-8"
+
+# Today's Date
+timedatectl set-timezone America/Los_Angeles
+timedatectl set-ntp true
+echo -e "\e[034mToday is:\e[0m"
+date | tee kali-setup-date.txt
 sed -i '/LC_TIME/d' /etc/default/locale && echo 'LC_TIME=en_US.UTF-8' >> /etc/default/locale && locale-gen en_US.UTF-8 && update-locale && export LC_TIME=en_US.UTF-8
 
 # Get the directory where the kali-setup.sh is executed
@@ -112,12 +108,6 @@ echo "Running the kali-setup.sh script..."
 sleep 2
 echo "Script Running!"
 echo
-
-# Today's Date
-timedatectl set-timezone America/Los_Angeles
-timedatectl set-ntp true
-echo -e "\e[034mToday is:\e[0m"
-date | tee kali-setup-date.txt
 echo
 
 echo -e "\e[034mGetting BIOS Info\e[0m"
