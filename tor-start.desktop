@@ -3,8 +3,22 @@ Version=1.0
 Type=Application
 Name=TorGhost Start
 Comment=Start TorGhost service
-Exec=sudo /home/kali/Downloads/torghost-start.sh
+Exec="sudo /opt/365/torghost-start.sh"
 Icon=security-high
 Terminal=true
 StartupNotify=true
 Path=
+
+# Step 1
+# echo "kali ALL=(ALL) NOPASSWD: /home/kali/Downloads/torghost-start.sh, /home/kali/Downloads/torghost-stop.sh" | sudo tee /etc/sudoers.d/torghost\nsudo chmod 440 /etc/sudoers.d/torghost
+
+
+# Step 2
+# https://bridges.torproject.org/bridges?transport=obfs4
+# sudo nano -c /etc/tor/torrc
+# UseBridges 1
+# ClientTransportPlugin obfs4 exec /usr/bin/obfs4proxy
+# Example bottom of file
+# Bridge obfs4 51.81.186.192:41115 7B1A9C4C737DB00E01749803383786165FF599B4 cert=fCX1D+45ApfprlWeWLcyBDj0GvoqOGkevfT7IRFqZOmTJ5rjK7ZkUoc6ei5KJLSyWy+uSA iat-mode=0
+# Bridge obfs4 91.98.173.170:8443 12D17D570A015F9C243C4EA9183DCE5BDA53A491 cert=jByUsYTsH8gFnKTztE9jiaZliV/wxcc9KZsWb9x0OjAtGZcVNLeD04+aboevMB8ofXP9ZQ iat-mode=0
+
