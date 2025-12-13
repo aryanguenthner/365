@@ -2,7 +2,7 @@
 
 ################################################
 # Kali Linux Blue Team, Red Team, OSINT CTI, Setup Automation Script
-# Last Updated 12/05/2025, minor evil updates, pay me later
+# Last Updated 12/13/2025, minor evil updates, pay me later
 # Tested on Kali 2025.4 XFCE
 # Usage: sudo git clone https://github.com/aryanguenthner/365 /opt/365
 # chmod -R 777 /home/kali/ /opt/365
@@ -261,24 +261,36 @@ check_install() {
 
 echo "=== Enabling .onion in Firefox (kali user) ==="
 
-KALI_HOME="/home/kali"
-PROFILE_BASE="$KALI_HOME/.mozilla/firefox"
+BASE="/home/kali/.mozilla/firefox"
 PREF='user_pref("network.dns.blockDotOnion", false);'
 
-# Create profile if missing
-mkdir -p "$PROFILE_BASE"
-sudo -u kali firefox >/dev/null 2>&1 &
-PID=$!
-sleep 2
-kill $PID >/dev/null 2>&1
+mkdir -p "$BASE"
 
-# Locate default-esr profile
-PROFILE=$(find "$PROFILE_BASE" -maxdepth 1 -type d -name "*default-esr*" | head -n 1)
+# Find profile (if it already exists)
+PROFILE=$(find "$BASE" -maxdepth 1 -type d -name "*default-esr*" | head -n 1)
+
+# Create profile only if missing
+if [ -z "$PROFILE" ]; then
+    sudo -u kali firefox >/dev/null 2>&1 &
+    for i in {1..10}; do
+        PROFILE=$(find "$BASE" -maxdepth 1 -type d -name "*default-esr*" | head -n 1)
+        [ -n "$PROFILE" ] && break
+        sleep 0.5
+    done
+    pkill -u kali firefox >/dev/null 2>&1
+fi
+
+[ -z "$PROFILE" ] && { echo "[✗] Firefox profile not found"; exit 1; }
+
+# Skip if user.js already exists
+if [ -f "$PROFILE/user.js" ]; then
+    echo "[✓] user.js already exists, skipping."
+    echo
+    exit 0
+fi
 
 # Write user.js
-echo "$PREF" >> "$PROFILE/user.js"
-
-# Fix permissions
+echo "$PREF" > "$PROFILE/user.js"
 chown -R kali:kali "$PROFILE"
 
 echo "[✓] .onion enabled for Firefox."
@@ -1123,6 +1135,9 @@ sudo gpasswd -a kali autologin
 
 echo "Autologin configured successfully"
 echo
+
+echo -e "\nexport LC_ALL=en_US.UTF-8\nexport LANG=en_US.UTF-8" >> ~/.zshrc
+source ~/.zshrc
 
 # Kali Setup Finish Time
 date | tee kali-setup-finish-date.txt
