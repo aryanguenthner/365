@@ -250,51 +250,16 @@ DOWNLOADS="/home/kali/Downloads"
 cd $DOWNLOADS || exit 1
 echo "Switched to $DOWNLOADS"
 
-# Function to check installation status
 check_install() {
-    if command -v "$1" &>/dev/null; then
-        echo -e "\e[32m$1 is installed successfully\!\e[0m"
+    local cmd="$1"
+    if command -v "$cmd" &>/dev/null; then
+        echo -e "\033[1;32m[✓] $cmd installed successfully\033[0m"
     else
-        echo -e "\e[31m$1 installation failed\!\e[0m"
+        echo -e "\033[1;31m[✗] Failed to install $cmd\033[0m"
+        exit 1
     fi
 }
 
-echo "=== Enabling .onion in Firefox (kali user) ==="
-
-BASE="/home/kali/.mozilla/firefox"
-PREF='user_pref("network.dns.blockDotOnion", false);'
-
-mkdir -p "$BASE"
-
-# Find profile (if it already exists)
-PROFILE=$(find "$BASE" -maxdepth 1 -type d -name "*default-esr*" | head -n 1)
-
-# Create profile only if missing
-if [ -z "$PROFILE" ]; then
-    sudo -u kali firefox >/dev/null 2>&1 &
-    for i in {1..10}; do
-        PROFILE=$(find "$BASE" -maxdepth 1 -type d -name "*default-esr*" | head -n 1)
-        [ -n "$PROFILE" ] && break
-        sleep 0.5
-    done
-    pkill -u kali firefox >/dev/null 2>&1
-fi
-
-[ -z "$PROFILE" ] && { echo "[✗] Firefox profile not found"; exit 1; }
-
-# Skip if user.js already exists
-if [ -f "$PROFILE/user.js" ]; then
-    echo "[✓] user.js already exists, skipping."
-    echo
-    exit 0
-fi
-
-# Write user.js
-echo "$PREF" > "$PROFILE/user.js"
-chown -R kali:kali "$PROFILE"
-
-echo "[✓] .onion enabled for Firefox."
-echo
 
 # === Google Chrome Install ===
 if command -v google-chrome-stable &>/dev/null; then
@@ -309,6 +274,9 @@ else
     check_install "google-chrome-stable"
 fi
 echo
+
+kali-setup.sh: line 263: check_install: command not found
+
 
 # === Signal Install ===
 # echo "Installing Signal Desktop..."
