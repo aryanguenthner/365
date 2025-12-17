@@ -814,6 +814,8 @@ if [[ "$response" == "yes" || "$response" == "y" ]]; then
 
     echo "--- Installing Git Repos ---"
     clone_if_missing "https://github.com/Wh04m1001/DFSCoerce" "DFSCoerce"
+    clone_if_missing "https://github.com/aryanguenthner/365"
+    clone_if_missing "https://github.com/aryanguenthner/darkfox"
     clone_if_missing "https://github.com/infosecn1nja/MaliciousMacroMSBuild.git" "MaliciousMacroMSBuild"
     clone_if_missing "https://github.com/TheRook/subbrute.git" "subbrute"
     clone_if_missing "https://github.com/aryanguenthner/BridgeKeeper.git" "BridgeKeeper"
@@ -1099,6 +1101,31 @@ sudo groupadd -r autologin 2> /dev/null
 sudo gpasswd -a kali autologin
 
 echo "Autologin configured successfully"
+echo
+echo "Mozilla can actually go on the DarkWeb, Use Torbrowser first"
+# --- Configure Firefox to allow .onion sites ---
+echo "[+] Configuring Firefox to allow .onion sites..."
+
+# Create the policies directory if it doesn't exist
+# Note: Kali uses Firefox ESR by default. Adjust path if using standard Firefox.
+FIREFOX_POLICY_DIR="/etc/firefox-esr/policies"
+mkdir -p "$FIREFOX_POLICY_DIR"
+
+# Write the policies.json file
+cat <<EOF > "$FIREFOX_POLICY_DIR/policies.json"
+{
+  "policies": {
+    "Preferences": {
+      "network.dns.blockDotOnion": {
+        "Value": false,
+        "Status": "locked"
+      }
+    }
+  }
+}
+EOF
+
+echo "[+] Firefox policy applied: network.dns.blockDotOnion = false"
 echo
 
 echo -e "\nexport LC_ALL=en_US.UTF-8\nexport LANG=en_US.UTF-8" >> ~/.zshrc

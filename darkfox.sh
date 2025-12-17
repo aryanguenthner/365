@@ -4,8 +4,9 @@
 # Made for CTI OSINT cyber security research on the Dark Deep Web
 # Intended to be used on Kali Linux
 # Updated for compatibility and better Tor handling
-# Hacked on 12/04/2025, pay me later
+# Hacked on 12/17/2025, pay me later
 # Great ideas
+# Maybe run darkfox two times to make sure everything is installed.
 # Go here --> https://addons.mozilla.org/en-US/firefox/addon/noscript/
 # install_addon "https://addons.mozilla.org/firefox/downloads/file/4141345/noscript-11.4.26.xpi" "noscript"
 # install_addon "https://addons.mozilla.org/firefox/downloads/file/4125998/adblock_plus-3.17.1.xpi" "adblock_plus"
@@ -85,6 +86,22 @@ for pkg in "${PACKAGES[@]}"; do
         fi
     fi
 done
+
+# Add Desktop Launcher
+LAUNCHER_SOURCE="/opt/darkfox/DarkFox.desktop"
+LAUNCHER_DEST="/home/kali/Desktop/DarkFox.desktop"
+
+# Check if the file exists using the -f flag
+if [ -f "$LAUNCHER_DEST" ]; then
+    echo "DarkFox launcher already exists on Desktop. Skipping..."
+else
+    echo "Adding DarkFox launcher to Desktop..."
+    cp "$LAUNCHER_SOURCE" "$LAUNCHER_DEST"
+    
+    # Ensure we target the file we just copied
+    chmod 777 "$LAUNCHER_DEST"
+fi 
+echo
 
 # Network Information
 echo -e "\e[031mGetting Network Information\e[0m"
@@ -219,37 +236,13 @@ if [ -f "$TORNG" ]
 then
     echo -e "\e[031mFound TorghostNG\e[0m"
 else
+
 sudo git clone https://github.com/aryanguenthner/torghostng /opt/torghostng
 cd /opt/torghostng
 sudo touch /etc/sysctl.conf
 sudo python3 install.py
     echo "TorghostNG is installed"
 fi
-echo
-
-echo "=== Enabling .onion in Firefox (kali user) ==="
-
-KALI_HOME="/home/kali"
-PROFILE_BASE="$KALI_HOME/.mozilla/firefox"
-PREF='user_pref("network.dns.blockDotOnion", false);'
-
-# Create profile if missing
-mkdir -p "$PROFILE_BASE"
-sudo -u kali firefox >/dev/null 2>&1 &
-PID=$!
-sleep 2
-kill $PID >/dev/null 2>&1
-
-# Locate default-esr profile
-PROFILE=$(find "$PROFILE_BASE" -maxdepth 1 -type d -name "*default-esr*" | head -n 1)
-
-# Write user.js
-echo "$PREF" >> "$PROFILE/user.js"
-
-# Fix permissions
-chown -R kali:kali "$PROFILE"
-
-echo "[✓] .onion enabled for Firefox."
 echo
 
 # Check/Install pyahmia
@@ -270,7 +263,55 @@ else
     echo
 fi
 
+
+# Editing Firefox about:config this allows DarkWeb .onion links to be opened with Firefox
+#echo 'user_pref("network.dns.blockDotOnion", false);' > user.js
+#sudo mv user.js /home/kali/.mozilla/firefox/*default-esr/
+# Create the files without having to run firefox for the first time.
+# Launch Firefox to auto-create the profile, then kill it
+USER_JS_PATH=$(find /home/kali/.mozilla/firefox/ -name "user.js" | head -n 1)
+if [[ -f "$USER_JS_PATH" ]]; then
+    if ! grep -q 'user_pref("network.dns.blockDotOnion", false);' "$USER_JS_PATH"; then
+        echo 'user_pref("network.dns.blockDotOnion", false);' >> "$USER_JS_PATH"
+    fi
+else
+    sudo -u kali firefox >/dev/null 2>&1 &
+    sleep 2
+    sudo pkill firefox
+    echo 'user_pref("network.dns.blockDotOnion", false);' > user.js
+    sudo mv user.js /home/kali/.mozilla/firefox/*default-esr/
+fi
+echo
 echo -ne '#######################\r'
+echo
+
+echo
+echo "Mozilla can actually go on the DarkWeb, Use Torbrowser first"
+# --- Configure Firefox to allow .onion sites ---
+echo "[+] Configuring Firefox to allow .onion sites..."
+
+# Create the policies directory if it doesn't exist
+# Note: Kali uses Firefox ESR by default. Adjust path if using standard Firefox.
+FIREFOX_POLICY_DIR="/etc/firefox-esr/policies"
+mkdir -p "$FIREFOX_POLICY_DIR"
+
+# Write the policies.json file
+cat <<EOF > "$FIREFOX_POLICY_DIR/policies.json"
+{
+  "policies": {
+    "Preferences": {
+      "network.dns.blockDotOnion": {
+        "Value": false,
+        "Status": "locked"
+      }
+    }
+  }
+}
+EOF
+
+echo "[+] Firefox policy applied: network.dns.blockDotOnion = false"
+echo
+
 echo
 echo "Config Looks Good So Far"
 echo
@@ -376,7 +417,7 @@ if [ "$COUNT" -eq 0 ]; then
                 }
             }' "$AHMIA_CSV" | sort -u > "$RESULTS_FILE"
             
-            sed -i '/invest/d; /222/d; /drug/d; /porn/d' "$RESULTS_FILE"
+            sed -i '/invest/d; /222/d; /drug/d; /porn/d; /fresh/d' "$RESULTS_FILE"
             
             COUNT=$(wc -l < "$RESULTS_FILE")
             echo -e "\e[31mOnions Found:\e[0m $COUNT"
@@ -570,6 +611,7 @@ echo
 sudo ./gowitness scan file -f "$DARKFOX_DIR/results.onion.csv" \
     --threads 16 \
     --write-db \
+    --screenshot-fullpage \
     --chrome-proxy socks5://127.0.0.1:9050 \
     2>&1 | grep -Ev "ERROR|unknown IPAddressSpace value: Loopback"
 
