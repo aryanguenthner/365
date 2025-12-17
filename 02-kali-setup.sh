@@ -275,9 +275,6 @@ else
 fi
 echo
 
-kali-setup.sh: line 263: check_install: command not found
-
-
 # === Signal Install ===
 # echo "Installing Signal Desktop..."
 # wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor | sudo tee /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
