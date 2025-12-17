@@ -680,20 +680,19 @@ sudo xdotool search --onlyvisible --class firefox windowactivate --sync key Ctrl
 
 
 # Ask the user if they want to disconnect from the dark web
-echo "Friendly reminder to exit the Dark Web type: torghostng -x"
+echo "Friendly reminder: to exit the Dark Web manually, type: torghostng -x"
 echo
-read -p "Do you want to disconnect from the dark web? (y/n): " DISCONNECT 
+read -p "Do you want to disconnect from the dark web? (y/n): " DISCONNECT
 echo
+
 if [[ "$DISCONNECT" == "y" || "$DISCONNECT" == "Y" ]]; then
-echo
-echo "Attempting to disconnect from the Dark Web..."
-    
-    echo "Exiting Dark Web"
     echo
-    echo -e "\e[031mBack to the real world\e[0m"
+    echo "Attempting to disconnect from the Dark Web..."
+    echo
+    echo "Exiting Dark Web"
+    echo -e "\e[31mBack to the real world\e[0m"
     echo
     sudo torghostng -x --dns
-
 fi
 echo
 
