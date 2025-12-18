@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=DarkFox
+Comment=Start DarkFox
+Exec="sudo /opt/darkfox/darkfox.sh"
+Icon=wafw00f
+Terminal=true
+StartupNotify=true
+Path=$(pwd)
