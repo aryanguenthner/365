@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=VBox Linux Headers Update
+Comment=Fix VBox
+Exec="sudo /opt/365/fix-linux-headers.sh"
+Icon=virtualbox-vbox
+Terminal=true
+StartupNotify=true
+Path=$(pwd)

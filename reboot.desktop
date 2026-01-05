@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Reboot
+Comment=Reboot
+Exec=reboot
+Icon=system-reboot
+Path=
+Terminal=true
+StartupNotify=false

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=updates
+Comment=updates
+Exec=pkexec sh -c "apt update && apt upgrade -y && apt-get full-upgrade -y"
+Icon=update-manager
+Terminal=true
+StartupNotify=true
+Path=

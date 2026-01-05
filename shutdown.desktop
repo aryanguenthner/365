@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Shutdown
+Comment=Shutdown
+Exec=sudo shutdown -h 0
+Icon=system-shutdown
+Path=
+Terminal=true
+StartupNotify=false
