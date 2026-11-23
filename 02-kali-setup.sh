@@ -4,7 +4,7 @@ set -euo pipefail
 ################################################
 # 02-kali-setup.sh
 # Kali Linux Red Team, Blue Team, OSINT CTI, Setup Automation Script
-# Last Updated 09/06/2026, minor evil updates, pay me later
+# Last Updated 11/22/2026, minor evil updates, pay me later
 # Tested on Kali 2026.3 XFCE
 # Usage: sudo git clone https://github.com/aryanguenthner/365 /opt/365
 # chmod -R 777 /home/kali/ /opt/365
@@ -307,26 +307,6 @@ wget -O "$DISCORD_DEB" "https://discord.com/api/download?platform=linux&format=d
 sudo apt install -y ./"$DISCORD_DEB" || sudo apt --fix-broken install -y
 rm "$DISCORD_DEB"
 check_install "discord"
-echo
-
-# === Slack Install ===
-echo "[*] Checking if Slack is installed..."
-
-# Check if Slack exists
-if ! command -v slack &> /dev/null; then
-    echo "[!] Slack not found. Installing Slack Desktop..."
-
-    SLACK_DEB="slack-desktop.deb"
-    wget -O "$SLACK_DEB" "https://downloads.slack-edge.com/releases/linux/4.33.90/prod/x64/slack-desktop-4.33.90-amd64.deb"
-
-    sudo dpkg -i "$SLACK_DEB" || sudo apt --fix-broken install -y
-
-    rm "$SLACK_DEB"
-
-    echo "[+] Slack installed."
-else
-    echo "[*] Slack is already installed."
-fi
 echo
 
 # --- Configuration ---
@@ -883,7 +863,6 @@ echo
 # <B9F8 D658 297A F3EF C18D  5CDF A2F6 83C5 2980 AECF>
 # sudo apt-key export 058F8B6B | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/mongo.gpg
 # sudo apt-key export 2007B954 | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/msf.gpg
-# sudo apt-key export 038651BD | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/slack.gpg
 
 ## Ivre Dependencies
 #sudo pip install tinydb
@@ -1143,6 +1122,40 @@ echo
 
 echo -e "\nexport LC_ALL=en_US.UTF-8\nexport LANG=en_US.UTF-8" >> ~/.zshrc
 
+# Kali Ai ready with Ollama
+sudo apt update && sudo apt install -y curl zstd
+
+curl --fail --location https://ollama.com/download/ollama-linux-amd64.tar.zst -o /tmp/ollama-linux-amd64.tar.zst
+file /tmp/ollama-linux-amd64.tar.zst
+
+sudo tar -xv --zstd -C /usr -f /tmp/ollama-linux-amd64.tar.zst
+rm /tmp/ollama-linux-amd64.tar.zst
+
+sudo useradd -r -s /bin/false -U -m -d /usr/share/ollama ollama
+sudo usermod -a -G ollama $(whoami)
+
+cat <<'EOF' | sudo tee /etc/systemd/system/ollama.service >/dev/null
+[Unit]
+Description=Ollama Service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/usr/bin/ollama serve
+User=ollama
+Group=ollama
+Restart=always
+RestartSec=3
+Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now ollama
+systemctl status ollama --no-pager
+ollama -v
 
 # Kali Setup Finish Time
 date | tee kali-setup-finish-date.txt
